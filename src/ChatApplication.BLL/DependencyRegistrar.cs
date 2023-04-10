@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ChatApplication.BLL.MappingProfiles;
+using ChatApplication.BLL.Services;
+using ChatApplication.BLL.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatApplication.BLL;
 
@@ -8,13 +11,20 @@ public static class DependencyRegistrar
         this IServiceCollection services)
     {
         services.ConfigureServices();
-        
+        services.ConfigureAutomapper();
+
         return services;
     }
 
     private static void ConfigureServices(
         this IServiceCollection services)
     {
-        
+        services.AddScoped<IGroupChatService, GroupChatService>();
+    }
+
+    private static void ConfigureAutomapper(
+        this IServiceCollection services)
+    {
+        services.AddAutoMapper(typeof(GroupChatProfile));
     }
 }
