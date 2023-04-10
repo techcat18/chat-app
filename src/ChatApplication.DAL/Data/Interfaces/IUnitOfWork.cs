@@ -1,6 +1,8 @@
-﻿namespace ChatApplication.DAL.Contexts.Interfaces;
+﻿using ChatApplication.DAL.Repositories.Interfaces;
 
-public class IUnitOfWork
+namespace ChatApplication.DAL.Data.Interfaces;
+
+public interface IUnitOfWork: IDisposable
 {
-    
+    public IGroupChatRepository GroupChatRepository { get; }
 }
