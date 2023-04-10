@@ -40,9 +40,11 @@ public class GroupChatController: ControllerBase
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(
+        Guid id,
         UpdateGroupChatModel updateModel,
         CancellationToken cancellationToken)
     {
+        updateModel.Id = id;
         await _groupChatService.UpdateAsync(updateModel, cancellationToken);
         return NoContent();
     }
