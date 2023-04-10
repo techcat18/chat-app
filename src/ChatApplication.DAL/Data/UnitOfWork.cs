@@ -20,6 +20,11 @@ public class UnitOfWork: IUnitOfWork
         get { return _groupChatRepository ??= new GroupChatRepository(_context); }
     }
 
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     private void Dispose(bool disposing)
     {
         if (!_disposed)
