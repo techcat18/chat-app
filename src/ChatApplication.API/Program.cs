@@ -1,3 +1,4 @@
+using ChatApplication.BLL;
 using ChatApplication.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureDataAccessLayer(builder.Configuration);
+builder.Services.ConfigureBusinessLogicLayer();
 
 var app = builder.Build();
 
