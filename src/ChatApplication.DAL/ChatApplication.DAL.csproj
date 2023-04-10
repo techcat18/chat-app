@@ -12,8 +12,4 @@
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Configurations" />
-    </ItemGroup>
-
 </Project>

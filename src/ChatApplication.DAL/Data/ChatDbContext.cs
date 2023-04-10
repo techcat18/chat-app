@@ -1,4 +1,5 @@
-﻿using ChatApplication.DAL.Entities;
+﻿using ChatApplication.DAL.Configurations;
+using ChatApplication.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.DAL.Data;
@@ -8,7 +9,14 @@ public class ChatDbContext: DbContext
     public DbSet<GroupChat> GroupChats { get; set; }
     
     public ChatDbContext(DbContextOptions<ChatDbContext> options): base(options){}
-    
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GroupChatConfiguration).Assembly);
+        
+        base.OnModelCreating(modelBuilder);
+    }
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         AuditEntities();
