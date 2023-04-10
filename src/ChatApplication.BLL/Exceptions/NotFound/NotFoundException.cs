@@ -1,6 +1,8 @@
 ﻿namespace ChatApplication.BLL.Exceptions.NotFound;
 
-public class NotFoundException
+public class NotFoundException: Exception
 {
-    
+    public NotFoundException(string message): base(message)
+    {
+    }
 }
