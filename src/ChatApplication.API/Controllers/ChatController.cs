@@ -1,4 +1,4 @@
-﻿using ChatApplication.BLL.Models.GroupChat;
+﻿using ChatApplication.BLL.Models.Chat;
 using ChatApplication.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,44 +8,44 @@ namespace ChatApplication.API.Controllers;
 [Route("api/group-chats")]
 public class GroupChatController: ControllerBase
 {
-    private readonly IGroupChatService _groupChatService;
+    private readonly IChatService _chatService;
 
-    public GroupChatController(IGroupChatService groupChatService)
+    public GroupChatController(IChatService chatService)
     {
-        _groupChatService = groupChatService;
+        _chatService = chatService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        var groupChats = await _groupChatService.GetAllAsync(cancellationToken);
+        var groupChats = await _chatService.GetAllAsync(cancellationToken);
         return Ok(groupChats);
     }
     
     [HttpGet("{id}", Name = nameof(GetById))]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var groupChat = await _groupChatService.GetByIdAsync(id, cancellationToken);
+        var groupChat = await _chatService.GetByIdAsync(id, cancellationToken);
         return Ok(groupChat);
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(
-        CreateGroupChatModel createModel, 
+        CreateChatModel createModel, 
         CancellationToken cancellationToken)
     {
-        var groupChat = await _groupChatService.CreateAsync(createModel, cancellationToken);
+        var groupChat = await _chatService.CreateAsync(createModel, cancellationToken);
         return CreatedAtRoute(nameof(GetById), new { id = groupChat.Id }, groupChat);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(
         Guid id,
-        UpdateGroupChatModel updateModel,
+        UpdateChatModel updateModel,
         CancellationToken cancellationToken)
     {
         updateModel.Id = id;
-        await _groupChatService.UpdateAsync(updateModel, cancellationToken);
+        await _chatService.UpdateAsync(updateModel, cancellationToken);
         return NoContent();
     }
 
@@ -54,7 +54,7 @@ public class GroupChatController: ControllerBase
         Guid id,
         CancellationToken cancellationToken)
     {
-        await _groupChatService.DeleteAsync(id, cancellationToken);
+        await _chatService.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

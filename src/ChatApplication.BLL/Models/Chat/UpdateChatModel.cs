@@ -2,9 +2,9 @@
 
 namespace ChatApplication.BLL.Models.GroupChat;
 
-public class UpdateGroupChatModel
+public class UpdateChatModel
 {
     [JsonIgnore]
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; }
 }

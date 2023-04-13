@@ -1,7 +1,6 @@
 ﻿namespace ChatApplication.BLL.Models.GroupChat;
 
-public class GroupChatModel
+public class CreateChatModel
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
 }

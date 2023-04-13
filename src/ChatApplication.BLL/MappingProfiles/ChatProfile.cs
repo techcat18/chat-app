@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ChatApplication.BLL.Models.GroupChat;
+using ChatApplication.BLL.Models.Chat;
 using ChatApplication.DAL.Entities;
 
 namespace ChatApplication.BLL.MappingProfiles;
@@ -8,7 +8,7 @@ public class GroupChatProfile: Profile
 {
     public GroupChatProfile()
     {
-        CreateMap<CreateGroupChatModel, GroupChat>();
-        CreateMap<GroupChat, GroupChatModel>();
+        CreateMap<CreateChatModel, Chat>();
+        CreateMap<Chat, ChatModel>();
     }
 }

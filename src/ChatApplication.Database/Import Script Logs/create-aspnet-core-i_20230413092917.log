@@ -1,0 +1,13 @@
+4/13/2023 12:29:17 PM	This log contains information about the import operation of the script 'create-aspnet-core-identity-schema.sql' into project 'ChatApplication.Database' on computer 'DESKTOP-LA5RDNV' by user'HP.
+4/13/2023 12:29:17 PM	Started importing file: D:\96b0c3136f8498246fa810d393927f04-28f3a173dc8d686fa218f982dfde997b7bc31d4b\96b0c3136f8498246fa810d393927f04-28f3a173dc8d686fa218f982dfde997b7bc31d4b\create-aspnet-core-identity-schema.sql 
+4/13/2023 12:29:17 PM	File name D:\96b0c3136f8498246fa810d393927f04-28f3a173dc8d686fa218f982dfde997b7bc31d4b\96b0c3136f8498246fa810d393927f04-28f3a173dc8d686fa218f982dfde997b7bc31d4b\create-aspnet-core-identity-schema.sql (size: 9216)
+4/13/2023 12:29:17 PM	Parsing import script
+4/13/2023 12:29:17 PM	Total number of batches in script: 34
+4/13/2023 12:29:17 PM	Total number of statements in script: 13
+4/13/2023 12:29:17 PM	The script was successfully imported into the project.
+4/13/2023 12:29:17 PM	Analyzing schema objects...
+4/13/2023 12:29:17 PM	Scanning project for duplicate elements
+4/13/2023 12:29:17 PM	Finished duplicate element processing
+4/13/2023 12:29:18 PM	In the script that you provided to the import operation, one or more statements were not fully understood. These statements were moved to the ScriptsIgnoredOnImport.sql file. Review the file contents for additional information.
+4/13/2023 12:29:18 PM	A summary of the import was saved to the following location: D:\PetProjects\ChatApplication\src\ChatApplication.Database\Import Script Logs\create-aspnet-core-i_20230413092917.log
+4/13/2023 12:29:18 PM	Click Finish to continue...
