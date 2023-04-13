@@ -1,6 +1,5 @@
 ﻿using ChatApplication.DAL.Data.Interfaces;
-using ChatApplication.DAL.Repositories;
-using ChatApplication.DAL.Repositories.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ChatApplication.DAL.Data;
 
@@ -8,16 +7,31 @@ public class UnitOfWork: IUnitOfWork
 {
     private bool _disposed;
     private readonly ChatDbContext _context;
-    private IChatRepository? _groupChatRepository;
-
-    public UnitOfWork(ChatDbContext context)
+    private readonly IServiceProvider _serviceProvider;
+    private readonly Dictionary<Type, object> _repositories = new();
+    
+    
+    public UnitOfWork(
+        ChatDbContext context, 
+        IServiceProvider serviceProvider)
     {
         _context = context;
+        _serviceProvider = serviceProvider;
     }
 
-    public IChatRepository ChatRepository
+    public TRepository GetRepository<TRepository>()
     {
-        get { return _groupChatRepository ??= new ChatRepository(_context); }
+        var type = typeof(TRepository);
+        
+        if (_repositories.ContainsKey(type))
+        {
+            return (TRepository)_repositories[type];
+        }
+
+        var repositoryInstance = _serviceProvider.GetRequiredService<TRepository>();
+        _repositories.Add(type, repositoryInstance);
+        
+        return repositoryInstance;
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)

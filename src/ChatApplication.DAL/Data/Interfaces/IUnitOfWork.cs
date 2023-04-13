@@ -1,9 +1,7 @@
-﻿using ChatApplication.DAL.Repositories.Interfaces;
-
-namespace ChatApplication.DAL.Data.Interfaces;
+﻿namespace ChatApplication.DAL.Data.Interfaces;
 
 public interface IUnitOfWork: IDisposable
 {
-    public IChatRepository ChatRepository { get; }
+    TRepository GetRepository<TRepository>();
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

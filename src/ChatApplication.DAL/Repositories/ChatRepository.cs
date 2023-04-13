@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.DAL.Repositories;
 
-public class ChatRepository: GenericRepository<Guid, Chat>, IChatRepository
+public class ChatRepository: GenericRepository<Chat>, Interfaces.IChatRepository
 {
     public ChatRepository(ChatDbContext context) : base(context)
     {

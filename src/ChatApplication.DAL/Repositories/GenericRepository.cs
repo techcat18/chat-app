@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.DAL.Repositories;
 
-public class GenericRepository<TId, TEntity>: IGenericRepository<TId, TEntity> where TEntity: class, IBaseEntity
+public class GenericRepository<TEntity>: IGenericRepository<TEntity> where TEntity: class, IBaseEntity
 {
     private readonly ChatDbContext _context;
     protected readonly DbSet<TEntity> _dbSet;
 
-    public GenericRepository(ChatDbContext context)
+    protected GenericRepository(ChatDbContext context)
     {
         _context = context;
         _dbSet = context.Set<TEntity>();
