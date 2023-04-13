@@ -1,6 +1,6 @@
-﻿namespace ChatApplication.DAL.Entities;
+﻿namespace ChatApplication.DAL.Entities.Interfaces;
 
-public abstract class BaseEntity
+public interface IBaseEntity
 {
     public int Id { get; set; }
 }

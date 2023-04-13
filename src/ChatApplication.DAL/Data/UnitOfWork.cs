@@ -8,16 +8,16 @@ public class UnitOfWork: IUnitOfWork
 {
     private bool _disposed;
     private readonly ChatDbContext _context;
-    private IGroupChatRepository? _groupChatRepository;
+    private IChatRepository? _groupChatRepository;
 
     public UnitOfWork(ChatDbContext context)
     {
         _context = context;
     }
 
-    public IGroupChatRepository GroupChatRepository
+    public IChatRepository ChatRepository
     {
-        get { return _groupChatRepository ??= new GroupChatRepository(_context); }
+        get { return _groupChatRepository ??= new ChatRepository(_context); }
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)

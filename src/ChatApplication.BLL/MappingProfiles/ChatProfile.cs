@@ -4,9 +4,9 @@ using ChatApplication.DAL.Entities;
 
 namespace ChatApplication.BLL.MappingProfiles;
 
-public class GroupChatProfile: Profile
+public class ChatProfile: Profile
 {
-    public GroupChatProfile()
+    public ChatProfile()
     {
         CreateMap<CreateChatModel, Chat>();
         CreateMap<Chat, ChatModel>();

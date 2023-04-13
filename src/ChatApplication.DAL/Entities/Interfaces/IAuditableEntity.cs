@@ -1,6 +1,6 @@
-﻿namespace ChatApplication.DAL.Entities;
+﻿namespace ChatApplication.DAL.Entities.Interfaces;
 
-public abstract class AuditableEntity: SoftDeletableEntity
+public interface IAuditableEntity: ISoftDeletableEntity
 {
     public DateTime CreatedAt { get; set; }
     public DateTime ModifiedAt { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace ChatApplication.DAL.Entities;
+﻿namespace ChatApplication.DAL.Entities.Interfaces;
 
-public class SoftDeletableEntity: BaseEntity
+public interface ISoftDeletableEntity: IBaseEntity
 {
     public bool IsDeleted { get; set; }
 }

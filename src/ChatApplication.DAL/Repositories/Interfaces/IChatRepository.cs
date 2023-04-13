@@ -2,9 +2,9 @@
 
 namespace ChatApplication.DAL.Repositories.Interfaces;
 
-public interface IGroupChatRepository: IGenericRepository<Guid, Chat>
+public interface IChatRepository: IGenericRepository<int, Chat>
 {
-    Task<Chat?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Chat?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task CreateAsync(Chat chat, CancellationToken cancellationToken = default);
     void Update(Chat chat);
     void Delete(Chat chat);

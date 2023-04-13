@@ -19,12 +19,12 @@ public static class DependencyRegistrar
     private static void ConfigureServices(
         this IServiceCollection services)
     {
-        services.AddScoped<IGroupChatService, GroupChatService>();
+        services.AddScoped<IChatService, ChatService>();
     }
 
     private static void ConfigureAutomapper(
         this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(GroupChatProfile));
+        services.AddAutoMapper(typeof(ChatProfile));
     }
 }

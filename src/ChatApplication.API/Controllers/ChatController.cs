@@ -6,11 +6,11 @@ namespace ChatApplication.API.Controllers;
 
 [ApiController]
 [Route("api/group-chats")]
-public class GroupChatController: ControllerBase
+public class ChatController: ControllerBase
 {
     private readonly IChatService _chatService;
 
-    public GroupChatController(IChatService chatService)
+    public ChatController(IChatService chatService)
     {
         _chatService = chatService;
     }
@@ -23,7 +23,7 @@ public class GroupChatController: ControllerBase
     }
     
     [HttpGet("{id}", Name = nameof(GetById))]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         var groupChat = await _chatService.GetByIdAsync(id, cancellationToken);
         return Ok(groupChat);
@@ -40,7 +40,7 @@ public class GroupChatController: ControllerBase
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(
-        Guid id,
+        int id,
         UpdateChatModel updateModel,
         CancellationToken cancellationToken)
     {
@@ -51,7 +51,7 @@ public class GroupChatController: ControllerBase
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(
-        Guid id,
+        int id,
         CancellationToken cancellationToken)
     {
         await _chatService.DeleteAsync(id, cancellationToken);

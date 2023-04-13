@@ -1,11 +1,12 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Entities.Interfaces;
 using ChatApplication.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.DAL.Repositories;
 
-public class GenericRepository<TId, TEntity>: IGenericRepository<TId, TEntity> where TEntity: BaseEntity
+public class GenericRepository<TId, TEntity>: IGenericRepository<TId, TEntity> where TEntity: class, IBaseEntity
 {
     private readonly ChatDbContext _context;
     protected readonly DbSet<TEntity> _dbSet;

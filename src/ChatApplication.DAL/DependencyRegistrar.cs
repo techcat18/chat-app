@@ -24,7 +24,7 @@ public static class DependencyRegistrar
     private static void ConfigureRepositories(
         this IServiceCollection services)
     {
-        services.AddScoped<IGroupChatRepository, GroupChatRepository>();
+        services.AddScoped<IChatRepository, ChatRepository>();
     }
 
     private static void ConfigureUnitOfWork(

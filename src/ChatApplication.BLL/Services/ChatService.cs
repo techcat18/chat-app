@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ChatApplication.BLL.Exceptions.NotFound;
-using ChatApplication.BLL.Models.GroupChat;
+using ChatApplication.BLL.Models.Chat;
 using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
@@ -22,43 +22,43 @@ public class ChatService: IChatService
 
     public async Task<IEnumerable<ChatModel>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var groupChats = await _unitOfWork.ChatRepository.GetAllAsync(cancellationToken);
-        return _mapper.Map<IEnumerable<ChatModel>>(groupChats);
+        var chat = await _unitOfWork.ChatRepository.GetAllAsync(cancellationToken);
+        return _mapper.Map<IEnumerable<ChatModel>>(chat);
     }
 
-    public async Task<ChatModel?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ChatModel?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var groupChat = await _unitOfWork.ChatRepository.GetByIdAsync(id, cancellationToken);
-        return _mapper.Map<ChatModel>(groupChat);
+        var chat = await _unitOfWork.ChatRepository.GetByIdAsync(id, cancellationToken);
+        return _mapper.Map<ChatModel>(chat);
     }
 
     public async Task<ChatModel> CreateAsync(CreateChatModel model, CancellationToken cancellationToken = default)
     {
-        var groupChat = _mapper.Map<Chat>(model);
+        var chat = _mapper.Map<Chat>(model);
         
-        await _unitOfWork.ChatRepository.CreateAsync(groupChat, cancellationToken);
+        await _unitOfWork.ChatRepository.CreateAsync(chat, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         
-        return _mapper.Map<ChatModel>(groupChat);
+        return _mapper.Map<ChatModel>(chat);
     }
 
     public async Task UpdateAsync(UpdateChatModel model, CancellationToken cancellationToken = default)
     {
-        var groupChat = await _unitOfWork.ChatRepository.GetByIdAsync(model.Id, cancellationToken)
-                        ?? throw new GroupChatNotFoundException("Group chat was not found");
+        var chat = await _unitOfWork.ChatRepository.GetByIdAsync(model.Id, cancellationToken)
+                        ?? throw new ChatNotFoundException("Group chat was not found");
 
-        groupChat.Name = model.Name;
+        chat.Name = model.Name;
 
-        _unitOfWork.ChatRepository.Update(groupChat);
+        _unitOfWork.ChatRepository.Update(chat);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var groupChat = await _unitOfWork.ChatRepository.GetByIdAsync(id, cancellationToken)
-                        ?? throw new GroupChatNotFoundException("Group chat was not found");
+        var chat = await _unitOfWork.ChatRepository.GetByIdAsync(id, cancellationToken)
+                        ?? throw new ChatNotFoundException("Group chat was not found");
 
-        _unitOfWork.ChatRepository.Delete(groupChat);
+        _unitOfWork.ChatRepository.Delete(chat);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

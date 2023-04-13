@@ -11,7 +11,7 @@ public class ChatRepository: GenericRepository<Guid, Chat>, IChatRepository
     {
     }
 
-    public async Task<Chat?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Chat?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _dbSet.FirstOrDefaultAsync(gc => gc.Id == id, cancellationToken);
     }
