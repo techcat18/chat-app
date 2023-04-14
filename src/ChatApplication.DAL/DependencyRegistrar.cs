@@ -1,7 +1,8 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Data.Interfaces;
-using ChatApplication.DAL.Repositories;
+using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ public static class DependencyRegistrar
         services.ConfigureRepositories();
         services.ConfigureUnitOfWork();
         services.ConfigureDbContext(configuration);
+        services.ConfigureIdentity();
 
         return services;
     }
@@ -41,5 +43,22 @@ public static class DependencyRegistrar
         {
             options.UseSqlServer(configuration.GetConnectionString("SQLConnection"));
         });
+    }
+    
+    private static void ConfigureIdentity(
+        this IServiceCollection services)
+    {
+        services.AddIdentity<User, IdentityRole>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.User.RequireUniqueEmail = false;
+                opt.SignIn.RequireConfirmedEmail = true;
+            })
+            .AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<ChatDbContext>();
     }
 }

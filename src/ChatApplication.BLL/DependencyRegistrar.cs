@@ -20,6 +20,8 @@ public static class DependencyRegistrar
         this IServiceCollection services)
     {
         services.AddScoped<IChatService, ChatService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtService, JwtService>();
     }
 
     private static void ConfigureAutomapper(

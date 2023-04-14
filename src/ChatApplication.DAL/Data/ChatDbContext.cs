@@ -1,11 +1,12 @@
 ﻿using System.Linq.Expressions;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Entities.Interfaces;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.DAL.Data;
 
-public class ChatDbContext: DbContext
+public class ChatDbContext: IdentityDbContext<User>
 {
     public DbSet<Chat> Chats { get; set; }
     public DbSet<ChatType> ChatTypes { get; set; }
@@ -15,7 +16,7 @@ public class ChatDbContext: DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         QueryFilter(modelBuilder);
-        
+
         base.OnModelCreating(modelBuilder);
     }
 
