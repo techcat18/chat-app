@@ -55,8 +55,8 @@ public static class DependencyRegistrar
                 opt.Password.RequireUppercase = true;
                 opt.Password.RequireDigit = true;
                 opt.Password.RequireNonAlphanumeric = false;
-                opt.User.RequireUniqueEmail = false;
-                opt.SignIn.RequireConfirmedEmail = true;
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedEmail = false;
             })
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ChatDbContext>();
