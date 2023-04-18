@@ -1,0 +1,13 @@
+﻿@page "/logout"
+@using ChatApplication.Blazor.Services.Interfaces
+
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.LogoutAsync();
+        NavigationManager.NavigateTo("/login");
+    }
+}

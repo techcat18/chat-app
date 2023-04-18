@@ -1,15 +1,16 @@
 ﻿@page "/fetchdata"
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Chats</PageTitle>
+@using ChatApplication.Blazor.Models.Chat
+@using ChatApplication.Blazor.Services.Interfaces
 
-@using ChatApplication.Blazor.Data
-@inject WeatherForecastService ForecastService
+@inject IChatService ChatService;
 
-<h1>Weather forecast</h1>
+<h1>Chats</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<p>This component demonstrates fetching chats from the server.</p>
 
-@if (forecasts == null)
+@if (_chatModels == null)
 {
     <p>
         <em>Loading...</em>
@@ -20,20 +21,18 @@ else
     <table class="table">
         <thead>
         <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Chat type id</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var forecast in forecasts)
+        @foreach (var chat in _chatModels)
         {
             <tr>
-                <td>@forecast.Date.ToShortDateString()</td>
-                <td>@forecast.TemperatureC</td>
-                <td>@forecast.TemperatureF</td>
-                <td>@forecast.Summary</td>
+                <td>@chat.Id</td>
+                <td>@chat.Name</td>
+                <td>@chat.ChatTypeId</td>
             </tr>
         }
         </tbody>
@@ -41,11 +40,10 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private IEnumerable<ChatModel> _chatModels;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        _chatModels = await ChatService.GetChatsAsync();
     }
-
 }
