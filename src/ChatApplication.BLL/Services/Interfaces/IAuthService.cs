@@ -6,4 +6,5 @@ public interface IAuthService
 {
     Task<JwtModel> LoginAsync(LoginModel model);
     Task SignupAsync(SignupModel model);
+    Task ResetPasswordAsync(ChangePasswordModel model);
 }

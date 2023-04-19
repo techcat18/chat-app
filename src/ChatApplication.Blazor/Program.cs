@@ -1,11 +1,17 @@
 using Blazored.LocalStorage;
 using ChatApplication.Blazor;
+using ChatApplication.Blazor.Polly;
+using Flurl.Http;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddMudServices();
+
+FlurlHttp.Configure(settings => settings.HttpClientFactory = new PollyHttpClientFactory());
 
 builder.Services.ConfigureDependencies(builder.Configuration);
 

@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
 using System.Text;
 using AutoMapper;
 using ChatApplication.BLL.Exceptions.Auth;
@@ -8,7 +7,6 @@ using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Configuration;
 
 namespace ChatApplication.BLL.Services;
 
@@ -18,20 +16,17 @@ public class AuthService: IAuthService
     private readonly SignInManager<User> _signInManager;
     private readonly IMapper _mapper;
     private readonly IJwtService _jwtHandler;
-    private readonly IConfiguration _configuration;
 
     public AuthService(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         IMapper mapper, 
-        IJwtService jwtHandler,
-        IConfiguration configuration)
+        IJwtService jwtHandler)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _mapper = mapper;
         _jwtHandler = jwtHandler;
-        _configuration = configuration;
     }
 
     public async Task<JwtModel> LoginAsync(LoginModel model)
@@ -70,6 +65,24 @@ public class AuthService: IAuthService
         if (!result.Succeeded)
         {
             throw new AuthException(result.ToString());
+        }
+    }
+    
+    public async Task ResetPasswordAsync(ChangePasswordModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+            
+        if (user == null)
+        {
+            throw new AuthException($"User with email {model.Email} was not found");
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+
+        if (!result.Succeeded)
+        {
+            throw new AuthException("Failed to reset password");
         }
     }
 }

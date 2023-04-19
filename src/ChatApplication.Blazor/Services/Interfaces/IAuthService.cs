@@ -6,5 +6,6 @@ public interface IAuthService
 {
     Task<LoginResponseModel> LoginAsync(LoginModel loginModel);
     Task<SignupResponseModel> SignupAsync(SignupModel signupModel);
+    Task<ChangePasswordResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel);
     Task LogoutAsync();
 }

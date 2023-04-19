@@ -32,4 +32,12 @@ public class AuthController: ControllerBase
         await _authService.SignupAsync(signupModel);
         return Ok();
     }
+
+    [HttpPut("changePassword")]
+    public async Task<IActionResult> ChangePassword(
+        ChangePasswordModel changePasswordModel)
+    {
+        await _authService.ResetPasswordAsync(changePasswordModel);
+        return NoContent();
+    }
 }

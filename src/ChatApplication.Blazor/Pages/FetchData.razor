@@ -1,11 +1,14 @@
 ﻿@page "/fetchdata"
 
 <PageTitle>Chats</PageTitle>
+
 @using ChatApplication.Blazor.Models.Chat
 @using ChatApplication.Blazor.Services.Interfaces
 
 @inject IChatService ChatService;
+@inject ISnackbar Snackbar;
 
+@*
 <h1>Chats</h1>
 
 <p>This component demonstrates fetching chats from the server.</p>
@@ -38,12 +41,116 @@ else
         </tbody>
     </table>
 }
+*@
+<MudPaper Elevation="3">
+    <MudTable
+        Items="@_chatModels"
+        Dense="@dense"
+        Hover="@hover"
+        Filter="new Func<ChatModel, bool>(FilterFunc)"
+        @bind-SelectedItem="chatModel"
+        SortLabel="Sort By"
+        CommitEditTooltip="Commit Edit"
+        OnCommitEditClick="@(() => Snackbar.Add("Commit Handle"))"
+    >
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">
+                Chat Models List
+            </MudText>
+            <MudSpacer />
+            <MudTextField
+                @bind-Value="searchString"
+                Placeholder="Search"
+                Adornment="Adornment.Start"
+                AdornmentIcon="@MudBlazor.Icons.Custom.Uncategorized.Baguette"
+                IconSize="Size.Medium"
+                Class="mt-0"
+            >
+            </MudTextField>
+        </ToolBarContent>
+        
+        <ColGroup>
+            <col style="width: 50px"/>
+            <col style="width: 80px"/>
+            <col style="width: 50%"/>
+            <col/>
+            <col/>
+            <col style="width: 50px"/>
+        </ColGroup>
+        
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.Id)">
+                    Id
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.Name)">
+                    Name
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.ChatTypeId)">
+                    Chat Type Id
+                </MudTableSortLabel>
+            </MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd>
+                @context.Id
+            </MudTd>
+            <MudTd>
+                @context.Name
+            </MudTd>
+            <MudTd>
+                @context.ChatTypeId
+            </MudTd>
+        </RowTemplate>
+        
+        <RowEditingTemplate>
+            <MudTd>
+                @context.Id
+            </MudTd>
+            <MudTd>
+                @context.Name
+            </MudTd>
+            <MudTd>
+                @context.ChatTypeId
+            </MudTd>
+        </RowEditingTemplate>
+        
+        <PagerContent>
+            <MudTablePager></MudTablePager>
+        </PagerContent>
+    </MudTable>
+</MudPaper>
 
 @code {
     private IEnumerable<ChatModel> _chatModels;
+    private bool dense = false;
+    private bool hover = true;
+    private string searchString = string.Empty;
+    private ChatModel chatModel = new();
 
-    protected override async Task OnInitializedAsync()
+    private async Task<IEnumerable<ChatModel>> GetChatsAsync()
     {
-        _chatModels = await ChatService.GetChatsAsync();
+        return await ChatService.GetChatsAsync();
+    }
+
+    private bool FilterFunc(ChatModel chatModel)
+    {
+        return string.IsNullOrWhiteSpace(searchString) 
+               || chatModel.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _chatModels = await ChatService.GetChatsAsync();
+
+            StateHasChanged();
+        }
     }
 }

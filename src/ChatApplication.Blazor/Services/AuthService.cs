@@ -10,18 +10,15 @@ namespace ChatApplication.Blazor.Services;
 
 public class AuthService: IAuthService
 {
-    private readonly string _apiUrl;
     private readonly ChatAuthenticationStateProvider _authenticationStateProvider;
     private readonly ILocalStorageService _localStorage;
     private readonly IApiHelper _apiHelper;
     
     public AuthService(
-        IConfiguration configuration,
         ChatAuthenticationStateProvider authenticationStateProvider,
         ILocalStorageService localStorage,
         IApiHelper apiHelper)
     {
-        _apiUrl = configuration.GetSection("APIUrl").Value;
         _authenticationStateProvider = authenticationStateProvider;
         _localStorage = localStorage;
         _apiHelper = apiHelper;
@@ -67,6 +64,21 @@ public class AuthService: IAuthService
         {
             return new SignupResponseModel { Succeeded = false, ErrorMessage = e.Message };
         }
+    }
+
+    public async Task<ChangePasswordResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel)
+    {
+        try
+        {
+            await _apiHelper.PutAsync<ChangePasswordModel, ChangePasswordResponseModel>(changePasswordModel, "auth/changePassword");
+
+            return new ChangePasswordResponseModel { Succeeded = true };
+        }
+        catch (FlurlHttpException e)
+        {
+            return new ChangePasswordResponseModel { Succeeded = false, ErrorMessage = e.Message };
+        }
+        
     }
 
     public async Task LogoutAsync()

@@ -44,4 +44,14 @@ public class ApiHelper: IApiHelper
             .PostJsonAsync(model)
             .ReceiveJson<TOut>();
     }
+
+    public async Task<TOut> PutAsync<TIn, TOut>(TIn model, string endpoint)
+    {
+        var token = await _localStorage.GetItemAsync<string>("token");
+
+        return await (_apiUrl + endpoint)
+            .WithHeader("Authorization", $"Bearer {token}")
+            .PutJsonAsync(model)
+            .ReceiveJson<TOut>();
+    }
 }

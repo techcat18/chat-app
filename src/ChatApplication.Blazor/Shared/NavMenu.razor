@@ -1,5 +1,6 @@
 ﻿@using ChatApplication.Blazor.Services
 @using ChatApplication.Blazor.Services.Interfaces
+
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider;
 @inject IAuthService AuthService;
 
@@ -19,11 +20,6 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
         @if (!_authenticated)
         {
             <div class="nav-item px-3">
@@ -39,6 +35,16 @@
         }
         @if (_authenticated)
         {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="fetchdata">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Menu
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="changePassword">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Change Password
+                </NavLink>
+            </div>
             <div class="nav-item px-3" >
                 <NavLink class="nav-link" href="logout">
                     <span class="oi oi-list-rich" aria-hidden="true"></span> Log out
