@@ -1,54 +1,22 @@
-﻿@page "/fetchdata"
+﻿@page "/chats"
 
 <PageTitle>Chats</PageTitle>
 
 @using ChatApplication.Blazor.Models.Chat
 @using ChatApplication.Blazor.Services.Interfaces
+@using ChatApplication.Shared.Models
+@using Microsoft.AspNetCore.WebUtilities
 
 @inject IChatService ChatService;
 @inject ISnackbar Snackbar;
+@inject NavigationManager NavigationManager;
 
-@*
-<h1>Chats</h1>
-
-<p>This component demonstrates fetching chats from the server.</p>
-
-@if (_chatModels == null)
-{
-    <p>
-        <em>Loading...</em>
-    </p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Chat type id</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var chat in _chatModels)
-        {
-            <tr>
-                <td>@chat.Id</td>
-                <td>@chat.Name</td>
-                <td>@chat.ChatTypeId</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
-*@
 <MudPaper Elevation="3">
     <MudTable
         Items="@_chatModels"
         Dense="@dense"
         Hover="@hover"
-        Filter="new Func<ChatModel, bool>(FilterFunc)"
-        @bind-SelectedItem="chatModel"
+        @bind-SelectedItem="_chatModel"
         SortLabel="Sort By"
         CommitEditTooltip="Commit Edit"
         OnCommitEditClick="@(() => Snackbar.Add("Commit Handle"))"
@@ -59,12 +27,13 @@ else
             </MudText>
             <MudSpacer />
             <MudTextField
-                @bind-Value="searchString"
                 Placeholder="Search"
                 Adornment="Adornment.Start"
-                AdornmentIcon="@MudBlazor.Icons.Custom.Uncategorized.Baguette"
+                AdornmentIcon="@Icons.Custom.Uncategorized.Baguette"
                 IconSize="Size.Medium"
                 Class="mt-0"
+                Value="_searchString"
+                ValueChanged="@( async (string searchString) => { await HandleSearchInput(searchString);})"
             >
             </MudTextField>
         </ToolBarContent>
@@ -130,27 +99,73 @@ else
     private IEnumerable<ChatModel> _chatModels;
     private bool dense = false;
     private bool hover = true;
-    private string searchString = string.Empty;
-    private ChatModel chatModel = new();
+    private string _searchString = string.Empty;
+    private ChatModel _chatModel = new();
+    private ChatFilterModel _filterModel = new();
 
-    private async Task<IEnumerable<ChatModel>> GetChatsAsync()
+    /*private async Task<IEnumerable<ChatModel>> GetChatsAsync()
     {
-        return await ChatService.GetChatsAsync();
+        _filterModel.SearchString = _searchString;
+        return await ChatService.GetChatsByFilterAsync(_filterModel);
+    }*/
+
+    /*private bool FilterFunc(ChatModel chatModel)
+    {
+        return string.IsNullOrWhiteSpace(_searchString) 
+               || chatModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase);
+    }*/
+
+    private async Task HandleSearchInput(string searchInput)
+    {
+        _searchString = searchInput;
+        _filterModel.SearchString = _searchString;
+        Navigate();
+        _chatModels = await ChatService.GetChatsByFilterAsync(_filterModel);
     }
-
-    private bool FilterFunc(ChatModel chatModel)
+    
+    private void Navigate()
     {
-        return string.IsNullOrWhiteSpace(searchString) 
-               || chatModel.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+        var queryParams = new Dictionary<string, string>
+        {
+            ["page"] = !string.IsNullOrWhiteSpace(_filterModel.Page.ToString()) ? _filterModel.Page.ToString() : null,
+            ["count"] = !string.IsNullOrWhiteSpace(_filterModel.Count.ToString()) ? _filterModel.Count.ToString() : null,
+            ["searchString"] = !string.IsNullOrWhiteSpace(_filterModel.SearchString) ? _filterModel.SearchString : null
+        };
+        
+        NavigationManager.NavigateTo(QueryHelpers.AddQueryString("chats", queryParams));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _chatModels = await ChatService.GetChatsAsync();
+            _filterModel.SearchString = _searchString;
+            _chatModels = await ChatService.GetChatsByFilterAsync(_filterModel);
 
             StateHasChanged();
         }
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchString", out var searchString))
+        {
+            _searchString = searchString;
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("page", out var page))
+        {
+            _filterModel.Page = int.Parse(page);
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("count", out var count))
+        {
+            _filterModel.Count = int.Parse(count);
+        }
+        
+        
+        return base.OnInitializedAsync();
     }
 }

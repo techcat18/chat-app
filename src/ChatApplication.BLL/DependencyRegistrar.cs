@@ -2,6 +2,7 @@
 using ChatApplication.BLL.Services;
 using ChatApplication.BLL.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 
 namespace ChatApplication.BLL;
 
@@ -22,6 +23,7 @@ public static class DependencyRegistrar
         services.AddScoped<IChatService, ChatService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IUserService, UserService>();
     }
 
     private static void ConfigureAutomapper(

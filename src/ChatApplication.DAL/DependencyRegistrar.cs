@@ -1,6 +1,7 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Repositories;
 using ChatApplication.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,8 @@ public static class DependencyRegistrar
     private static void ConfigureRepositories(
         this IServiceCollection services)
     {
-        services.AddScoped<IChatRepository, Repositories.ChatRepository>();
+        services.AddScoped<IChatRepository, ChatRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 
     private static void ConfigureUnitOfWork(

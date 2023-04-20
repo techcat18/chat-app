@@ -1,23 +1,107 @@
-﻿@inherits LayoutComponentBase
+﻿@using ChatApplication.Blazor.Services
+@inherits LayoutComponentBase
 
-<PageTitle>ChatApplication.Blazor</PageTitle>
+@inject ChatAuthenticationStateProvider AuthenticationStateProvider;
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<MudLayout>
+    <MudAppBar Elevation="3">
+        @if (_authenticated)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleSidebar"/>
+        }
+        <MudSpacer/>
+        @if (!_authenticated)
+        {
+            <MudLink class="link" Href="/login" Match="NavLinkMatch.All" Color="Color.Inherit">Log in</MudLink>
+            <MudLink Href="/signup" Color="Color.Inherit">Sign up</MudLink>
+        }
+        else
+        {
+            <MudLink Href="/logout" Color="Color.Inherit">Log out</MudLink>
+        }
+        @if (_isLightMode)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme"/>
+        }
+        else
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness5" Color="Color.Inherit" OnClick="ToggleTheme"/>
+        }
+    </MudAppBar>
+    @if (_authenticated)
+    {
+        <MudDrawer @bind-Open="_sidebarOpen" Elevation="1">
+            <MudDrawerHeader>
+                @*<MudAvatar Color="Color.Transparent" Size="Size.Large" Image="assets/Logo-CodeMaze.png" />*@
+                @*<MudText Typo="Typo.h5" Color="Color.Primary" Style="margin-top:10px; margin-left:15px;">Code-Maze</MudText>*@
+            </MudDrawerHeader>
+            <NavMenu/>
+        </MudDrawer>
+    }
+    
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="_currentTheme"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
+
+@code {
+    private bool _isLightMode = true;
+    private bool _sidebarOpen;
+    private MudTheme _currentTheme = new ();
+    private bool _authenticated;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            if (authState.User.Identity != null)
+            {
+                _authenticated = authState.User.Identity.IsAuthenticated;
+            }
+            
+            StateHasChanged();
+        }
+    }
+    
+    private void ToggleTheme()
+    {
+        _isLightMode = !_isLightMode;
+        if(!_isLightMode)
+        {
+            _currentTheme = GenerateDarkTheme();
+        }
+        else
+        {
+            _currentTheme = new MudTheme();
+        }
+    }
+
+    private void ToggleSidebar()
+    {
+        _sidebarOpen = !_sidebarOpen;
+    }
+    
+    private MudTheme GenerateDarkTheme() =>
+        new()
+        {
+            Palette = new Palette
+            {
+                Black = "#27272f",
+                Background = "#32333d",
+                BackgroundGrey = "#27272f",
+                Surface = "#373740",
+                TextPrimary = "#ffffffb3",
+                TextSecondary = "rgba(255,255,255, 0.50)",
+                AppbarBackground = "#27272f",
+                AppbarText = "#ffffffb3"
+            }
+        };
+}

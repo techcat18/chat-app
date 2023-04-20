@@ -14,4 +14,8 @@
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ChatApplication.Shared\ChatApplication.Shared.csproj" />
+    </ItemGroup>
+
 </Project>

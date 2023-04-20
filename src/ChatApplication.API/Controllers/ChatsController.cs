@@ -1,5 +1,6 @@
 ﻿using ChatApplication.BLL.Models.Chat;
 using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +18,19 @@ public class ChatsController: ControllerBase
     }
 
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
         var chats = await _chatService.GetAllAsync(cancellationToken);
+        return Ok(chats);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetByFilter(
+        [FromQuery]ChatFilterModel model, 
+        CancellationToken cancellationToken)
+    {
+        var chats = await _chatService.GetAllByFilterAsync(model, cancellationToken);
         return Ok(chats);
     }
     

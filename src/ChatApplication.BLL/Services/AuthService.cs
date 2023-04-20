@@ -1,12 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using AutoMapper;
 using ChatApplication.BLL.Exceptions.Auth;
 using ChatApplication.BLL.Models.Auth;
 using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace ChatApplication.BLL.Services;
 
@@ -71,7 +69,7 @@ public class AuthService: IAuthService
     public async Task ResetPasswordAsync(ChangePasswordModel model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
-            
+
         if (user == null)
         {
             throw new AuthException($"User with email {model.Email} was not found");

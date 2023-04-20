@@ -1,14 +1,27 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Extensions;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApplication.DAL.Repositories;
 
-public class ChatRepository: GenericRepository<Chat>, Interfaces.IChatRepository
+public class ChatRepository: GenericRepository<Chat>, IChatRepository
 {
     public ChatRepository(ChatDbContext context) : base(context)
     {
+    }
+
+    public async Task<IEnumerable<Chat>> GetAllByFilterAsync(
+        ChatFilterModel filterModel,
+        CancellationToken cancellationToken)
+    {
+        return await _dbSet
+            .FilterByName(filterModel.SearchString)
+            .Sort(filterModel.SortingOption)
+            .Paginate(filterModel.Page, filterModel.Count)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Chat?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -29,5 +42,15 @@ public class ChatRepository: GenericRepository<Chat>, Interfaces.IChatRepository
     public void Delete(Chat chat)
     {
         _dbSet.Remove(chat);
+    }
+
+    public async Task<int> GetTotalCountAsync(
+        ChatFilterModel filterModel,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .FilterByName(filterModel.SearchString)
+            .Sort(filterModel.SortingOption)
+            .CountAsync(cancellationToken);
     }
 }

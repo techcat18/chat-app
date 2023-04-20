@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApplication.Blazor", "C
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ChatApplication.Database", "ChatApplication.Database\ChatApplication.Database.sqlproj", "{7A95D270-A748-4EEA-8151-B28BA7A13A3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApplication.Shared", "ChatApplication.Shared\ChatApplication.Shared.csproj", "{243A85A0-BCF3-4AEC-92F8-0C6B8DFD05B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{7A95D270-A748-4EEA-8151-B28BA7A13A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A95D270-A748-4EEA-8151-B28BA7A13A3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A95D270-A748-4EEA-8151-B28BA7A13A3A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{243A85A0-BCF3-4AEC-92F8-0C6B8DFD05B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{243A85A0-BCF3-4AEC-92F8-0C6B8DFD05B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{243A85A0-BCF3-4AEC-92F8-0C6B8DFD05B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{243A85A0-BCF3-4AEC-92F8-0C6B8DFD05B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
