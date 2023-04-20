@@ -2,6 +2,7 @@
 using ChatApplication.Blazor.Models.Chat;
 using ChatApplication.Blazor.Services.Interfaces;
 using ChatApplication.Shared.Models;
+using Newtonsoft.Json;
 
 namespace ChatApplication.Blazor.Services;
 
@@ -23,9 +24,11 @@ public class ChatService: IChatService
 
     public async Task<IEnumerable<ChatModel>> GetChatsByFilterAsync(ChatFilterModel filterModel)
     {
-        var chats =
-            await _apiHelper.GetAsync<ChatFilterModel, IEnumerable<ChatModel>>(filterModel, "chats");
+        var chatResponse =
+            await _apiHelper.GetAsync(filterModel, "chats");
 
-        return chats;
+        var chats = JsonConvert.DeserializeObject<PagedList<ChatModel>>(chatResponse);
+
+        return chats.Data;
     }
 }

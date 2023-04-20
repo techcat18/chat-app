@@ -1,30 +1,28 @@
-﻿@page "/chats"
-
-<PageTitle>Chats</PageTitle>
-
-@using ChatApplication.Blazor.Models.Chat
+﻿@page "/users"
+@using ChatApplication.Blazor.Models.User
 @using ChatApplication.Blazor.Services.Interfaces
 @using ChatApplication.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
 
-@inject IChatService ChatService;
+<PageTitle>Users</PageTitle>
+
 @inject ISnackbar Snackbar;
 @inject NavigationManager NavigationManager;
+@inject IUserService UserService;
 
 <MudPaper Elevation="3">
     <MudTable
-        Items="@_chatModels"
-        Dense="@dense"
-        Hover="@hover"
-        CurrentPage="2"
-        @bind-SelectedItem="_chatModel"
+        Items="@_userModels"
+        Dense="@_dense"
+        Hover="@_hover"
+        @bind-SelectedItem="_userModel"
         SortLabel="Sort By"
         CommitEditTooltip="Commit Edit"
         OnCommitEditClick="@(() => Snackbar.Add("Commit Handle"))"
     >
         <ToolBarContent>
             <MudText Typo="Typo.h6">
-                Chats
+                Users
             </MudText>
             <MudSpacer />
             <MudTextField
@@ -50,18 +48,18 @@
         
         <HeaderContent>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.Id)">
+                <MudTableSortLabel SortBy="new Func<UserModel, object>(c => c.Id)">
                     Id
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.Name)">
-                    Name
+                <MudTableSortLabel SortBy="new Func<UserModel, object>(c => c.Email)">
+                    Email
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.ChatTypeId)">
-                    Chat Type Id
+                <MudTableSortLabel SortBy="new Func<UserModel, object>(c => c.UserName)">
+                    User name
                 </MudTableSortLabel>
             </MudTh>
         </HeaderContent>
@@ -71,10 +69,10 @@
                 @context.Id
             </MudTd>
             <MudTd>
-                @context.Name
+                @context.Email
             </MudTd>
             <MudTd>
-                @context.ChatTypeId
+                @context.UserName
             </MudTd>
         </RowTemplate>
         
@@ -83,46 +81,33 @@
                 @context.Id
             </MudTd>
             <MudTd>
-                @context.Name
+                @context.Email
             </MudTd>
             <MudTd>
-                @context.ChatTypeId
+                @context.UserName
             </MudTd>
         </RowEditingTemplate>
         
         <PagerContent>
-            <MudTablePager PageSizeOptions="@_pageSizeOption"></MudTablePager>
+            <MudTablePager></MudTablePager>
         </PagerContent>
     </MudTable>
 </MudPaper>
 
 @code {
-    private IEnumerable<ChatModel> _chatModels;
-    private bool dense = false;
-    private bool hover = true;
-    private string _searchString;
-    private int _pageSizeOption;
-    private ChatModel _chatModel = new();
-    private ChatFilterModel _filterModel = new();
-
-    /*private async Task<IEnumerable<ChatModel>> GetChatsAsync()
-    {
-        _filterModel.SearchString = _searchString;
-        return await ChatService.GetChatsByFilterAsync(_filterModel);
-    }*/
-
-    /*private bool FilterFunc(ChatModel chatModel)
-    {
-        return string.IsNullOrWhiteSpace(_searchString) 
-               || chatModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase);
-    }*/
-
+    private IEnumerable<UserModel> _userModels;
+    private UserModel _userModel = new();
+    private UserFilterModel _filterModel = new();
+    private readonly bool _dense = false;
+    private readonly bool _hover = true;
+    private string _searchString = string.Empty;
+    
     private async Task HandleSearchInput(string searchInput)
     {
         _searchString = searchInput;
         _filterModel.SearchString = _searchString;
         Navigate();
-        _chatModels = await ChatService.GetChatsByFilterAsync(_filterModel);
+        _userModels = await UserService.GetUsersByFilterAsync(_filterModel);
     }
     
     private void Navigate()
@@ -136,13 +121,13 @@
         
         NavigationManager.NavigateTo(QueryHelpers.AddQueryString("chats", queryParams));
     }
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _filterModel.SearchString = _searchString;
-            _chatModels = await ChatService.GetChatsByFilterAsync(_filterModel);
+            _userModels = await UserService.GetUsersByFilterAsync(_filterModel);
 
             StateHasChanged();
         }
@@ -164,9 +149,10 @@
         
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("count", out var count))
         {
-            _pageSizeOption = int.Parse(count);
+            _filterModel.Count = int.Parse(count);
         }
-
+        
+        
         return base.OnInitializedAsync();
     }
 }

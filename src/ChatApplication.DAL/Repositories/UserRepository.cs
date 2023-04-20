@@ -21,8 +21,7 @@ public class UserRepository: IUserRepository
         CancellationToken cancellationToken = default)
     {
         return await _users
-            .FilterByEmail(filterModel.Email)
-            .FilterByUserName(filterModel.UserName)
+            .FilterBySearchString(filterModel.SearchString)
             .Paginate(filterModel.Page, filterModel.Count)
             .ToListAsync(cancellationToken);
     }
@@ -32,8 +31,7 @@ public class UserRepository: IUserRepository
         CancellationToken cancellationToken = default)
     {
         return await _users
-            .FilterByEmail(filterModel.Email)
-            .FilterByUserName(filterModel.UserName)
+            .FilterBySearchString(filterModel.SearchString)
             .CountAsync(cancellationToken);
     }
 }

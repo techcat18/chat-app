@@ -19,29 +19,18 @@ public static class UserQueryableExtensions
             .Take(count);
     }
 
-    public static IQueryable<User> FilterByEmail(
+    public static IQueryable<User> FilterBySearchString(
         this IQueryable<User> users,
-        string? email)
+        string? searchString)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(searchString))
         {
             return users;
         }
 
         return users
-            .Where(u => u.Email.ToUpper().Contains(email.ToUpper()));
-    }
-    
-    public static IQueryable<User> FilterByUserName(
-        this IQueryable<User> users,
-        string? userName)
-    {
-        if (string.IsNullOrWhiteSpace(userName))
-        {
-            return users;
-        }
-
-        return users
-            .Where(u => u.UserName.ToUpper().Contains(userName.ToUpper()));
+            .Where(u => 
+                u.Email.ToUpper().Contains(searchString.ToUpper()) ||
+                u.UserName.ToUpper().Contains(searchString.ToUpper()));
     }
 }

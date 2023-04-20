@@ -1,13 +1,24 @@
-﻿namespace ChatApplication.Shared.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace ChatApplication.Shared.Models;
 
 public class PagedList<T>
 {
-    public IEnumerable<T> Data { get; private set; }
-    public int CurrentPage { get; private set; }
-    public int TotalPages { get; private set; }
-    public int TotalCount { get; private set;  }
+    [JsonPropertyName("data")]
+    public IEnumerable<T> Data { get; set; }
+    [JsonPropertyName("currentPage")]
+    public int CurrentPage { get; set; }
+    [JsonPropertyName("totalPages")]
+    public int TotalPages { get; set; }
+    [JsonPropertyName("totalCount")]
+    public int TotalCount { get; set; }
 
-    public PagedList(IEnumerable<T> data, int totalCount, int currentPage, int pageSize)
+    public PagedList()
+    {
+        
+    }
+
+    private PagedList(IEnumerable<T> data, int totalCount, int currentPage, int pageSize)
     {
         Data = data;
         TotalCount = totalCount;
