@@ -7,5 +7,9 @@ public interface IUserService
 {
     Task<PagedList<UserModel>> GetAllByFilterAsync(
         UserFilterModel filterModel,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
+
+    Task<UserModel> GetByIdAsync(
+        string id,
+        CancellationToken cancellationToken = default);
 }

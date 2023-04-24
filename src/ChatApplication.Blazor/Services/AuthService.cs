@@ -52,38 +52,51 @@ public class AuthService: IAuthService
         return claims;
     }
 
-    public async Task<SignupResponseModel> SignupAsync(SignupModel signupModel)
+    public async Task<AuthResponseModel> SignupAsync(SignupModel signupModel)
     {
         try
         {
             await _apiHelper.PostAsync(signupModel, "auth/signup");
 
-            return new SignupResponseModel { Succeeded = true };
+            return new AuthResponseModel { Succeeded = true };
         }
         catch (FlurlHttpException e)
         {
-            return new SignupResponseModel { Succeeded = false, ErrorMessage = e.Message };
+            return new AuthResponseModel { Succeeded = false, ErrorMessage = e.Message };
         }
     }
 
-    public async Task<ChangePasswordResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel)
+    public async Task<AuthResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel)
     {
         try
         {
-            await _apiHelper.PutAsync<ChangePasswordModel, ChangePasswordResponseModel>(changePasswordModel, "auth/changePassword");
+            await _apiHelper.PutAsync(changePasswordModel, "auth/changePassword");
 
-            return new ChangePasswordResponseModel { Succeeded = true };
+            return new AuthResponseModel { Succeeded = true };
         }
         catch (FlurlHttpException e)
         {
-            return new ChangePasswordResponseModel { Succeeded = false, ErrorMessage = e.Message };
+            return new AuthResponseModel { Succeeded = false, ErrorMessage = e.Message };
         }
-        
     }
 
     public async Task LogoutAsync()
     {
         await _localStorage.RemoveItemAsync("token");
         await _authenticationStateProvider.MarkUserAsLoggedOut();
+    }
+
+    public async Task<AuthResponseModel> ChangeInfoAsync(ChangeUserInfoModel changeUserInfoModel)
+    {
+        try
+        {
+            await _apiHelper.PutAsync(changeUserInfoModel, "auth/changeInfo");
+
+            return new AuthResponseModel { Succeeded = true };
+        }
+        catch (FlurlHttpException e)
+        {
+            return new AuthResponseModel { Succeeded = false, ErrorMessage = e.Message };
+        }
     }
 }

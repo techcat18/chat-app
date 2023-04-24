@@ -1,6 +1,6 @@
-﻿namespace ChatApplication.Blazor.Models.User;
+﻿namespace ChatApplication.Blazor.Models.Auth;
 
-public class UserModel
+public class ChangeUserInfoModel
 {
     public string Id { get; set; }
     public string Email { get; set; }

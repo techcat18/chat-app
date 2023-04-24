@@ -91,7 +91,7 @@
         </RowEditingTemplate>
         
         <PagerContent>
-            <MudTablePager PageSizeOptions="@_pageSizeOption"></MudTablePager>
+            <MudTablePager PageSizeOptions="@(new []{1, 2, 3})"></MudTablePager>
         </PagerContent>
     </MudTable>
 </MudPaper>
@@ -101,7 +101,6 @@
     private bool dense = false;
     private bool hover = true;
     private string _searchString;
-    private int _pageSizeOption;
     private ChatModel _chatModel = new();
     private ChatFilterModel _filterModel = new();
 
@@ -164,7 +163,7 @@
         
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("count", out var count))
         {
-            _pageSizeOption = int.Parse(count);
+            _filterModel.Count = int.Parse(count);
         }
 
         return base.OnInitializedAsync();

@@ -1,0 +1,47 @@
+﻿@page "/login"
+@using ChatApplication.Blazor.Models.Auth
+@using ChatApplication.Blazor.Services.Interfaces
+@using Severity = MudBlazor.Severity
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject ISnackbar SnackBar
+
+<form Class="container" @onsubmit="SubmitForm">
+    <h2 class="container__heading">Log in</h2>
+    
+    <div class="form-group container__item">
+        <label for="email">Email</label>
+        <input type="text" Class="form-control" id="email" @bind="_email" />
+    </div>
+    <div class="form-group container__item">
+        <label for="password">Password</label>
+        <input type="password" Class="form-control" id="password" @bind="_password" />
+    </div>
+    <button type="submit" class="btn btn-primary container__btn">Log in</button>
+</form>
+
+@code {
+    private string _email;
+    private string _password;
+
+    private async Task SubmitForm()
+    {
+        var loginModel = new LoginModel
+        {
+            Email = _email,
+            Password = _password
+        };
+
+        var response = await AuthService.LoginAsync(loginModel);
+
+        if (response.Succeeded)
+        {
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            SnackBar.Add("Invalid email or password", Severity.Error);
+        }
+    }
+}

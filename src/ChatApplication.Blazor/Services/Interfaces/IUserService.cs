@@ -5,5 +5,6 @@ namespace ChatApplication.Blazor.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<IEnumerable<UserModel>> GetUsersByFilterAsync(UserFilterModel filterModel);
+    Task<PagedList<UserModel>> GetByFilterAsync(UserFilterModel filterModel);
+    Task<UserModel> GetByIdAsync(string id);
 }

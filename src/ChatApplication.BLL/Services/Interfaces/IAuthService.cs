@@ -4,7 +4,16 @@ namespace ChatApplication.BLL.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<JwtModel> LoginAsync(LoginModel model);
-    Task SignupAsync(SignupModel model);
-    Task ResetPasswordAsync(ChangePasswordModel model);
+    Task<JwtModel> LoginAsync(
+        LoginModel model,
+        CancellationToken cancellationToken = default);
+    Task SignupAsync(
+        SignupModel model,
+        CancellationToken cancellationToken = default);
+    Task ResetPasswordAsync(
+        ChangePasswordModel model,
+        CancellationToken cancellationToken = default);
+    Task ChangeUserInfoAsync(
+        ChangeInfoModel changeInfoModel,
+        CancellationToken cancellationToken = default);
 }

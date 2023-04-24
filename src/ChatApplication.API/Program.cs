@@ -14,6 +14,8 @@ builder.Services.ConfigureApiLayer(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseExceptionHandlingMiddleware();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

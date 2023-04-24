@@ -1,4 +1,5 @@
 ﻿@using ChatApplication.Blazor.Services
+@using Microsoft.IdentityModel.JsonWebTokens
 @inherits LayoutComponentBase
 
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider;
@@ -12,12 +13,12 @@
         <MudSpacer/>
         @if (!_authenticated)
         {
-            <MudLink class="link" Href="/login" Match="NavLinkMatch.All" Color="Color.Inherit">Log in</MudLink>
-            <MudLink Href="/signup" Color="Color.Inherit">Sign up</MudLink>
+            <a class="link" href="/login">Log in</a>
+            <a class="link" href="/signup">Sign up</a>
         }
         else
         {
-            <MudLink Href="/logout" Color="Color.Inherit">Log out</MudLink>
+            <a class="link" href="/logout">Log out</a>
         }
         @if (_isLightMode)
         {
@@ -32,8 +33,7 @@
     {
         <MudDrawer @bind-Open="_sidebarOpen" Elevation="1">
             <MudDrawerHeader>
-                @*<MudAvatar Color="Color.Transparent" Size="Size.Large" Image="assets/Logo-CodeMaze.png" />*@
-                @*<MudText Typo="Typo.h5" Color="Color.Primary" Style="margin-top:10px; margin-left:15px;">Code-Maze</MudText>*@
+                <MudText Style="font-size: 1.5rem">@_userEmail</MudText>
             </MudDrawerHeader>
             <NavMenu/>
         </MudDrawer>
@@ -53,7 +53,19 @@
 @code {
     private bool _isLightMode = true;
     private bool _sidebarOpen;
-    private MudTheme _currentTheme = new ();
+    private string _userEmail;
+
+    private MudTheme _currentTheme = new()
+    {
+        Typography = new Typography
+        {
+            Default = new Default
+            {
+                FontSize = "1.5rem"
+            }
+        }
+    };
+    
     private bool _authenticated;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -64,6 +76,7 @@
 
             if (authState.User.Identity != null)
             {
+                _userEmail = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
                 _authenticated = authState.User.Identity.IsAuthenticated;
             }
             
@@ -80,7 +93,16 @@
         }
         else
         {
-            _currentTheme = new MudTheme();
+            _currentTheme = new MudTheme
+            {
+                Typography = new Typography
+                {
+                    Default = new Default
+                    {
+                        FontSize = "1.5rem"
+                    }
+                }
+            };
         }
     }
 
@@ -102,6 +124,13 @@
                 TextSecondary = "rgba(255,255,255, 0.50)",
                 AppbarBackground = "#27272f",
                 AppbarText = "#ffffffb3"
+            },
+            Typography = new Typography
+            {
+                Default = new Default
+                {
+                    FontSize = "1.5rem"
+                }
             }
         };
 }

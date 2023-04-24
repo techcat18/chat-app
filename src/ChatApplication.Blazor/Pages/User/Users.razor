@@ -1,0 +1,197 @@
+﻿@page "/users"
+
+@using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Services.Interfaces
+@using ChatApplication.Shared.Models
+@using Microsoft.AspNetCore.WebUtilities
+
+<PageTitle>Users</PageTitle>
+
+@inject ISnackbar Snackbar;
+@inject NavigationManager NavigationManager;
+@inject IUserService UserService;
+
+<MudPaper Elevation="3">
+    <MudTable
+        @ref="_table"
+        T="UserModel"
+        ServerData="@(new Func<TableState, Task<TableData<UserModel>>>(GetServerData))"
+        CurrentPage="@(_filterModel.Page - 1)"
+        RowsPerPage="@(_filterModel.Count)"
+        SortLabel="@_sortingOption"
+        OnRowClick="@(user => OnRowClicked(user.Item))"
+    >
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">
+                Users
+            </MudText>
+            <MudSpacer />
+            <MudTextField
+                Placeholder="Search"
+                Adornment="Adornment.Start"
+                AdornmentIcon="@Icons.Custom.Uncategorized.Baguette"
+                IconSize="Size.Medium"
+                Class="mt-0"
+                Value="@_filterModel.SearchString"
+                ValueChanged="@((string searchString) => { HandleSearchInput(searchString);})"
+            >
+            </MudTextField>
+        </ToolBarContent>
+
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel SortLabel="Id" T="UserModel">
+                    Id
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortLabel="Email" T="UserModel">
+                    Email
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortLabel="FirstName" T="UserModel">
+                    First Name
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortLabel="LastName" T="UserModel">
+                    Last Name
+                </MudTableSortLabel>
+            </MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd>
+                @context.Id
+            </MudTd>
+            <MudTd>
+                @context.Email
+            </MudTd>
+            <MudTd>
+                @context.FirstName
+            </MudTd>
+            <MudTd>
+                @context.LastName
+            </MudTd>
+        </RowTemplate>
+        
+        <RowEditingTemplate>
+            <MudTd>
+                @context.Id
+            </MudTd>
+            <MudTd>
+                @context.Email
+            </MudTd>
+            <MudTd>
+                @context.FirstName
+            </MudTd>
+            <MudTd>
+                @context.LastName
+            </MudTd>
+        </RowEditingTemplate>
+        
+        <PagerContent>
+            <MudTablePager PageSizeOptions="@(new []{1, 2, 3})"></MudTablePager>
+        </PagerContent>
+    </MudTable>
+</MudPaper>
+
+@code {
+    private readonly UserFilterModel _filterModel = new();
+    private MudTable<UserModel> _table;
+    private TableState _tableState;
+    private string _sortingOption;
+    private SortDirection _sortingOrder;
+
+    private void HandleSearchInput(string searchInput)
+    {
+        _filterModel.SearchString = searchInput;
+        _table.ReloadServerData();
+    }
+
+    private async Task<TableData<UserModel>> GetServerData(TableState state)
+    {
+        _filterModel.Page = state.Page + 1;
+        _filterModel.Count = state.PageSize;
+        _filterModel.OrderBy = state.SortDirection == SortDirection.Descending ?
+            state.SortLabel + " desc" :
+            state.SortLabel;
+        
+        Navigate();
+        
+        var response = await UserService.GetByFilterAsync(_filterModel);
+
+        return new TableData<UserModel>
+        {
+            Items = response.Data,
+            TotalItems = response.TotalCount
+        };
+    }
+
+    private void OnRowClicked(UserModel user)
+    {
+        NavigationManager.NavigateTo($"users/{user.Id}");
+    }
+    
+    private void Navigate()
+    {
+        var queryParams = new Dictionary<string, string>
+        {
+            ["page"] = !string.IsNullOrWhiteSpace(_filterModel.Page.ToString()) ? _filterModel.Page.ToString() : null,
+            ["count"] = !string.IsNullOrWhiteSpace(_filterModel.Count.ToString()) ? _filterModel.Count.ToString() : null,
+            ["searchString"] = !string.IsNullOrWhiteSpace(_filterModel.SearchString) ? _filterModel.SearchString : null,
+            ["orderBy"] = !string.IsNullOrWhiteSpace(_filterModel.OrderBy) ? _filterModel.OrderBy : null
+        };
+        
+        NavigationManager.NavigateTo(QueryHelpers.AddQueryString("users", queryParams));
+    }
+
+    private void FetchParamsFromUrl()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchString", out var searchString))
+        {
+            _filterModel.SearchString = searchString;
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("page", out var page))
+        {
+            _filterModel.Page = int.Parse(page);
+            _table.CurrentPage = int.Parse(page) - 1;
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("count", out var count))
+        {
+            _filterModel.Count = int.Parse(count);
+            _table.RowsPerPage = int.Parse(count);
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("orderBy", out var orderBy))
+        {
+            _filterModel.OrderBy = orderBy;
+
+            var strArray = orderBy.ToString().Split(' ');
+            
+            _sortingOption = strArray[0];
+            _sortingOrder = SortDirection.Ascending;
+            
+            if (strArray.Length == 2)
+            {
+                _sortingOrder = SortDirection.Descending;
+            }
+            
+            _table.SortLabel = _sortingOption;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            FetchParamsFromUrl();
+            StateHasChanged();
+        }
+    }
+}

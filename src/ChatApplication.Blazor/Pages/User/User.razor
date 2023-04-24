@@ -1,0 +1,63 @@
+﻿@page "/users/{id}"
+
+@using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Pages.User.Dialogs
+@using ChatApplication.Blazor.Services
+@using ChatApplication.Blazor.Services.Interfaces
+@using System.IdentityModel.Tokens.Jwt
+
+@inject IUserService UserService
+@inject IDialogService DialogService
+@inject ChatAuthenticationStateProvider AuthenticationStateProvider
+
+<div class="container">
+    <div class="container__field">
+        <p><b>Id:</b> @_userModel.Id</p>
+    </div>
+    <div class="container__field">
+        <p><b>Email:</b> @_userModel.Email</p>
+    </div>
+    <div class="container__field">
+        <p><b>First Name:</b> @_userModel.FirstName</p>
+    </div>
+    <div class="container__field">
+        <p><b>Last Name:</b> @_userModel.LastName</p>
+    </div>
+    @if (CanModify)
+    {
+        <MudButton OnClick="OnChangeInfo" Variant="Variant.Filled" Color="Color.Primary">Change Info</MudButton>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private bool CanModify { get; set; }
+
+    private UserModel _userModel = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _userModel = await UserService.GetByIdAsync(Id);
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            if (authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value 
+                == _userModel.Id)
+            {
+                CanModify = true;
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnChangeInfo(MouseEventArgs obj)
+    {
+        var parameters = new DialogParameters { ["UserModel"]=_userModel };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true};
+        DialogService.Show<ChangeUserInfoDialog>("Change Info", parameters, options);
+    }
+}

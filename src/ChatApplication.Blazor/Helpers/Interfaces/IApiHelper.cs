@@ -6,5 +6,6 @@ public interface IApiHelper
     Task<string> GetAsync<TIn>(TIn model, string endpoint);
     Task PostAsync<T>(T model, string endpoint);
     Task<TOut> PostAsync<TIn, TOut>(TIn model, string endpoint);
+    Task PutAsync<TIn>(TIn model, string endpoint);
     Task<TOut> PutAsync<TIn, TOut>(TIn model, string endpoint);
 }

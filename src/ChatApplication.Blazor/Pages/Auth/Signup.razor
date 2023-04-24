@@ -1,0 +1,64 @@
+﻿@page "/signup"
+
+@using ChatApplication.Blazor.Models.Auth
+@using ChatApplication.Blazor.Services.Interfaces
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar;
+
+<form class="container" @onsubmit="SubmitForm">
+    <h2 class="container__heading">Sign up</h2>
+    
+    <div class="form-group container__item">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" id="email" @bind="_email" />
+    </div>
+    <div class="form-group container__item">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" @bind="_firstName" />
+    </div>
+    <div class="form-group container__item">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" @bind="_lastName" />
+    </div>
+    <div class="form-group container__item">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" @bind="_password" />
+    </div>
+    <div class="form-group container__item">
+        <label for="password">Confirm password</label>
+        <input type="password" class="form-control" id="confirmedPassword" @bind="_confirmedPassword" />
+    </div>
+    <button type="submit" class="btn btn-primary container__btn">Sign up</button>
+</form>
+
+@code {
+    private string _email;
+    private string _password;
+    private string _firstName;
+    private string _lastName;
+    private string _confirmedPassword;
+
+    private async Task SubmitForm()
+    {
+        var signupModel = new SignupModel
+        {
+            Email = _email,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Password = _password,
+        };
+
+        var response = await AuthService.SignupAsync(signupModel);
+
+        if (response.Succeeded)
+        {
+            NavigationManager.NavigateTo("/login", true);
+        }
+        else
+        {
+            Snackbar.Add("Something went wrong", Severity.Error);
+        }
+    }
+}

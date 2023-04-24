@@ -5,7 +5,8 @@ namespace ChatApplication.Blazor.Services.Interfaces;
 public interface IAuthService
 {
     Task<LoginResponseModel> LoginAsync(LoginModel loginModel);
-    Task<SignupResponseModel> SignupAsync(SignupModel signupModel);
-    Task<ChangePasswordResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel);
+    Task<AuthResponseModel> SignupAsync(SignupModel signupModel);
+    Task<AuthResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel);
+    Task<AuthResponseModel> ChangeInfoAsync(ChangeUserInfoModel changeUserInfoModel);
     Task LogoutAsync();
 }

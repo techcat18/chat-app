@@ -1,0 +1,16 @@
+﻿.container{
+    display: flex;
+    flex-direction: column;
+}
+
+.container__field{
+    display: flex;
+}
+
+.container__field > p{
+    font-size: 1.5rem;
+}
+
+.container__button{
+    background-color: red;
+}

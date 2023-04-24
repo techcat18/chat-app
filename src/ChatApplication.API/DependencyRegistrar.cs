@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ChatApplication.API.Middleware;
 using ChatApplication.BLL.Models.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +14,7 @@ public static class DependencyRegistrar
     {
         services.ConfigureOptions(configuration);
         services.ConfigureAuth(configuration);
-        
+
         return services;
     }
     
@@ -45,5 +46,10 @@ public static class DependencyRegistrar
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JwtSettings")["Key"]))
                 };
             });
+    }
+    
+    public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<ExceptionHandlingMiddleware>();
     }
 }

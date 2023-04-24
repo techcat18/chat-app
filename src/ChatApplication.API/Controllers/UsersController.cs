@@ -23,4 +23,13 @@ public class UsersController: ControllerBase
         var users = await _userService.GetAllByFilterAsync(filterModel, cancellationToken);
         return Ok(users);
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(
+        string id,
+        CancellationToken cancellationToken)
+    {
+        var user = await _userService.GetByIdAsync(id, cancellationToken);
+        return Ok(user);
+    }
 }

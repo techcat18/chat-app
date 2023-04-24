@@ -24,6 +24,7 @@ public static class DependencyRegistrar
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddHttpContextAccessor();
     }
 
     private static void ConfigureAutomapper(

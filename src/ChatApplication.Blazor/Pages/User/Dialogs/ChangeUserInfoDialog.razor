@@ -1,0 +1,46 @@
+﻿@using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Services.Interfaces
+@using ChatApplication.Blazor.Models.Auth
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="@UserModel.Id" T="string" Label="Id" ReadOnly="true"/>
+        <MudTextField @bind-Value="@UserModel.Email" T="string" Label="Email"/>
+        <MudTextField @bind-Value="@UserModel.FirstName" T="string" Label="First Name"/>
+        <MudTextField @bind-Value="@UserModel.LastName" T="string" Label="Last Name"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public UserModel UserModel { get; set; } = new();
+
+    private async void Submit()
+    {
+        var changeInfoModel = new ChangeUserInfoModel
+        {
+            Id = UserModel.Id,
+            Email = UserModel.Email,
+            FirstName = UserModel.FirstName,
+            LastName = UserModel.LastName
+        };
+
+        await AuthService.ChangeInfoAsync(changeInfoModel);
+
+        var currentUrl = NavigationManager.Uri;
+        NavigationManager.NavigateTo(currentUrl, true);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

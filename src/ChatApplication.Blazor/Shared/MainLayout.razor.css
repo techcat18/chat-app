@@ -1,4 +1,15 @@
-.login{
+.link{
     display: inline-block;
-    margin-right: 20px;
+    font-size: 1.4rem;
+    text-decoration: none;
+    color: #fff;
+}
+
+.link:not(:last-child){
+    margin-right: 1rem;
+}
+
+.link:hover{
+    text-decoration: underline;
+    color: #fff;
 }

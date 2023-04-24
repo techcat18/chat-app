@@ -22,6 +22,7 @@ public class UserRepository: IUserRepository
     {
         return await _users
             .FilterBySearchString(filterModel.SearchString)
+            .Sort(filterModel.OrderBy)
             .Paginate(filterModel.Page, filterModel.Count)
             .ToListAsync(cancellationToken);
     }
@@ -33,5 +34,11 @@ public class UserRepository: IUserRepository
         return await _users
             .FilterBySearchString(filterModel.SearchString)
             .CountAsync(cancellationToken);
+    }
+
+    public async Task<User?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        return await _users
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 }

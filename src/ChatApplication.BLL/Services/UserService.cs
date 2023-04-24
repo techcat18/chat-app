@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChatApplication.BLL.Exceptions.Auth;
 using ChatApplication.BLL.Models.User;
 using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Data.Interfaces;
@@ -24,7 +25,7 @@ public class UserService: IUserService
 
     public async Task<PagedList<UserModel>> GetAllByFilterAsync(
         UserFilterModel filterModel, 
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var users = await _userRepository
             .GetByFilterAsync(filterModel, cancellationToken);
@@ -38,5 +39,13 @@ public class UserService: IUserService
             .ToPagedModel(userModels, totalCount, filterModel.Page, filterModel.Count);
 
         return pagedModel;
+    }
+
+    public async Task<UserModel> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, cancellationToken)
+                   ?? throw new AuthException($"User with id {id} was not found");
+
+        return _mapper.Map<UserModel>(user);
     }
 }

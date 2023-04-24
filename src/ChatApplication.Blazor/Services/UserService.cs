@@ -15,13 +15,21 @@ public class UserService: IUserService
         _apiHelper = apiHelper;
     }
 
-    public async Task<IEnumerable<UserModel>> GetUsersByFilterAsync(UserFilterModel filterModel)
+    public async Task<PagedList<UserModel>> GetByFilterAsync(UserFilterModel filterModel)
     {
         var userResponse = 
             await _apiHelper.GetAsync(filterModel, "users");
 
         var users = JsonConvert.DeserializeObject<PagedList<UserModel>>(userResponse);
         
-        return users.Data;
+        return users;
+    }
+
+    public async Task<UserModel> GetByIdAsync(string id)
+    {
+        var userModel =
+            await _apiHelper.GetAsync<UserModel>($"users/{id}");
+
+        return userModel;
     }
 }

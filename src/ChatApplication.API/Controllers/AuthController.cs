@@ -1,9 +1,11 @@
 ﻿using ChatApplication.BLL.Models.Auth;
 using ChatApplication.BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApplication.API.Controllers;
 
+[Authorize(AuthenticationSchemes = "Bearer")]
 [ApiController]
 [Route("api/auth")]
 public class AuthController: ControllerBase
@@ -15,6 +17,7 @@ public class AuthController: ControllerBase
         _authService = authService;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JwtModel))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -24,6 +27,7 @@ public class AuthController: ControllerBase
         return Ok(token);
     }
 
+    [AllowAnonymous]
     [HttpPost("signup")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -38,6 +42,15 @@ public class AuthController: ControllerBase
         ChangePasswordModel changePasswordModel)
     {
         await _authService.ResetPasswordAsync(changePasswordModel);
+        return NoContent();
+    }
+
+    [HttpPut("changeInfo")]
+    public async Task<IActionResult> ChangeInfo(
+        ChangeInfoModel changeInfoModel,
+        CancellationToken cancellationToken)
+    {
+        await _authService.ChangeUserInfoAsync(changeInfoModel, cancellationToken);
         return NoContent();
     }
 }

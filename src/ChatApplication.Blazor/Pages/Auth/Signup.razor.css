@@ -1,0 +1,16 @@
+﻿.container__heading{
+    text-align: center;
+}
+
+.container__item{
+    font-size: 1.5rem;
+}
+
+.container__item > input{
+    font-size: 1.5rem;
+}
+
+.container__btn{
+    margin-top: 1rem;
+    font-size: 1.5rem;
+}
