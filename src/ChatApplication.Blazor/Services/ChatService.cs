@@ -31,4 +31,12 @@ public class ChatService: IChatService
 
         return chats.Data;
     }
+
+    public async Task<ChatModel> GetChatByIdAsync(int id)
+    {
+        var chatResponse =
+            await _apiHelper.GetAsync<ChatModel>($"chats/{id}");
+
+        return chatResponse;
+    }
 }

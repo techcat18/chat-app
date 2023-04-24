@@ -14,13 +14,13 @@
 <MudPaper Elevation="3">
     <MudTable
         Items="@_chatModels"
-        Dense="@dense"
-        Hover="@hover"
+        T="ChatModel"
         CurrentPage="2"
         @bind-SelectedItem="_chatModel"
         SortLabel="Sort By"
         CommitEditTooltip="Commit Edit"
         OnCommitEditClick="@(() => Snackbar.Add("Commit Handle"))"
+        OnRowClick="@(chat => OnRowClicked(chat.Item))"
     >
         <ToolBarContent>
             <MudText Typo="Typo.h6">
@@ -98,23 +98,14 @@
 
 @code {
     private IEnumerable<ChatModel> _chatModels;
-    private bool dense = false;
-    private bool hover = true;
     private string _searchString;
     private ChatModel _chatModel = new();
     private ChatFilterModel _filterModel = new();
 
-    /*private async Task<IEnumerable<ChatModel>> GetChatsAsync()
+    private void OnRowClicked(ChatModel chat)
     {
-        _filterModel.SearchString = _searchString;
-        return await ChatService.GetChatsByFilterAsync(_filterModel);
-    }*/
-
-    /*private bool FilterFunc(ChatModel chatModel)
-    {
-        return string.IsNullOrWhiteSpace(_searchString) 
-               || chatModel.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase);
-    }*/
+        NavigationManager.NavigateTo($"chats/{chat.Id}");
+    }
 
     private async Task HandleSearchInput(string searchInput)
     {

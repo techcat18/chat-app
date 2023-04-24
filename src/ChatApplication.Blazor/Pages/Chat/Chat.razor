@@ -1,0 +1,82 @@
+﻿@page "/chats/{id:int}"
+
+@using ChatApplication.Blazor.Services.Interfaces
+@using ChatApplication.Blazor.Models.Chat
+
+@inject IChatService ChatService
+
+<div class="container">
+    <p class="container__chat-name">@_chatModel.Name</p>
+    <div class="container__messages">
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Some text</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Some text 2</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item--left-side">
+            <p class="container__messages__item-email">test2@gmail.com</p>
+            <p class="container__messages__item-body">Left side</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Some text 3</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Some text 4</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Some text 4</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Some text 4</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+        <div class="container__messages__item">
+            <p class="container__messages__item-email">test@gmail.com</p>
+            <p class="container__messages__item-body">Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text</p>
+            <p class="container__messages__item-time">1:31</p>
+        </div>
+    </div>
+    <div class="container__input-box">
+        <textarea class="container__input"></textarea>
+        <button class="container__input-send-btn">Send</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private ChatModel _chatModel = new();
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _chatModel = await ChatService.GetChatByIdAsync(Id);
+            StateHasChanged();
+        }
+    }
+}
