@@ -1,0 +1,72 @@
+﻿@using ChatApplication.Blazor.Models.Chat
+@using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Services.Interfaces
+
+@inject NavigationManager NavigationManager
+@inject IChatService ChatService
+@inject IUserService UserService
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="@CreateChatModel.Name" T="string" Label="Name"/>
+        <MudSelect 
+            T="UserModel" 
+            Label="Users" 
+            MultiSelection="true" 
+            SelectedValuesChanged="OnSelectedValuesChanged"
+            Text="@string.Join(",", SelectedUsers.Select(u => u.Email))"
+        >
+            @foreach (var user in Users)
+            {
+                <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSwitch 
+            @bind-Checked="@IsChatPrivate" 
+            Color="Color.Primary" 
+            Label="Private"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    private CreateChatModel CreateChatModel { get; set; } = new();
+    private  bool IsChatPrivate { get; set; }
+    
+    private IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
+    private IEnumerable<UserModel> SelectedUsers { get; set; } = new List<UserModel>();
+    
+    private void OnSelectedValuesChanged(IEnumerable<UserModel> users)
+    {
+        SelectedUsers = users;
+    }
+
+    private async void Submit()
+    {
+        CreateChatModel.UserIds = SelectedUsers.Select(u => u.Id);
+        CreateChatModel.ChatTypeId = IsChatPrivate ? 2 : 1;
+        
+        await ChatService.CreateChatAsync(CreateChatModel);
+        
+        var currentUrl = NavigationManager.Uri;
+        NavigationManager.NavigateTo(currentUrl, true);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Users = await UserService.GetAllAsync();
+        }
+    }
+
+}

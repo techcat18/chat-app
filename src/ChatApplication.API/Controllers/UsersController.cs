@@ -15,8 +15,16 @@ public class UsersController: ControllerBase
         _userService = userService;
     }
 
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAll(
+        CancellationToken cancellationToken)
+    {
+        var users = await _userService.GetAllAsync(cancellationToken);
+        return Ok(users);
+    }
+
     [HttpGet]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> GetAllByFilter(
         [FromQuery]UserFilterModel filterModel,
         CancellationToken cancellationToken)
     {

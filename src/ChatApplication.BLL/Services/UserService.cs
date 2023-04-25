@@ -23,6 +23,12 @@ public class UserService: IUserService
         _mapper = mapper;
     }
 
+    public async Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var users = await _userRepository.GetAllAsync(cancellationToken);
+        return _mapper.Map<IEnumerable<UserModel>>(users);
+    }
+
     public async Task<PagedList<UserModel>> GetAllByFilterAsync(
         UserFilterModel filterModel, 
         CancellationToken cancellationToken = default)

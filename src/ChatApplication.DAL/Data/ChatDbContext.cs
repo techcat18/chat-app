@@ -10,12 +10,17 @@ public class ChatDbContext: IdentityDbContext<User>
 {
     public DbSet<Chat> Chats { get; set; }
     public DbSet<ChatType> ChatTypes { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<UserChat> UserChats { get; set; }
     
     public ChatDbContext(DbContextOptions<ChatDbContext> options): base(options){}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         QueryFilter(modelBuilder);
+        
+        modelBuilder.Entity<UserChat>()
+            .HasKey(uc => new { uc.UserId, uc.ChatId });
 
         base.OnModelCreating(modelBuilder);
     }

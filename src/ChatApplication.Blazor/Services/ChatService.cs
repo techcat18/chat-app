@@ -17,7 +17,8 @@ public class ChatService: IChatService
 
     public async Task<IEnumerable<ChatModel>> GetChatsAsync()
     {
-        var chats = await _apiHelper.GetAsync<IEnumerable<ChatModel>>("chats/all");
+        var chats = 
+            await _apiHelper.GetAsync<IEnumerable<ChatModel>>("chats/all");
         
         return chats;
     }
@@ -32,11 +33,28 @@ public class ChatService: IChatService
         return chats.Data;
     }
 
+    public async Task<PagedList<ChatModel>> GetChatsByUserIdAsync(
+        string userId, 
+        ChatFilterModel filterModel)
+    {
+        var chatResponse = 
+            await _apiHelper.GetAsync(filterModel, $"users/{userId}/chats");
+        
+        var chats = JsonConvert.DeserializeObject<PagedList<ChatModel>>(chatResponse);
+
+        return chats;
+    }
+
     public async Task<ChatModel> GetChatByIdAsync(int id)
     {
         var chatResponse =
             await _apiHelper.GetAsync<ChatModel>($"chats/{id}");
 
         return chatResponse;
+    }
+
+    public async Task CreateChatAsync(CreateChatModel createChatModel)
+    {
+        await _apiHelper.PostAsync(createChatModel, $"chats");
     }
 }

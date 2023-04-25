@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.BLL.Models.Chat;
+﻿namespace ChatApplication.Blazor.Models.Chat;
 
 public class CreateChatModel
 {

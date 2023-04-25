@@ -1,40 +1,36 @@
 ﻿@page "/login"
 @using ChatApplication.Blazor.Models.Auth
 @using ChatApplication.Blazor.Services.Interfaces
-@using Severity = MudBlazor.Severity
 
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 @inject ISnackbar SnackBar
 
-<form Class="container" @onsubmit="SubmitForm">
+<EditForm Model="_loginModel" OnValidSubmit="SubmitForm">
+    <FluentValidationValidator />
+
     <h2 class="container__heading">Log in</h2>
-    
+
     <div class="form-group container__item">
         <label for="email">Email</label>
-        <input type="text" Class="form-control" id="email" @bind="_email" />
+        <input type="text" Class="form-control" id="email" @bind="_loginModel.Email"/>
+        <ValidationMessage For="@(() => _loginModel.Email)"/>
     </div>
     <div class="form-group container__item">
         <label for="password">Password</label>
-        <input type="password" Class="form-control" id="password" @bind="_password" />
+        <input type="password" Class="form-control" id="password" @bind="_loginModel.Password"/>
+        <ValidationMessage For="@(() => _loginModel.Password)"/>
     </div>
     <button type="submit" class="btn btn-primary container__btn">Log in</button>
-</form>
+</EditForm>
 
 @code {
-    private string _email;
-    private string _password;
+    private readonly LoginModel _loginModel = new();
 
     private async Task SubmitForm()
     {
-        var loginModel = new LoginModel
-        {
-            Email = _email,
-            Password = _password
-        };
-
-        var response = await AuthService.LoginAsync(loginModel);
-
+        var response = await AuthService.LoginAsync(_loginModel);
+    
         if (response.Succeeded)
         {
             NavigationManager.NavigateTo("/", true);

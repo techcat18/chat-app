@@ -6,9 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
       <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
-      <PackageReference Include="FluentValidation" Version="11.5.2" />
       <PackageReference Include="Flurl.Http" Version="3.2.4" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
       <PackageReference Include="MudBlazor" Version="6.2.2" />
       <PackageReference Include="Polly" Version="7.2.3" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.29.0" />

@@ -16,6 +16,13 @@ public class UserRepository: IUserRepository
         _users = context.Users;
     }
 
+    public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _users
+            .Include(u => u.UserChats)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<User>> GetByFilterAsync(
         UserFilterModel filterModel,
         CancellationToken cancellationToken = default)
@@ -24,6 +31,13 @@ public class UserRepository: IUserRepository
             .FilterBySearchString(filterModel.SearchString)
             .Sort(filterModel.OrderBy)
             .Paginate(filterModel.Page, filterModel.Count)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<User>> GetByEmailsAsync(IEnumerable<string> emails, CancellationToken cancellationToken = default)
+    {
+        return await _users
+            .Where(u => emails.Contains(u.Email))
             .ToListAsync(cancellationToken);
     }
 

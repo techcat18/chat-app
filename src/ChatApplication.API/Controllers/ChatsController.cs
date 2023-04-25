@@ -17,7 +17,7 @@ public class ChatsController: ControllerBase
         _chatService = chatService;
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [HttpGet("all")]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
@@ -27,10 +27,20 @@ public class ChatsController: ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetByFilter(
-        [FromQuery]ChatFilterModel model, 
+        [FromQuery]ChatFilterModel filterModel, 
         CancellationToken cancellationToken)
     {
-        var chats = await _chatService.GetAllByFilterAsync(model, cancellationToken);
+        var chats = await _chatService.GetAllByFilterAsync(filterModel, cancellationToken);
+        return Ok(chats);
+    }
+
+    [HttpGet("/api/users/{userId}/chats")]
+    public async Task<IActionResult> GetByUserId(
+        string userId,
+        [FromQuery] ChatFilterModel filterModel,
+        CancellationToken cancellationToken)
+    {
+        var chats = await _chatService.GetAllByUserIdAsync(userId, filterModel, cancellationToken);
         return Ok(chats);
     }
     

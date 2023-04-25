@@ -3,23 +3,32 @@
 <PageTitle>Chats</PageTitle>
 
 @using ChatApplication.Blazor.Models.Chat
+@using ChatApplication.Blazor.Pages.Chat.Dialogs
+@using ChatApplication.Blazor.Services
 @using ChatApplication.Blazor.Services.Interfaces
 @using ChatApplication.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
+@using System.IdentityModel.Tokens.Jwt
 
 @inject IChatService ChatService;
-@inject ISnackbar Snackbar;
 @inject NavigationManager NavigationManager;
+@inject IDialogService DialogService
+@inject ChatAuthenticationStateProvider AuthenticationState;
 
+<MudButton 
+    OnClick="OnAddNewChat" 
+    Variant="Variant.Filled" 
+    Color="Color.Primary"
+>
+    +
+</MudButton>
 <MudPaper Elevation="3">
     <MudTable
-        Items="@_chatModels"
+        @ref="_table"
         T="ChatModel"
-        CurrentPage="2"
-        @bind-SelectedItem="_chatModel"
+        CurrentPage="0"
+        ServerData="@(new Func<TableState, Task<TableData<ChatModel>>>(GetServerData))"
         SortLabel="Sort By"
-        CommitEditTooltip="Commit Edit"
-        OnCommitEditClick="@(() => Snackbar.Add("Commit Handle"))"
         OnRowClick="@(chat => OnRowClicked(chat.Item))"
     >
         <ToolBarContent>
@@ -33,7 +42,7 @@
                 AdornmentIcon="@Icons.Custom.Uncategorized.Baguette"
                 IconSize="Size.Medium"
                 Class="mt-0"
-                Value="_searchString"
+                Value="@_filterModel.SearchString"
                 ValueChanged="@( async (string searchString) => { await HandleSearchInput(searchString);})"
             >
             </MudTextField>
@@ -77,19 +86,7 @@
                 @context.ChatTypeId
             </MudTd>
         </RowTemplate>
-        
-        <RowEditingTemplate>
-            <MudTd>
-                @context.Id
-            </MudTd>
-            <MudTd>
-                @context.Name
-            </MudTd>
-            <MudTd>
-                @context.ChatTypeId
-            </MudTd>
-        </RowEditingTemplate>
-        
+
         <PagerContent>
             <MudTablePager PageSizeOptions="@(new []{1, 2, 3})"></MudTablePager>
         </PagerContent>
@@ -97,10 +94,31 @@
 </MudPaper>
 
 @code {
-    private IEnumerable<ChatModel> _chatModels;
-    private string _searchString;
-    private ChatModel _chatModel = new();
-    private ChatFilterModel _filterModel = new();
+    private readonly ChatFilterModel _filterModel = new();
+    private MudTable<ChatModel> _table;
+    private string _userId;
+    
+    private async Task<TableData<ChatModel>> GetServerData(TableState state)
+    {
+        _filterModel.Page = state.Page + 1;
+        _filterModel.Count = state.PageSize;
+
+        Navigate();
+
+        if (string.IsNullOrWhiteSpace(_userId))
+        {
+            var authState = await AuthenticationState.GetAuthenticationStateAsync();
+            _userId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        }
+        
+        var response = await ChatService.GetChatsByUserIdAsync(_userId, _filterModel);
+
+        return new TableData<ChatModel>
+        {
+            Items = response.Data,
+            TotalItems = response.TotalCount
+        };
+    }
 
     private void OnRowClicked(ChatModel chat)
     {
@@ -109,10 +127,8 @@
 
     private async Task HandleSearchInput(string searchInput)
     {
-        _searchString = searchInput;
-        _filterModel.SearchString = _searchString;
-        Navigate();
-        _chatModels = await ChatService.GetChatsByFilterAsync(_filterModel);
+        _filterModel.SearchString = searchInput;
+        await _table.ReloadServerData();
     }
     
     private void Navigate()
@@ -131,32 +147,36 @@
     {
         if (firstRender)
         {
-            _filterModel.SearchString = _searchString;
-            _chatModels = await ChatService.GetChatsByFilterAsync(_filterModel);
-
+            FetchParamsFromUrl();
             StateHasChanged();
         }
     }
 
-    protected override Task OnInitializedAsync()
+    private void FetchParamsFromUrl()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchString", out var searchString))
         {
-            _searchString = searchString;
+            _filterModel.SearchString = searchString;
         }
         
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("page", out var page))
         {
             _filterModel.Page = int.Parse(page);
+            _table.CurrentPage = int.Parse(page) - 1;
         }
         
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("count", out var count))
         {
             _filterModel.Count = int.Parse(count);
+            _table.RowsPerPage = int.Parse(count);
         }
-
-        return base.OnInitializedAsync();
+    }
+    
+    private void OnAddNewChat(MouseEventArgs obj)
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true};
+        DialogService.Show<AddNewChatDialog>("Add New Chat", options);
     }
 }

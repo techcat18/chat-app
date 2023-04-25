@@ -7,7 +7,11 @@ public interface IChatRepository: IGenericRepository<Chat>
 {
     Task<IEnumerable<Chat>> GetAllByFilterAsync(
         ChatFilterModel filterModel,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
+    Task<IEnumerable<Chat>> GetAllByUserIdAsync(
+        string userId,
+        ChatFilterModel filterModel,
+        CancellationToken cancellationToken = default);
     Task<Chat?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task CreateAsync(Chat chat, CancellationToken cancellationToken = default);
     void Update(Chat chat);

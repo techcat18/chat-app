@@ -7,50 +7,51 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar;
 
-<form class="container" @onsubmit="SubmitForm">
-    <h2 class="container__heading">Sign up</h2>
+<EditForm Model="_signupModel" class="container" OnValidSubmit="SubmitForm">
+    <FluentValidationValidator />
     
+    <h2 class="container__heading">Sign up</h2>
+
     <div class="form-group container__item">
         <label for="email">Email</label>
-        <input type="text" class="form-control" id="email" @bind="_email" />
+        <input type="text" class="form-control" id="email" @bind="_signupModel.Email"/>
+        <ValidationMessage For="@(() => _signupModel.Email)"/>
     </div>
     <div class="form-group container__item">
         <label for="firstName">First Name</label>
-        <input type="text" class="form-control" id="firstName" @bind="_firstName" />
+        <input type="text" class="form-control" id="firstName" @bind="_signupModel.FirstName"/>
+        <ValidationMessage For="@(() => _signupModel.FirstName)"/>
     </div>
     <div class="form-group container__item">
         <label for="lastName">Last Name</label>
-        <input type="text" class="form-control" id="lastName" @bind="_lastName" />
+        <input type="text" class="form-control" id="lastName" @bind="_signupModel.LastName"/>
+        <ValidationMessage For="@(() => _signupModel.LastName)"/>
     </div>
     <div class="form-group container__item">
         <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" @bind="_password" />
+        <input type="password" class="form-control" id="password" @bind="_signupModel.Password"/>
+        <ValidationMessage For="@(() => _signupModel.Password)"/>
     </div>
     <div class="form-group container__item">
         <label for="password">Confirm password</label>
-        <input type="password" class="form-control" id="confirmedPassword" @bind="_confirmedPassword" />
+        <input type="password" class="form-control" id="confirmedPassword" @bind="_signupModel.ConfirmedPassword"/>
+        <ValidationMessage For="@(() => _signupModel.ConfirmedPassword)"/>
     </div>
     <button type="submit" class="btn btn-primary container__btn">Sign up</button>
-</form>
+</EditForm>
 
 @code {
-    private string _email;
-    private string _password;
-    private string _firstName;
-    private string _lastName;
-    private string _confirmedPassword;
+    private readonly SignupModel _signupModel = new();
 
     private async Task SubmitForm()
     {
-        var signupModel = new SignupModel
+        if (_signupModel.Password != _signupModel.ConfirmedPassword)
         {
-            Email = _email,
-            FirstName = _firstName,
-            LastName = _lastName,
-            Password = _password,
-        };
-
-        var response = await AuthService.SignupAsync(signupModel);
+            Snackbar.Add("Passwords don't match", Severity.Error);
+            return;
+        }
+        
+        var response = await AuthService.SignupAsync(_signupModel);
 
         if (response.Succeeded)
         {

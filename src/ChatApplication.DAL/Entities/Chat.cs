@@ -11,4 +11,6 @@ public class Chat: IAuditableEntity
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime ModifiedAt { get; set; }
+
+    public ICollection<UserChat> UserChats { get; set; }
 }

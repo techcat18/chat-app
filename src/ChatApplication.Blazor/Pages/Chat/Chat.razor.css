@@ -11,20 +11,32 @@
 .container__messages{
     display: flex;
     flex-direction: column-reverse;
-    padding: 1rem;
+    padding-top: 1rem;
     height: 500px;
     overflow-y: auto;
 }
 
 .container__messages__item{
     display: flex;
+    flex-direction: column;
     margin-left: auto;
     max-width: 90%;
+    background-color: rgb(89, 74, 226);
+    color: #fff;
+    padding: .5rem;
+    margin-top: .5rem;
+    border-radius: 1rem;
 }
 
 .container__messages__item--left-side{
     display: flex;
+    flex-direction: column;
     max-width: 90%;
+    background-color: #212121;
+    color: #fff;
+    padding: .5rem;
+    margin-top: .5rem;
+    border-radius: 1rem;
 }
 
 .container__messages__item-email{
@@ -33,12 +45,18 @@
 
 .container__messages__item-body{
     overflow-wrap: anywhere;
-    margin: 0 1rem;
+}
+
+.container__messages__item-time{
+    font-size: 1rem;
+    margin-left: auto;
+    margin-bottom: 0;
 }
 
 .container__input-box{
     display: flex;
     border: 1px solid #000;
+    margin-top: .5rem;
 }
 
 .container__input{

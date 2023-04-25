@@ -1,5 +1,4 @@
-﻿using ChatApplication.DAL.Entities;
-using ChatApplication.DAL.Entities.Interfaces;
+﻿using ChatApplication.DAL.Entities.Interfaces;
 
 namespace ChatApplication.DAL.Repositories.Interfaces;
 

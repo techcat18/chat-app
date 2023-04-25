@@ -24,5 +24,6 @@ public static class DependencyRegistrar
         services.AddScoped<IApiHelper, ApiHelper>();
         services.AddScoped<IChatService, ChatService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IMessageService, MessageService>();
     }
 }

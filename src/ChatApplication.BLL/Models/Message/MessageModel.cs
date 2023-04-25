@@ -1,0 +1,12 @@
+﻿namespace ChatApplication.BLL.Models.Message;
+
+public class MessageModel
+{
+    public int Id { get; set; }
+    public int? ParentMessageId { get; set; }
+    public string SenderId { get; set; }
+    public string SenderEmail { get; set; }
+    public int ChatId { get; set; }
+    public string Content { get; set; }
+    public DateTime DateSent { get; set; }
+}

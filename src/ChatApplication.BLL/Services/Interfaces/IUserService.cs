@@ -5,6 +5,8 @@ namespace ChatApplication.BLL.Services.Interfaces;
 
 public interface IUserService
 {
+    Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken = default);
+    
     Task<PagedList<UserModel>> GetAllByFilterAsync(
         UserFilterModel filterModel,
         CancellationToken cancellationToken = default);

@@ -15,6 +15,14 @@ public class UserService: IUserService
         _apiHelper = apiHelper;
     }
 
+    public async Task<IEnumerable<UserModel>> GetAllAsync()
+    {
+        var users = await _apiHelper
+            .GetAsync<IEnumerable<UserModel>>("users/all");
+
+        return users;
+    }
+
     public async Task<PagedList<UserModel>> GetByFilterAsync(UserFilterModel filterModel)
     {
         var userResponse = 

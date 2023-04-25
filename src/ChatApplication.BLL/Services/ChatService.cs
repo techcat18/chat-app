@@ -13,6 +13,8 @@ public class ChatService: IChatService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IChatRepository _chatRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserChatRepository _userChatRepository;
     private readonly IMapper _mapper;
 
     public ChatService(
@@ -21,6 +23,8 @@ public class ChatService: IChatService
     {
         _unitOfWork = unitOfWork;
         _chatRepository = _unitOfWork.GetRepository<IChatRepository>();
+        _userRepository = _unitOfWork.GetRepository<IUserRepository>();
+        _userChatRepository = _unitOfWork.GetRepository<IUserChatRepository>();
         _mapper = mapper;
     }
 
@@ -50,6 +54,22 @@ public class ChatService: IChatService
         return pagedModel;
     }
 
+    public async Task<PagedList<ChatModel>> GetAllByUserIdAsync(
+        string userId, 
+        ChatFilterModel filterModel, 
+        CancellationToken cancellationToken = default)
+    {
+        var chats = await _chatRepository
+            .GetAllByUserIdAsync(userId, filterModel, cancellationToken);
+        
+        var chatModels = _mapper.Map<IEnumerable<ChatModel>>(chats);
+
+        var pagedModel = PagedList<ChatModel>
+            .ToPagedModel(chatModels, chats.Count(), filterModel.Page, filterModel.Count);
+
+        return pagedModel;
+    }
+
     public async Task<ChatModel?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var chat = await _chatRepository
@@ -61,10 +81,26 @@ public class ChatService: IChatService
     public async Task<ChatModel> CreateAsync(CreateChatModel model, CancellationToken cancellationToken = default)
     {
         var chat = _mapper.Map<Chat>(model);
-        
+
         await _chatRepository
             .CreateAsync(chat, cancellationToken);
-        
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var userChats = model.UserIds.Select(x =>
+        {
+            var userChat = new UserChat
+            {
+                ChatId = chat.Id,
+                UserId = x,
+                DateJoined = DateTime.UtcNow
+            };
+
+            return userChat;
+        });
+
+        await _userChatRepository.AddUsersToChatAsync(userChats, cancellationToken);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         
         return _mapper.Map<ChatModel>(chat);

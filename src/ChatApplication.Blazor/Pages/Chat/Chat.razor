@@ -2,81 +2,110 @@
 
 @using ChatApplication.Blazor.Services.Interfaces
 @using ChatApplication.Blazor.Models.Chat
+@using ChatApplication.Blazor.Models.Message
+@using ChatApplication.Blazor.Services
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.IdentityModel.JsonWebTokens
 
 @inject IChatService ChatService
+@inject IMessageService MessageService
+@inject ChatAuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration Configuration
 
 <div class="container">
     <p class="container__chat-name">@_chatModel.Name</p>
     <div class="container__messages">
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Some text</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Some text 2</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item--left-side">
-            <p class="container__messages__item-email">test2@gmail.com</p>
-            <p class="container__messages__item-body">Left side</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Some text 3</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Some text 4</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Some text 4</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Some text 4</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
-        <div class="container__messages__item">
-            <p class="container__messages__item-email">test@gmail.com</p>
-            <p class="container__messages__item-body">Very loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text</p>
-            <p class="container__messages__item-time">1:31</p>
-        </div>
+        @foreach (var message in _messages)
+        {
+            @if (message.SenderId == _userId)
+            {
+                <div class="container__messages__item">
+                    <p class="container__messages__item-body">@message.Content</p>
+                    <p class="container__messages__item-time">@message.DateSent.ToString("hh:mm:ss")</p>
+                </div>
+            }
+            else
+            {
+                <div class="container__messages__item--left-side">
+                    <p class="container__messages__item-email">@message.SenderEmail</p>
+                    <p class="container__messages__item-body">@message.Content</p>
+                    <p class="container__messages__item-time">@message.DateSent.ToString("hh:mm:ss")</p>
+                </div>
+            }
+        }
+        
     </div>
     <div class="container__input-box">
-        <textarea class="container__input"></textarea>
-        <button class="container__input-send-btn">Send</button>
+        <textarea @bind="_createMessageModel.Content" @bind:event="oninput" class="container__input"></textarea>
+        <button disabled="@(!IsConnected)" class="container__input-send-btn" @onclick="OnSendMessage">Send</button>
     </div>
 </div>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+    
+    private HubConnection _hubConnection { get; set; }
+    public bool IsConnected =>
+        _hubConnection?.State == HubConnectionState.Connected;
+
+    private string _userId;
 
     private ChatModel _chatModel = new();
-    
+    private IList<MessageModel> _messages { get; set; } = new List<MessageModel>();
+
+    private readonly CreateMessageModel _createMessageModel = new();
+    private AuthenticationState _authState;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _chatModel = await ChatService.GetChatByIdAsync(Id);
+            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            
+            await GetMessagesAsync(_chatModel.Id);
+            
+            _createMessageModel.ChatId = _chatModel.Id;
+            _userId = _authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            _createMessageModel.SenderId = _userId;
+
             StateHasChanged();
         }
     }
+
+    private async Task OnSendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(_createMessageModel.Content))
+        {
+            return;
+        }
+
+        var message = await MessageService.CreateMessageAsync(_createMessageModel);
+        
+        await _hubConnection.SendAsync("SendMessageAsync", message);
+
+        _createMessageModel.Content = null;
+    }
+
+    private async Task GetMessagesAsync(int chatId)
+    {
+        _messages = await MessageService.GetMessagesByChatIdAsync(_chatModel.Id);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{Configuration.GetSection("APIUrl").Value}chathub")
+            .Build();
+
+        _hubConnection.On<MessageModel>("ReceiveMessage", async message =>
+        {
+            _messages.Insert(0, message);
+            await InvokeAsync(StateHasChanged);
+        });
+        
+        await _hubConnection.StartAsync();
+    }
+
 }

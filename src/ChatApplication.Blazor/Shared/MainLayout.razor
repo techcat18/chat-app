@@ -1,8 +1,11 @@
 ﻿@using ChatApplication.Blazor.Services
+@using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.IdentityModel.JsonWebTokens
 @inherits LayoutComponentBase
 
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider;
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
 
 <MudLayout>
     <MudAppBar Elevation="3">

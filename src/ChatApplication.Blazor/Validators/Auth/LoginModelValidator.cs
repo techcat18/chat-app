@@ -8,16 +8,10 @@ public class LoginModelValidator: AbstractValidator<LoginModel>
     public LoginModelValidator()
     {
         RuleFor(lm => lm.Email)
-            .NotEmpty()
-            .EmailAddress();
+            .NotEmpty().WithMessage("Email must not be empty")
+            .EmailAddress().WithMessage("Must be a valid email");
 
         RuleFor(lm => lm.Password)
-            .NotEmpty();
+            .NotEmpty().WithMessage("Password must not be empty");
     }
-    
-    public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-    {
-        var result = await ValidateAsync(ValidationContext<LoginModel>.CreateWithOptions((LoginModel)model, x => x.IncludeProperties(propertyName)));
-        return result.IsValid ? Array.Empty<string>() : result.Errors.Select(e => e.ErrorMessage);
-    };
 }

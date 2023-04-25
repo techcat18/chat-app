@@ -15,9 +15,23 @@ public class ChatRepository: GenericRepository<Chat>, IChatRepository
 
     public async Task<IEnumerable<Chat>> GetAllByFilterAsync(
         ChatFilterModel filterModel,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return await _dbSet
+            .FilterByName(filterModel.SearchString)
+            .Sort(filterModel.SortingOption)
+            .Paginate(filterModel.Page, filterModel.Count)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Chat>> GetAllByUserIdAsync(
+        string userId,
+        ChatFilterModel filterModel,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(c => c.UserChats)
+            .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
             .FilterByName(filterModel.SearchString)
             .Sort(filterModel.SortingOption)
             .Paginate(filterModel.Page, filterModel.Count)
