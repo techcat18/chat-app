@@ -1,30 +1,53 @@
 ﻿@using ChatApplication.Blazor.Models.Chat
 @using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Services
 @using ChatApplication.Blazor.Services.Interfaces
+@using Microsoft.IdentityModel.JsonWebTokens
 
 @inject NavigationManager NavigationManager
 @inject IChatService ChatService
 @inject IUserService UserService
+@inject ChatAuthenticationStateProvider AuthenticationStateProvider
 
 <MudDialog>
     <DialogContent>
         <MudTextField @bind-Value="@CreateChatModel.Name" T="string" Label="Name"/>
-        <MudSelect 
-            T="UserModel" 
-            Label="Users" 
-            MultiSelection="true" 
-            SelectedValuesChanged="OnSelectedValuesChanged"
-            Text="@string.Join(",", SelectedUsers.Select(u => u.Email))"
-        >
-            @foreach (var user in Users)
-            {
-                <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
-            }
-        </MudSelect>
+        <MudSpacer/>
         <MudSwitch 
             @bind-Checked="@IsChatPrivate" 
             Color="Color.Primary" 
-            Label="Private"/>
+            Label="Private"
+        />
+        <MudSpacer/>
+        @if (IsChatPrivate)
+        {
+            <MudSelect
+                T="UserModel"
+                @bind-Value="SelectedUser"
+                Label="User"
+                Text="@SelectedUser.Email"
+            >
+                @foreach (var user in Users)
+                {
+                    <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
+                }
+            </MudSelect>
+        }
+        else
+        {
+            <MudSelect
+                T="UserModel" 
+                Label="Users" 
+                MultiSelection="true" 
+                SelectedValuesChanged="OnSelectedValuesChanged"
+                Text="@string.Join(",", SelectedUsers.Select(u => u.Email))"
+            >
+                @foreach (var user in Users)
+                {
+                    <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
+                }
+            </MudSelect>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -38,10 +61,14 @@
 
     private CreateChatModel CreateChatModel { get; set; } = new();
     private  bool IsChatPrivate { get; set; }
+
+    private AuthenticationState _authState;
+    private string _userId;
     
     private IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
     private IEnumerable<UserModel> SelectedUsers { get; set; } = new List<UserModel>();
-    
+    private UserModel SelectedUser { get; set; } = new();
+
     private void OnSelectedValuesChanged(IEnumerable<UserModel> users)
     {
         SelectedUsers = users;
@@ -49,7 +76,18 @@
 
     private async void Submit()
     {
-        CreateChatModel.UserIds = SelectedUsers.Select(u => u.Id);
+        if (IsChatPrivate)
+        {
+            var userIds = new List<string> { SelectedUser.Id, _userId };
+            CreateChatModel.UserIds = userIds;
+        }
+        else
+        {
+            var userIds = SelectedUsers.Select(u => u.Id).ToList();
+            userIds.Add(_userId);
+            CreateChatModel.UserIds = userIds;
+        }
+        
         CreateChatModel.ChatTypeId = IsChatPrivate ? 2 : 1;
         
         await ChatService.CreateChatAsync(CreateChatModel);
@@ -65,8 +103,9 @@
     {
         if (firstRender)
         {
-            Users = await UserService.GetAllAsync();
+            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _userId = _authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            Users = (await UserService.GetAllAsync()).Where(u => u.Id != _userId);
         }
     }
-
 }

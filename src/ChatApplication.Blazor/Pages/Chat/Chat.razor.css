@@ -4,6 +4,10 @@
     flex-direction: column;
 }
 
+.container__heading{
+    display: flex;
+}
+
 .container__chat-name{
     font-weight: 600;
 }

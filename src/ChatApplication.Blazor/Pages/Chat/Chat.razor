@@ -13,7 +13,11 @@
 @inject IConfiguration Configuration
 
 <div class="container">
-    <p class="container__chat-name">@_chatModel.Name</p>
+    <div class="container__heading">
+        <p class="container__chat-name">@_chatModel.Name</p>
+        
+    </div>
+    
     <div class="container__messages">
         @foreach (var message in _messages)
         {
@@ -33,7 +37,7 @@
                 </div>
             }
         }
-        
+
     </div>
     <div class="container__input-box">
         <textarea @bind="_createMessageModel.Content" @bind:event="oninput" class="container__input"></textarea>
