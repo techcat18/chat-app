@@ -2,12 +2,15 @@
 @using ChatApplication.Blazor.Models.User
 @using ChatApplication.Blazor.Services
 @using ChatApplication.Blazor.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.IdentityModel.JsonWebTokens
 
 @inject NavigationManager NavigationManager
 @inject IChatService ChatService
 @inject IUserService UserService
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
 
 <MudDialog>
     <DialogContent>
@@ -19,15 +22,15 @@
             Label="Private"
         />
         <MudSpacer/>
+        <input value="@_searchTerm" placeholder="Search Users" @oninput="OnSearchTermChanged">
         @if (IsChatPrivate)
         {
             <MudSelect
                 T="UserModel"
                 @bind-Value="SelectedUser"
                 Label="User"
-                Text="@SelectedUser.Email"
             >
-                @foreach (var user in Users)
+                @foreach (var user in Users.Where(u => u.Email.ToUpper().Contains(_searchTerm.ToUpper())))
                 {
                     <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
                 }
@@ -42,7 +45,7 @@
                 SelectedValuesChanged="OnSelectedValuesChanged"
                 Text="@string.Join(",", SelectedUsers.Select(u => u.Email))"
             >
-                @foreach (var user in Users)
+                @foreach (var user in Users.Where(u => u.Email.ToUpper().Contains(_searchTerm.ToUpper())))
                 {
                     <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
                 }
@@ -58,6 +61,9 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] private HubConnection HubConnection { get; set; }
+
+    private string _searchTerm = String.Empty;
 
     private CreateChatModel CreateChatModel { get; set; } = new();
     private  bool IsChatPrivate { get; set; }
@@ -72,6 +78,18 @@
     private void OnSelectedValuesChanged(IEnumerable<UserModel> users)
     {
         SelectedUsers = users;
+    }
+    
+    private void OnSearchTermChanged(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+        {
+            _searchTerm = e.Value.ToString();
+        }
+        else
+        {
+            _searchTerm = String.Empty;
+        }
     }
 
     private async void Submit()

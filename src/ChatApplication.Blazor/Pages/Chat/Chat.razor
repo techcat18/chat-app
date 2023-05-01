@@ -1,39 +1,56 @@
 ﻿@page "/chats/{id:int}"
-
 @using ChatApplication.Blazor.Services.Interfaces
-@using ChatApplication.Blazor.Models.Chat
-@using ChatApplication.Blazor.Models.Message
-@using ChatApplication.Blazor.Services
+@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.IdentityModel.JsonWebTokens
+@using ChatApplication.Blazor.Services
+@using ChatApplication.Blazor.Models.Chat
+@using ChatApplication.Blazor.Models.Message
+@using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Pages.Chat.Dialogs
 
 @inject IChatService ChatService
 @inject IMessageService MessageService
+@inject IUserService UserService
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider
 @inject IConfiguration Configuration
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 <div class="container">
     <div class="container__heading">
         <p class="container__chat-name">@_chatModel.Name</p>
-        
+        <button @onclick="ShowUsers" class="container__chat-users-title">Users</button>
+        <button @onclick="StartVideoCall">Video Call</button>
     </div>
     
     <div class="container__messages">
-        @foreach (var message in _messages)
+        @foreach (var message in Messages.ToList())
         {
             @if (message.SenderId == _userId)
             {
                 <div class="container__messages__item">
-                    <p class="container__messages__item-body">@message.Content</p>
-                    <p class="container__messages__item-time">@message.DateSent.ToString("hh:mm:ss")</p>
+                    <div class="container__messages__item-info">
+                        <p class="container__messages__item-body">@message.Content</p>
+                        <p class="container__messages__item-time">@message.DateSent.ToString("hh:mm:ss")</p>
+                    </div>
                 </div>
+                
             }
             else
             {
-                <div class="container__messages__item--left-side">
-                    <p class="container__messages__item-email">@message.SenderEmail</p>
-                    <p class="container__messages__item-body">@message.Content</p>
-                    <p class="container__messages__item-time">@message.DateSent.ToString("hh:mm:ss")</p>
+                <div class="container__messages__item">
+                    @if (message.SenderProfilePicture != null)
+                    {
+                        <img class="container__messages__item-image" src="data:image/jpeg;base64,@message.SenderProfilePicture" alt="Profile picture"/>
+                    }
+                    <div class="container__messages__item-info--left-side">
+                        <p class="container__messages__item-email">@message.SenderEmail</p>
+                        <p class="container__messages__item-body">@message.Content</p>
+                        <p class="container__messages__item-time">@message.DateSent.ToString("hh:mm:ss")</p>
+                    </div>
                 </div>
             }
         }
@@ -41,7 +58,7 @@
     </div>
     <div class="container__input-box">
         <textarea @bind="_createMessageModel.Content" @bind:event="oninput" class="container__input"></textarea>
-        <button disabled="@(!IsConnected)" class="container__input-send-btn" @onclick="OnSendMessage">Send</button>
+        <button class="container__input-send-btn" @onclick="OnSendMessage">Send</button>
     </div>
 </div>
 
@@ -49,14 +66,13 @@
     [Parameter]
     public int Id { get; set; }
     
-    private HubConnection _hubConnection { get; set; }
-    public bool IsConnected =>
-        _hubConnection?.State == HubConnectionState.Connected;
+    [CascadingParameter] private HubConnection HubConnection { get; set; }
 
     private string _userId;
 
     private ChatModel _chatModel = new();
-    private IList<MessageModel> _messages { get; set; } = new List<MessageModel>();
+    private UserModel _userModel = new();
+    private IList<MessageModel> Messages { get; set; } = new List<MessageModel>();
 
     private readonly CreateMessageModel _createMessageModel = new();
     private AuthenticationState _authState;
@@ -66,13 +82,17 @@
         if (firstRender)
         {
             _chatModel = await ChatService.GetChatByIdAsync(Id);
+
             _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             
-            await GetMessagesAsync(_chatModel.Id);
-            
+            await HubConnection.SendAsync("JoinGroupAsync", _chatModel.Id);
+            await GetMessagesAsync();
+
             _createMessageModel.ChatId = _chatModel.Id;
             _userId = _authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
             _createMessageModel.SenderId = _userId;
+            
+            _userModel = await UserService.GetByIdAsync(_userId);
 
             StateHasChanged();
         }
@@ -86,30 +106,69 @@
         }
 
         var message = await MessageService.CreateMessageAsync(_createMessageModel);
-        
-        await _hubConnection.SendAsync("SendMessageAsync", message);
+
+        await HubConnection.InvokeAsync("SendMessageAsync", message.Id, message.ChatId);
 
         _createMessageModel.Content = null;
     }
 
-    private async Task GetMessagesAsync(int chatId)
+    private async Task GetMessagesAsync()
     {
-        _messages = await MessageService.GetMessagesByChatIdAsync(_chatModel.Id);
+        Messages = await MessageService.GetMessagesByChatIdAsync(_chatModel.Id);
+    }
+
+    private void ShowUsers()
+    {
+        var parameters = new DialogParameters { ["ChatId"] = _chatModel.Id, ["IsChatPrivate"] = _chatModel.ChatTypeId == 2 };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true};
+        DialogService.Show<ChatUsersDialog>("Users", parameters, options);
+    }
+
+    private void StartVideoCall()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { FullScreen = true, CloseButton = true };
+        DialogService.Show<VideoCallDialog>("Users", parameters, options);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        _hubConnection = new HubConnectionBuilder()
+        HubConnection ??= new HubConnectionBuilder()
             .WithUrl($"{Configuration.GetSection("APIUrl").Value}chathub")
             .Build();
 
-        _hubConnection.On<MessageModel>("ReceiveMessage", async message =>
+        if (HubConnection.State == HubConnectionState.Disconnected)
         {
-            _messages.Insert(0, message);
-            await InvokeAsync(StateHasChanged);
+            await HubConnection.StartAsync();
+        }
+        
+        HubConnection.On("UserConnected", async () =>
+        {
+            await JsRuntime.InvokeVoidAsync("addNewVideo");
         });
         
-        await _hubConnection.StartAsync();
+        HubConnection.On<MessageModel>("ReceiveMessage", async message =>
+        {
+            Messages.Insert(0, message);
+            await InvokeAsync(StateHasChanged);
+        });
+
+        HubConnection.On<int>("ReceiveNotification", chatId =>
+        {
+            var chatUrl = $@"{Configuration.GetSection("FrontUrl").Value}chats/{chatId}";
+            
+            if (NavigationManager.Uri != chatUrl)
+            {
+                Snackbar.Add($"New message in chat {chatId}", Severity.Info, config =>
+                {
+                    config.Onclick = snackbar =>
+                    {
+                        NavigationManager.NavigateTo(chatUrl);
+                        return Task.CompletedTask;
+                    };
+                });
+            }
+        });
     }
 
 }

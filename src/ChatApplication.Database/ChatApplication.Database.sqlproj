@@ -60,6 +60,8 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views" />
+    <Folder Include="dbo\Functions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\ChatTypes.sql" />
@@ -73,5 +75,10 @@
     <Build Include="dbo\Tables\AspNetUsers.sql" />
     <Build Include="dbo\Tables\AspNetUserTokens.sql" />
     <Build Include="dbo\Tables\UserChats.sql" />
+    <Build Include="dbo\Views\ChatView.sql" />
+    <Build Include="dbo\Functions\GetMessagesByChatIdFunction.sql" />
+    <Build Include="dbo\Functions\GetMessageByIdFunction.sql" />
+    <Build Include="dbo\Functions\GetChatsByUserIdFunction.sql" />
+    <Build Include="dbo\Views\UserView.sql" />
   </ItemGroup>
 </Project>

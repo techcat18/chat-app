@@ -44,13 +44,4 @@ public class AuthController: ControllerBase
         await _authService.ResetPasswordAsync(changePasswordModel);
         return NoContent();
     }
-
-    [HttpPut("changeInfo")]
-    public async Task<IActionResult> ChangeInfo(
-        ChangeInfoModel changeInfoModel,
-        CancellationToken cancellationToken)
-    {
-        await _authService.ChangeUserInfoAsync(changeInfoModel, cancellationToken);
-        return NoContent();
-    }
 }

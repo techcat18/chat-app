@@ -2,6 +2,8 @@
 	[Id] [nvarchar](450) NOT NULL,
 	[FirstName] [nvarchar](400),
 	[LastName] [nvarchar](400),
+	[Image] [varchar](max),
+	[Age] INT NULL,
 	[AccessFailedCount] [int] NOT NULL,
 	[ConcurrencyStamp] [nvarchar](max) NULL,
 	[Email] [nvarchar](256) NULL,

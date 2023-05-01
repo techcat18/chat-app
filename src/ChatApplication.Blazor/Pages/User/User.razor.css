@@ -3,12 +3,38 @@
     flex-direction: column;
 }
 
+.container__info{
+    display: flex;
+}
+
+.container__info-left-side{
+    display: flex;
+    flex-direction: column;
+    margin-right: 2rem;
+}
+
+.container__image{
+    max-width: 30vw;
+    height: auto;
+}
+
+.container__info-right-side{
+    display: flex;
+    flex-direction: column;
+}
+
 .container__field{
     display: flex;
 }
 
 .container__field > p{
     font-size: 1.5rem;
+}
+
+.container__actions{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
 }
 
 .container__button{

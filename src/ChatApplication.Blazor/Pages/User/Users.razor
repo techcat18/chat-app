@@ -59,6 +59,11 @@
                     Last Name
                 </MudTableSortLabel>
             </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortLabel="LastName" T="UserModel">
+                    Age
+                </MudTableSortLabel>
+            </MudTh>
         </HeaderContent>
 
         <RowTemplate>
@@ -74,6 +79,9 @@
             <MudTd>
                 @context.LastName
             </MudTd>
+            <MudTd>
+                @context.Age
+            </MudTd>
         </RowTemplate>
         
         <RowEditingTemplate>
@@ -88,6 +96,9 @@
             </MudTd>
             <MudTd>
                 @context.LastName
+            </MudTd>
+            <MudTd>
+                @context.Age
             </MudTd>
         </RowEditingTemplate>
         

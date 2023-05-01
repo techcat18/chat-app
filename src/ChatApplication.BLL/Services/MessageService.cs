@@ -30,6 +30,12 @@ public class MessageService: IMessageService
         return _mapper.Map<IEnumerable<MessageModel>>(messages);
     }
 
+    public async Task<MessageModel> GetMessageByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var message = await _messageRepository.GetByIdAsync(id, cancellationToken);
+        return _mapper.Map<MessageModel>(message);
+    }
+
     public async Task<MessageModel> CreateMessageAsync(
         CreateMessageModel createMessageModel, 
         CancellationToken cancellationToken = default)

@@ -1,6 +1,10 @@
-﻿using ChatApplication.BLL.MappingProfiles;
+﻿using System.Reflection;
+using ChatApplication.BLL.MappingProfiles;
 using ChatApplication.BLL.Services;
 using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.BLL.Validators.Auth;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 
@@ -13,6 +17,7 @@ public static class DependencyRegistrar
     {
         services.ConfigureServices();
         services.ConfigureAutomapper();
+        services.ConfigureFluentValidation();
 
         return services;
     }
@@ -32,5 +37,12 @@ public static class DependencyRegistrar
         this IServiceCollection services)
     {
         services.AddAutoMapper(typeof(ChatProfile));
+    }
+
+    private static void ConfigureFluentValidation(
+        this IServiceCollection services)
+    {
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<LoginModelValidator>();
     }
 }

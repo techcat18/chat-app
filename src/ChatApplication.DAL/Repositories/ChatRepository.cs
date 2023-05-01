@@ -1,7 +1,9 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Extensions;
+using ChatApplication.DAL.Functions.Results;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.DAL.Views;
 using ChatApplication.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,25 +15,23 @@ public class ChatRepository: GenericRepository<Chat>, IChatRepository
     {
     }
 
-    public async Task<IEnumerable<Chat>> GetAllByFilterAsync(
+    public async Task<IEnumerable<ChatView>> GetAllByFilterAsync(
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default)
     {
-        return await _dbSet
+        return await _context.ChatView.AsQueryable()
             .FilterByName(filterModel.SearchString)
             .Sort(filterModel.SortingOption)
             .Paginate(filterModel.Page, filterModel.Count)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Chat>> GetAllByUserIdAsync(
+    public async Task<IEnumerable<ChatFuncResult>> GetAllByUserIdAsync(
         string userId,
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default)
     {
-        return await _dbSet
-            .Include(c => c.UserChats)
-            .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
+        return await _context.ChatsByUserIdFunc(userId)
             .FilterByName(filterModel.SearchString)
             .Sort(filterModel.SortingOption)
             .Paginate(filterModel.Page, filterModel.Count)

@@ -1,5 +1,7 @@
-﻿using ChatApplication.BLL.Services.Interfaces;
+﻿using ChatApplication.BLL.Models.User;
+using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApplication.API.Controllers;
@@ -32,6 +34,24 @@ public class UsersController: ControllerBase
         return Ok(users);
     }
 
+    [HttpGet("/api/chats/{chatId}/users")]
+    public async Task<IActionResult> GetByChatId(
+        int chatId,
+        CancellationToken cancellationToken)
+    {
+        var users = await _userService.GetAllByChatIdAsync(chatId, cancellationToken);
+        return Ok(users);
+    }
+
+    [HttpGet("/api/chats/{chatId}/users/except")]
+    public async Task<IActionResult> GetExceptByChatId(
+        int chatId,
+        CancellationToken cancellationToken)
+    {
+        var users = await _userService.GetAllExceptByChatIdAsync(chatId, cancellationToken);
+        return Ok(users);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(
         string id,
@@ -39,5 +59,15 @@ public class UsersController: ControllerBase
     {
         var user = await _userService.GetByIdAsync(id, cancellationToken);
         return Ok(user);
+    }
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPut]
+    public async Task<IActionResult> Put(
+        UpdateUserModel updateUserModel,
+        CancellationToken cancellationToken)
+    {
+        await _userService.UpdateAsync(updateUserModel, cancellationToken);
+        return Ok();
     }
 }

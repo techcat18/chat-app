@@ -6,6 +6,7 @@
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider;
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
+@inject IJSRuntime JsRuntime
 
 <MudLayout>
     <MudAppBar Elevation="3">
@@ -44,7 +45,9 @@
     
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
-            @Body
+            <CascadingValue Value="HubConnection">
+                @Body
+            </CascadingValue>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -57,6 +60,7 @@
     private bool _isLightMode = true;
     private bool _sidebarOpen;
     private string _userEmail;
+    private HubConnection HubConnection { get; set; }
 
     private MudTheme _currentTheme = new()
     {
@@ -136,4 +140,13 @@
                 }
             }
         };
+
+    protected override async Task OnInitializedAsync()
+    {
+        HubConnection = new HubConnectionBuilder()
+            .WithUrl($"{Configuration.GetSection("APIUrl").Value}chathub")
+            .Build();
+        
+        await HubConnection.StartAsync();
+    }
 }

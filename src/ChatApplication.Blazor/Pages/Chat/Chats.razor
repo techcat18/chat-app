@@ -47,16 +47,7 @@
             >
             </MudTextField>
         </ToolBarContent>
-        
-        <ColGroup>
-            <col style="width: 50px"/>
-            <col style="width: 80px"/>
-            <col style="width: 50%"/>
-            <col/>
-            <col/>
-            <col style="width: 50px"/>
-        </ColGroup>
-        
+
         <HeaderContent>
             <MudTh>
                 <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.Id)">
@@ -73,6 +64,11 @@
                     Chat Type Id
                 </MudTableSortLabel>
             </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<ChatModel, object>(c => c.MembersCount)">
+                    Members Count
+                </MudTableSortLabel>
+            </MudTh>
         </HeaderContent>
 
         <RowTemplate>
@@ -84,6 +80,9 @@
             </MudTd>
             <MudTd>
                 @context.ChatTypeId
+            </MudTd>
+            <MudTd>
+                @context.MembersCount
             </MudTd>
         </RowTemplate>
 

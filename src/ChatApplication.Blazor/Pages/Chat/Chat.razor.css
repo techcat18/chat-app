@@ -6,6 +6,8 @@
 
 .container__heading{
     display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .container__chat-name{
@@ -22,6 +24,11 @@
 
 .container__messages__item{
     display: flex;
+    align-items: flex-end;
+}
+
+.container__messages__item-info{
+    display: flex;
     flex-direction: column;
     margin-left: auto;
     max-width: 90%;
@@ -32,7 +39,7 @@
     border-radius: 1rem;
 }
 
-.container__messages__item--left-side{
+.container__messages__item-info--left-side{
     display: flex;
     flex-direction: column;
     max-width: 90%;
@@ -43,8 +50,12 @@
     border-radius: 1rem;
 }
 
-.container__messages__item-email{
-    
+.container__messages__item-image{
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 .5rem;
 }
 
 .container__messages__item-body{

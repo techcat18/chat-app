@@ -1,6 +1,9 @@
 ﻿using System.Linq.Expressions;
+using ChatApplication.DAL.Configurations;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Entities.Interfaces;
+using ChatApplication.DAL.Functions.Results;
+using ChatApplication.DAL.Views;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,15 +15,41 @@ public class ChatDbContext: IdentityDbContext<User>
     public DbSet<ChatType> ChatTypes { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<UserChat> UserChats { get; set; }
-    
+
+    public DbSet<ChatView> ChatView { get; set; }
+    public DbSet<UserView> UserView { get; set; }
+
+    public IQueryable<MessageFuncResult> MessagesByChatIdFunc(int chatId)
+        => FromExpression(() => MessagesByChatIdFunc(chatId));
+
+    public IQueryable<MessageFuncResult> MessageByIdFunc(int id)
+        => FromExpression(() => MessageByIdFunc(id));
+
+    public IQueryable<ChatFuncResult> ChatsByUserIdFunc(string userId)
+        => FromExpression(() => ChatsByUserIdFunc(userId));
+
     public ChatDbContext(DbContextOptions<ChatDbContext> options): base(options){}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         QueryFilter(modelBuilder);
-        
-        modelBuilder.Entity<UserChat>()
-            .HasKey(uc => new { uc.UserId, uc.ChatId });
+
+        modelBuilder
+            .HasDbFunction(typeof(ChatDbContext)
+                .GetMethod(nameof(MessagesByChatIdFunc))!)
+            .HasName("GetMessagesByChatIdFunction");
+
+        modelBuilder
+            .HasDbFunction(typeof(ChatDbContext)
+                .GetMethod(nameof(MessageByIdFunc))!)
+            .HasName("GetMessageByIdFunction");
+
+        modelBuilder
+            .HasDbFunction(typeof(ChatDbContext)
+                .GetMethod(nameof(ChatsByUserIdFunc))!)
+            .HasName("GetChatsByUserIdFunction");
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserChatConfiguration).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }

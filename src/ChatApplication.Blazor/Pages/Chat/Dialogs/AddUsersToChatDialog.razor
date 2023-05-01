@@ -1,0 +1,41 @@
+﻿@using ChatApplication.Blazor.Services.Interfaces
+@using Microsoft.AspNetCore.Components
+@using ChatApplication.Blazor.Models.Chat
+@using ChatApplication.Blazor.Models.User
+@using ChatApplication.Blazor.Pages.User
+
+@inject IUserService UserService
+
+@*<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="@CreateChatModel.Name" T="string" Label="Name"/>
+        <MudSpacer/>
+        <MudSwitch 
+            @bind-Checked="@IsChatPrivate" 
+            Color="Color.Primary" 
+            Label="Private"
+        />
+        <MudSpacer/>
+        <input value="@_searchTerm" placeholder="Search Users" @oninput="OnSearchTermChanged">
+        <MudSelect
+            T="UserModel" 
+            Label="Users" 
+            MultiSelection="true" 
+            SelectedValuesChanged="OnSelectedValuesChanged"
+            Text="@string.Join(",", SelectedUsers.Select(u => u.Email))"
+        >
+            @foreach (var user in Users.Where(u => u.Email.ToUpper().Contains(_searchTerm.ToUpper())))
+            {
+                <MudSelectItem T="UserModel" Value="@user">@user.Email</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>*@
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+}

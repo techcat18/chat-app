@@ -11,22 +11,35 @@
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider
 
 <div class="container">
-    <div class="container__field">
-        <p><b>Id:</b> @_userModel.Id</p>
+    <div class="container__info">
+        <div class="container__info-left-side">
+            <img class="container__image" src="data:image/jpeg;base64,@_userModel.Image" alt="">
+        </div>
+        <div class="container__info-right-side">
+            <div class="container__field">
+                <p><b>Id:</b> @_userModel.Id</p>
+            </div>
+            <div class="container__field">
+                <p><b>Email:</b> @_userModel.Email</p>
+            </div>
+            <div class="container__field">
+                <p><b>First Name:</b> @_userModel.FirstName</p>
+            </div>
+            <div class="container__field">
+                <p><b>Last Name:</b> @_userModel.LastName</p>
+            </div>
+            <div class="container__field">
+                <p><b>Age:</b> @_userModel.Age</p>
+            </div>
+        </div>
     </div>
-    <div class="container__field">
-        <p><b>Email:</b> @_userModel.Email</p>
+    <div class="container__actions">
+        @if (CanModify)
+        {
+            <MudButton OnClick="OnChangeInfo" Variant="Variant.Filled" Color="Color.Primary">Change Info</MudButton>
+        }
     </div>
-    <div class="container__field">
-        <p><b>First Name:</b> @_userModel.FirstName</p>
-    </div>
-    <div class="container__field">
-        <p><b>Last Name:</b> @_userModel.LastName</p>
-    </div>
-    @if (CanModify)
-    {
-        <MudButton OnClick="OnChangeInfo" Variant="Variant.Filled" Color="Color.Primary">Change Info</MudButton>
-    }
+
 </div>
 
 @code {
@@ -34,6 +47,8 @@
     public string Id { get; set; }
 
     private bool CanModify { get; set; }
+    
+    private string UserPhoto { get; set; }
 
     private UserModel _userModel = new();
 
@@ -42,6 +57,9 @@
         if (firstRender)
         {
             _userModel = await UserService.GetByIdAsync(Id);
+            UserPhoto = _userModel.Image == null ? "https://cdn2.psychologytoday.com/assets/styles/manual_crop_1_91_1_1528x800/public/field_blog_entry_teaser_image/2020-09/teamk_pixabay.jpg?itok=a3QpJVQ6" :
+            $"data:image/jpeg;base64,{_userModel.Image}";
+            
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             if (authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value 

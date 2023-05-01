@@ -8,7 +8,7 @@ namespace ChatApplication.DAL.Repositories;
 
 public class GenericRepository<TEntity>: IGenericRepository<TEntity> where TEntity: class, IBaseEntity
 {
-    private readonly ChatDbContext _context;
+    protected readonly ChatDbContext _context;
     protected readonly DbSet<TEntity> _dbSet;
 
     protected GenericRepository(ChatDbContext context)

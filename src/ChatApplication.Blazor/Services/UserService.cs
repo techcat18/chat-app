@@ -33,11 +33,32 @@ public class UserService: IUserService
         return users;
     }
 
+    public async Task<IEnumerable<UserModel>> GetByChatIdAsync(int chatId)
+    {
+        var users =
+            await _apiHelper.GetAsync<IEnumerable<UserModel>>($"chats/{chatId}/users");
+
+        return users;
+    }
+
+    public async Task<IEnumerable<UserModel>> GetAllExceptByChatIdAsync(int chatId)
+    {
+        var users =
+            await _apiHelper.GetAsync<IEnumerable<UserModel>>($"chats/{chatId}/users/except");
+
+        return users;
+    }
+
     public async Task<UserModel> GetByIdAsync(string id)
     {
         var userModel =
             await _apiHelper.GetAsync<UserModel>($"users/{id}");
 
         return userModel;
+    }
+
+    public async Task UpdateAsync(UpdateUserModel updateUserModel)
+    {
+        await _apiHelper.PutAsync(updateUserModel, "users");
     }
 }

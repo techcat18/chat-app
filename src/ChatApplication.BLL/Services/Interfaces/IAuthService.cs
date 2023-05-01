@@ -7,13 +7,12 @@ public interface IAuthService
     Task<JwtModel> LoginAsync(
         LoginModel model,
         CancellationToken cancellationToken = default);
+    
     Task SignupAsync(
         SignupModel model,
         CancellationToken cancellationToken = default);
+    
     Task ResetPasswordAsync(
         ChangePasswordModel model,
-        CancellationToken cancellationToken = default);
-    Task ChangeUserInfoAsync(
-        ChangeInfoModel changeInfoModel,
         CancellationToken cancellationToken = default);
 }

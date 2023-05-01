@@ -1,0 +1,47 @@
+﻿@using ChatApplication.Blazor.Services.Interfaces
+@using ChatApplication.Blazor.Models.User
+
+@inject IUserService UserService
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        @foreach (var user in Users)
+        {
+            <MudText>@user.Email</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="AddUsers" Color="Color.Primary">Add Users</MudButton>
+        <MudButton OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public int ChatId { get; set; }
+    [Parameter]
+    public bool IsChatPrivate { get; set; }
+
+    public IEnumerable<UserModel> Users { get; set; } = new List<UserModel>();
+
+    private void Close() => MudDialog.Cancel();
+
+    private void AddUsers()
+    {
+        var parameters = new DialogParameters { };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true};
+        DialogService.Show<AddUsersToChatDialog>("Add Users", parameters, options);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Users = await UserService.GetByChatIdAsync(ChatId);
+            StateHasChanged();
+        }
+    }
+
+}

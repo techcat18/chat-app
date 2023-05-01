@@ -1,14 +1,16 @@
 ﻿using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Functions.Results;
+using ChatApplication.DAL.Views;
 using ChatApplication.Shared.Models;
 
 namespace ChatApplication.DAL.Repositories.Interfaces;
 
 public interface IChatRepository: IGenericRepository<Chat>
 {
-    Task<IEnumerable<Chat>> GetAllByFilterAsync(
+    Task<IEnumerable<ChatView>> GetAllByFilterAsync(
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default);
-    Task<IEnumerable<Chat>> GetAllByUserIdAsync(
+    Task<IEnumerable<ChatFuncResult>> GetAllByUserIdAsync(
         string userId,
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default);

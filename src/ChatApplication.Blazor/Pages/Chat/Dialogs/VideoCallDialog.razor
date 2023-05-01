@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+
+@inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
+
+<div id="videoArea"></div>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    //[CascadingParameter] private HubConnection HubConnection { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("start");
+            
+            StateHasChanged();
+        }
+    }
+
+    /*protected override async Task OnInitializedAsync()
+    {
+        HubConnection ??= new HubConnectionBuilder()
+            .WithUrl($"{Configuration.GetSection("APIUrl").Value}chathub")
+            .Build();
+
+        if (HubConnection.State == HubConnectionState.Disconnected)
+        {
+            await HubConnection.StartAsync();
+        }
+    }*/
+}

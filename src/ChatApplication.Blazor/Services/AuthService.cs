@@ -85,18 +85,4 @@ public class AuthService: IAuthService
         await _localStorage.RemoveItemAsync("token");
         await _authenticationStateProvider.MarkUserAsLoggedOut();
     }
-
-    public async Task<AuthResponseModel> ChangeInfoAsync(ChangeUserInfoModel changeUserInfoModel)
-    {
-        try
-        {
-            await _apiHelper.PutAsync(changeUserInfoModel, "auth/changeInfo");
-
-            return new AuthResponseModel { Succeeded = true };
-        }
-        catch (FlurlHttpException e)
-        {
-            return new AuthResponseModel { Succeeded = false, ErrorMessage = e.Message };
-        }
-    }
 }

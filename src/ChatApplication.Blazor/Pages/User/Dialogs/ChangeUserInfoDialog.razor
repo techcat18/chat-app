@@ -2,16 +2,33 @@
 @using ChatApplication.Blazor.Services.Interfaces
 @using ChatApplication.Blazor.Models.Auth
 
-@inject IAuthService AuthService
+@inject IUserService UserService
 @inject NavigationManager NavigationManager
 
 <MudDialog>
     <DialogContent>
+        <MudFileUpload T="IBrowserFile" FilesChanged="UploadPhoto">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           for="@context">
+                    Upload Photo
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+        @if (UserPhoto != null)
+        {
+            <MudTextField Value="@UserPhoto.Name" T="string" Label="Photo" ReadOnly="true"></MudTextField>
+        }
         <MudTextField @bind-Value="@UserModel.Id" T="string" Label="Id" ReadOnly="true"/>
         <MudTextField @bind-Value="@UserModel.Email" T="string" Label="Email"/>
         <MudTextField @bind-Value="@UserModel.FirstName" T="string" Label="First Name"/>
         <MudTextField @bind-Value="@UserModel.LastName" T="string" Label="Last Name"/>
+        <MudTextField @bind-Value="@UserModel.Age" T="int" Label="Age"/>
     </DialogContent>
+
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
@@ -25,17 +42,26 @@
     [Parameter]
     public UserModel UserModel { get; set; } = new();
 
+    public IBrowserFile UserPhoto { get; set; }
+    
+    private void UploadPhoto(IBrowserFile photo)
+    {
+        UserPhoto = photo;
+    }
+    
     private async void Submit()
     {
-        var changeInfoModel = new ChangeUserInfoModel
+        var updateUserModel = new UpdateUserModel
         {
             Id = UserModel.Id,
             Email = UserModel.Email,
             FirstName = UserModel.FirstName,
-            LastName = UserModel.LastName
+            LastName = UserModel.LastName,
+            Age = UserModel.Age,
+            ImageBytes = UserPhoto == null ? null : await GetBytesFromBrowserFile(UserPhoto)
         };
 
-        await AuthService.ChangeInfoAsync(changeInfoModel);
+        await UserService.UpdateAsync(updateUserModel);
 
         var currentUrl = NavigationManager.Uri;
         NavigationManager.NavigateTo(currentUrl, true);
@@ -43,4 +69,11 @@
     }
 
     void Cancel() => MudDialog.Cancel();
+    
+    private async Task<byte[]> GetBytesFromBrowserFile(IBrowserFile file)
+    {
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        return memoryStream.ToArray();
+    }
 }

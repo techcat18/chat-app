@@ -9,8 +9,7 @@ public class UnitOfWork: IUnitOfWork
     private readonly ChatDbContext _context;
     private readonly IServiceProvider _serviceProvider;
     private readonly Dictionary<Type, object> _repositories = new();
-    
-    
+
     public UnitOfWork(
         ChatDbContext context, 
         IServiceProvider serviceProvider)
@@ -33,7 +32,7 @@ public class UnitOfWork: IUnitOfWork
         
         return repositoryInstance;
     }
-
+    
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await _context.SaveChangesAsync(cancellationToken);
