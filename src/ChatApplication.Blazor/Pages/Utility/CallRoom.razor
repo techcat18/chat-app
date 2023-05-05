@@ -1,0 +1,62 @@
+﻿@page "/callRoom"
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.AspNetCore.SignalR.Client
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
+
+<h3>CallRoom</h3>
+
+<p>CallerId: @CallerId</p>
+<p>ReceiverId: @ReceiverId</p>
+
+<div id="videoArea"></div>
+
+<style>
+    #videoArea {
+      display: grid;
+      grid-template-columns: 40vw 40vw;
+      gap: 20px;
+    }
+    
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+</style>
+
+@code {
+    [CascadingParameter]
+    //public HubConnection VideoHubConnection { get; set; }
+
+    private string CallerId { get; set; }
+    private string ReceiverId { get; set; }
+
+    private IJSObjectReference Peer { get; set; }  
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Peer = await JsRuntime.InvokeAsync<IJSObjectReference>("getPeer");
+            await JsRuntime.InvokeVoidAsync("start", Peer);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("callerId", out var callerId))
+        {
+            CallerId = callerId;
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("receiverId", out var receiverId))
+        {
+            ReceiverId = receiverId;
+        }
+    }
+}

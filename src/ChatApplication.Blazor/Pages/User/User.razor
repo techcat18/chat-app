@@ -5,10 +5,13 @@
 @using ChatApplication.Blazor.Services
 @using ChatApplication.Blazor.Services.Interfaces
 @using System.IdentityModel.Tokens.Jwt
+@using Microsoft.AspNetCore.SignalR.Client
 
 @inject IUserService UserService
 @inject IDialogService DialogService
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
 
 <div class="container">
     <div class="container__info">
@@ -38,19 +41,44 @@
         {
             <MudButton OnClick="OnChangeInfo" Variant="Variant.Filled" Color="Color.Primary">Change Info</MudButton>
         }
+        @if (CanCall)
+        {
+            <MudButton OnClick="OnCall" Variant="Variant.Filled" Color="Color.Primary">Call</MudButton>
+        }
     </div>
 
+    <div id="videoArea"></div>
 </div>
+
+<style>
+    #videoArea {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 300px);
+      grid-auto-rows: 300px;
+      gap: 20px;
+    }
+    
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+</style>
 
 @code {
     [Parameter]
     public string Id { get; set; }
+    [CascadingParameter]
+    public HubConnection VideHubConnection { get; set; }
 
     private bool CanModify { get; set; }
+    private bool CanCall { get; set; }
+    
+    private string LoggedUserId { get; set; }
     
     private string UserPhoto { get; set; }
-
     private UserModel _userModel = new();
+    private IJSObjectReference Peer { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -61,11 +89,15 @@
             $"data:image/jpeg;base64,{_userModel.Image}";
             
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            LoggedUserId = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value; 
 
-            if (authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value 
-                == _userModel.Id)
+            if (LoggedUserId == _userModel.Id)
             {
                 CanModify = true;
+            }
+            else
+            {
+                CanCall = true;
             }
 
             StateHasChanged();
@@ -77,5 +109,17 @@
         var parameters = new DialogParameters { ["UserModel"]=_userModel };
         var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true};
         DialogService.Show<ChangeUserInfoDialog>("Change Info", parameters, options);
+    }
+
+    private async Task OnCall(MouseEventArgs obj)
+    {
+        await JsRuntime.InvokeVoidAsync("initializeUserCall", Id, DotNetObjectReference.Create(this));
+    }
+    
+    [JSInvokable]
+    public async Task CallUserAsync(string id, string userId)
+    {
+        await VideHubConnection.SendAsync("CallUserAsync", id, userId);
+        NavigationManager.NavigateTo($"/callRoom?callerId={LoggedUserId}&receiverId={userId}");
     }
 }

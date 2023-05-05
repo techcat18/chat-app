@@ -1,12 +1,18 @@
 ﻿@using ChatApplication.Blazor.Services
 @using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.IdentityModel.JsonWebTokens
+@using Blazored.LocalStorage
+@using ChatApplication.Blazor.Pages.Chat.Dialogs
+@using ChatApplication.Blazor.Pages.Utility
+@using System.Security.Claims
 @inherits LayoutComponentBase
 
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider;
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
 @inject IJSRuntime JsRuntime
+@inject ILocalStorageService LocalStorage
+@inject IDialogService DialogService
 
 <MudLayout>
     <MudAppBar Elevation="3">
@@ -46,7 +52,9 @@
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
             <CascadingValue Value="HubConnection">
-                @Body
+                <CascadingValue Value="VideoHubConnection">
+                   @Body 
+                </CascadingValue>
             </CascadingValue>
         </MudContainer>
     </MudMainContent>
@@ -61,6 +69,7 @@
     private bool _sidebarOpen;
     private string _userEmail;
     private HubConnection HubConnection { get; set; }
+    private HubConnection VideoHubConnection { get; set; }
 
     private MudTheme _currentTheme = new()
     {
@@ -85,8 +94,33 @@
             {
                 _userEmail = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
                 _authenticated = authState.User.Identity.IsAuthenticated;
+                var id = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+                var jwtToken = await JsRuntime.InvokeAsync<string>("getJwtToken");
+                
+                VideoHubConnection = new HubConnectionBuilder()
+                    .WithUrl($"{Configuration.GetSection("APIUrl").Value}videoHub?access_token={jwtToken}")
+                    .Build();
+
+                VideoHubConnection.On<string>("AnswerCall", async userId =>
+                {
+                    await InvokeAsync(() =>
+                    {
+                        var parameters = new DialogParameters { ["CallerId"] = userId, ["ReceiverId"] = id, ["VideoHubConnection"] = VideoHubConnection };
+                        DialogService.Show<AcceptRejectCallDialog>("Accept or reject the call", parameters);
+                    });
+                });
+
+                VideoHubConnection.On<string>("CallAccepted", async peerId =>
+                {
+                    var stream = await JsRuntime.InvokeAsync<IJSObjectReference>("getLocalStream");
+                    var peer = await JsRuntime.InvokeAsync<IJSObjectReference>("getPeer");
+                    await JsRuntime.InvokeVoidAsync("connectToNewUser", peerId, peer, stream);
+                });
+
+                await VideoHubConnection.StartAsync();
             }
-            
+
             StateHasChanged();
         }
     }
@@ -144,7 +178,7 @@
     protected override async Task OnInitializedAsync()
     {
         HubConnection = new HubConnectionBuilder()
-            .WithUrl($"{Configuration.GetSection("APIUrl").Value}chathub")
+            .WithUrl($"{Configuration.GetSection("APIUrl").Value}chatHub")
             .Build();
         
         await HubConnection.StartAsync();

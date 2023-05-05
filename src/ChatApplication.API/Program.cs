@@ -40,10 +40,25 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.Use(async (httpContext, next) =>
+{
+    var accessToken = httpContext.Request.Query["access_token"];
+
+    var path = httpContext.Request.Path;
+    
+    if (!string.IsNullOrEmpty(accessToken) &&
+        (path.StartsWithSegments("/api/videoHub")))
+    {
+        httpContext.Request.Headers["Authorization"] = "Bearer " + accessToken;
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<ChatHub>("/api/chathub");
+app.MapHub<ChatHub>("/api/chatHub");
 app.MapHub<VideoHub>("/api/videoHub");
 
 app.MapControllers();

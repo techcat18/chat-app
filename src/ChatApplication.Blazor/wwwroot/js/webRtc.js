@@ -1,65 +1,131 @@
-﻿
-function start(){
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl('https://localhost:7233/api/videoHub').build();
+﻿let localStream = undefined;
+let myVideoArea = undefined;
+let myPeer = undefined;
+let myPeerId = undefined;
+
+function createPeer(){
+    return new Peer();
+}
+
+function getPeer(){
+    return myPeer;
+}
+
+function acceptCall(instance){
+    if (!myPeer){
+        myPeer = createPeer();
+    }
+
+    myPeer.on('open', id => {
+        instance.invokeMethodAsync("AcceptCallAsync", id);
+    })
+}
+
+function initialize(chatId, instance){
+    window.addEventListener('unload', stopMultimedia);
     
     const peer = new Peer();
-    
-    peer.on('open', () => {
-        const startSignalR = async () => {
-            await connection.start();
-            await connection.invoke('JoinVideoCallAsync');
-        }
 
-        startSignalR();
+    peer.on('open', async id => {
+        instance.invokeMethodAsync('JoinVideoCallAsync', id);
     })
 
+    myPeer = peer;
+    return peer;
+}
+
+function getLocalStream(){
+    return localStream;
+}
+
+function initializeUserCall(userId, instance){
+    window.addEventListener('unload', stopMultimedia)
+
+    const peer = new Peer();
+    
+    peer.on('open', async id => {
+        instance.invokeMethodAsync("CallUserAsync", id, userId);
+    })
+
+    myPeer = peer;
+    return peer;
+}
+
+async function leaveCall(connection, chatId) {
+    await connection.invoke('LeaveVideoCallAsync', chatId);
+}
+
+async function start(peer){
     const videoArea = document.getElementById('videoArea');
-    const videoItem = document.createElement('video');
+    myVideoArea = videoArea
+    
+    const myVideo = document.createElement('video');
+    
+    videoArea.append(myVideo)
 
-    videoItem.autoplay = true;
-    videoItem.muted = true;
-
-    navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true
+    await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
     }).then(stream => {
-        addVideoStream(videoItem, stream);
+        localStream = stream
 
         peer.on('call', call => {
             call.answer(stream)
             const video = document.createElement('video')
-            
+
             call.on('stream', userVideoStream => {
                 addVideoStream(video, userVideoStream)
             })
         })
+        
+        addVideoStream(myVideo, stream)
+    })
+}
 
-        connection.on('UserConnected', userId => {
-            connectNewUser(userId, stream);
-        })
+function addVideoStream(video, stream){
+    video.srcObject = stream;
+
+    video.addEventListener('loadedmetadata', () => {
+        video.play();
+    })
+
+    myVideoArea.appendChild(video);
+}
+
+function connectToNewUser(userId, peer, stream){
+    console.log('connecting to new user', userId)
+    const call = peer.call(userId, stream)
+    const video = document.createElement('video')
+
+    console.log("peer", peer);
+    console.log("stream", stream);
+
+    call.on('stream', userVideoStream => {
+        console.log('on stream')
+        addVideoStream(video, userVideoStream, myVideoArea)
+    })
+
+    call.on('close', () => {
+        console.log('on close')
+        video.remove()
     });
+}
 
-    const addVideoStream = (video, stream) => {
-        video.srcObject = stream;
+function stop(peer){
+    peer.destroy()
+    stopMultimedia();
+}
 
-        video.addEventListener('loadedmetadata', () => {
-            video.play();
-        })
+function stopMultimedia(){
+    localStream.getTracks().forEach(function(track) {
+        track.stop();
+    });
+}
 
-        videoArea.appendChild(video);
-    }
+function getJwtToken(){
+    let jwtToken = localStorage.getItem('token');
+    jwtToken = jwtToken.substring(1);
+    jwtToken = jwtToken.substring(0, jwtToken.lastIndexOf('"'));
     
-    const connectNewUser = (userId, stream) => {
-        const call = peer.call(userId, stream)
-        const video = document.createElement('video')
-        
-        call.on('stream', userVideoStream => {
-            addVideoStream(video, userVideoStream)
-        })
-        
-        call.on('close', () => {
-            video.remove()
-        })
-    }
+    return jwtToken;
 }

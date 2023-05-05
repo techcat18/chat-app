@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+<MudDialog>
+    <DialogContent>
+        <p>someone is calling you</p>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Accept">Accept</MudButton>
+        <MudButton>Reject</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public HubConnection VideoHubConnection { get; set; }
+    
+    [Parameter]
+    public string CallerId { get; set; }
+    
+    [Parameter]
+    public string ReceiverId { get; set; }
+    
+    private async Task Accept()
+    {
+        await JsRuntime.InvokeVoidAsync("acceptCall", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public async Task AcceptCallAsync(string peerId)
+    {
+        await VideoHubConnection.SendAsync("AcceptUserCallAsync", peerId, CallerId);
+        NavigationManager.NavigateTo($"/callRoom?callerId={CallerId}&receiverId={ReceiverId}");
+    }
+}
