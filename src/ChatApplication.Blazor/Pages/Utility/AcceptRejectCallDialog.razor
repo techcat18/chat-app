@@ -37,6 +37,7 @@
     private async Task Reject()
     {
         await VideoHubConnection.SendAsync("RejectUserCallAsync", CallerId);
+        MudDialog.Close();
     }
 
     [JSInvokable]
