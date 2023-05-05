@@ -13,9 +13,6 @@ function getPeer(){
 
 function acceptCall(instance){
     myPeer = createPeer();
-    /*if (!myPeer){
-        myPeer = createPeer();
-    }*/
 
     myPeer.on('open', id => {
         instance.invokeMethodAsync("AcceptCallAsync", id);

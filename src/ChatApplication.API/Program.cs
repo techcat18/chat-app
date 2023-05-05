@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
         x => x
-            .WithOrigins("https://localhost:7155")
+            .WithOrigins(builder.Configuration.GetSection("FrontUrl").Value)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -30,11 +30,8 @@ app.UseCors("CorsPolicy");
 
 app.UseExceptionHandlingMiddleware();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
