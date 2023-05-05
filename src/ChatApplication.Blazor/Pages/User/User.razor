@@ -119,7 +119,7 @@
     [JSInvokable]
     public async Task CallUserAsync(string id, string userId)
     {
-        await VideHubConnection.SendAsync("CallUserAsync", id, userId);
+        await VideHubConnection.SendAsync("CallUserAsync", id, userId, LoggedUserId);
         NavigationManager.NavigateTo($"/callRoom?callerId={LoggedUserId}&receiverId={userId}");
     }
 }

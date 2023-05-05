@@ -12,6 +12,7 @@
 <p>ReceiverId: @ReceiverId</p>
 
 <div id="videoArea"></div>
+<button @onclick="LeaveTheCallAsync">Leave the call</button>
 
 <style>
     #videoArea {
@@ -40,6 +41,7 @@
     {
         if (firstRender)
         {
+            NavigationManager.LocationChanged += OnLocationChanged;
             Peer = await JsRuntime.InvokeAsync<IJSObjectReference>("getPeer");
             await JsRuntime.InvokeVoidAsync("start", Peer);
         }
@@ -58,5 +60,18 @@
         {
             ReceiverId = receiverId;
         }
+    }
+    
+    private void OnLocationChanged(object sender, LocationChangedEventArgs args)
+    {
+        JsRuntime.InvokeVoidAsync("stop", Peer);
+    }
+    
+    private async Task LeaveTheCallAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("stop", Peer);
+
+        var uri = NavigationManager.Uri[..NavigationManager.Uri.LastIndexOf('/')];
+        NavigationManager.NavigateTo(uri);
     }
 }

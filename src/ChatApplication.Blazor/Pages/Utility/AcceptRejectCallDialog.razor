@@ -5,11 +5,11 @@
 
 <MudDialog>
     <DialogContent>
-        <p>someone is calling you</p>
+        <p>@CallerEmail is calling you</p>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Accept">Accept</MudButton>
-        <MudButton>Reject</MudButton>
+        <MudButton OnClick="Reject">Reject</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -26,9 +26,17 @@
     [Parameter]
     public string ReceiverId { get; set; }
     
+    [Parameter]
+    public string CallerEmail { get; set; }
+    
     private async Task Accept()
     {
         await JsRuntime.InvokeVoidAsync("acceptCall", DotNetObjectReference.Create(this));
+    }
+
+    private async Task Reject()
+    {
+        await VideoHubConnection.SendAsync("RejectUserCallAsync", CallerId);
     }
 
     [JSInvokable]

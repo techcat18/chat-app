@@ -2,9 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.IdentityModel.JsonWebTokens
 @using Blazored.LocalStorage
-@using ChatApplication.Blazor.Pages.Chat.Dialogs
 @using ChatApplication.Blazor.Pages.Utility
-@using System.Security.Claims
 @inherits LayoutComponentBase
 
 @inject ChatAuthenticationStateProvider AuthenticationStateProvider;
@@ -13,6 +11,7 @@
 @inject IJSRuntime JsRuntime
 @inject ILocalStorageService LocalStorage
 @inject IDialogService DialogService
+@inject ISnackbar SnackBar
 
 <MudLayout>
     <MudAppBar Elevation="3">
@@ -102,11 +101,17 @@
                     .WithUrl($"{Configuration.GetSection("APIUrl").Value}videoHub?access_token={jwtToken}")
                     .Build();
 
-                VideoHubConnection.On<string>("AnswerCall", async userId =>
+                VideoHubConnection.On<string, string>("AnswerCall", async (userId, callerEmail) =>
                 {
                     await InvokeAsync(() =>
                     {
-                        var parameters = new DialogParameters { ["CallerId"] = userId, ["ReceiverId"] = id, ["VideoHubConnection"] = VideoHubConnection };
+                        var parameters = new DialogParameters 
+                        {
+                            ["CallerId"] = userId, ["ReceiverId"] = id,
+                            ["VideoHubConnection"] = VideoHubConnection, 
+                            ["CallerEmail"] = callerEmail 
+                        };
+                        
                         DialogService.Show<AcceptRejectCallDialog>("Accept or reject the call", parameters);
                     });
                 });
@@ -116,6 +121,12 @@
                     var stream = await JsRuntime.InvokeAsync<IJSObjectReference>("getLocalStream");
                     var peer = await JsRuntime.InvokeAsync<IJSObjectReference>("getPeer");
                     await JsRuntime.InvokeVoidAsync("connectToNewUser", peerId, peer, stream);
+                });
+
+                VideoHubConnection.On("CallRejected", () =>
+                {
+                    SnackBar.Add("Call rejected", Severity.Error);
+                    NavigationManager.NavigateTo("/");
                 });
 
                 await VideoHubConnection.StartAsync();
