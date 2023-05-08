@@ -1,6 +1,6 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Entities;
-using ChatApplication.DAL.Functions.Results;
+using ChatApplication.DAL.Entities.Functions;
 using ChatApplication.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,14 +22,14 @@ public class MessageRepository: IMessageRepository
         return await _messages.ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<MessageFuncResult>> GetByChatIdAsync(int chatId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<MessageFunction>> GetByChatIdAsync(int chatId, CancellationToken cancellationToken = default)
     {
         return await _context.MessagesByChatIdFunc(chatId)
             .OrderByDescending(m => m.DateSent)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<MessageFuncResult?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<MessageFunction?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.MessageByIdFunc(id)
             .FirstOrDefaultAsync(cancellationToken);

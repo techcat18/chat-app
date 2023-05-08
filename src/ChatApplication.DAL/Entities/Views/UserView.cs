@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.DAL.Views;
+﻿namespace ChatApplication.DAL.Entities.Views;
 
 public class UserView
 {

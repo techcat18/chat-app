@@ -1,5 +1,5 @@
 ﻿using ChatApplication.DAL.Entities;
-using ChatApplication.DAL.Views;
+using ChatApplication.DAL.Entities.Views;
 using ChatApplication.Shared.Models;
 
 namespace ChatApplication.DAL.Repositories.Interfaces;

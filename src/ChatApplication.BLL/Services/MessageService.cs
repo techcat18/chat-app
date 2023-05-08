@@ -9,7 +9,6 @@ namespace ChatApplication.BLL.Services;
 
 public class MessageService: IMessageService
 {
-    private readonly IMessageRepository _messageRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
@@ -17,7 +16,6 @@ public class MessageService: IMessageService
         IUnitOfWork unitOfWork, 
         IMapper mapper)
     {
-        _messageRepository = unitOfWork.GetRepository<IMessageRepository>();
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -26,13 +24,13 @@ public class MessageService: IMessageService
         int chatId, 
         CancellationToken cancellationToken = default)
     {
-        var messages = await _messageRepository.GetByChatIdAsync(chatId, cancellationToken);
+        var messages = await _unitOfWork.GetRepository<IMessageRepository>().GetByChatIdAsync(chatId, cancellationToken);
         return _mapper.Map<IEnumerable<MessageModel>>(messages);
     }
 
     public async Task<MessageModel> GetMessageByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var message = await _messageRepository.GetByIdAsync(id, cancellationToken);
+        var message = await _unitOfWork.GetRepository<IMessageRepository>().GetByIdAsync(id, cancellationToken);
         return _mapper.Map<MessageModel>(message);
     }
 
@@ -42,10 +40,10 @@ public class MessageService: IMessageService
     {
         var messageModel = _mapper.Map<Message>(createMessageModel);
         
-        await _messageRepository.CreateAsync(messageModel, cancellationToken);
+        await _unitOfWork.GetRepository<IMessageRepository>().CreateAsync(messageModel, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var message = await _messageRepository.GetByIdAsync(messageModel.Id, cancellationToken);
+        var message = await _unitOfWork.GetRepository<IMessageRepository>().GetByIdAsync(messageModel.Id, cancellationToken);
 
         return _mapper.Map<MessageModel>(message);
     }

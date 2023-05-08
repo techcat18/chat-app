@@ -1,12 +1,12 @@
-﻿using ChatApplication.DAL.Functions.Results;
+﻿using ChatApplication.DAL.Entities.Functions;
 using ChatApplication.Shared.Models;
 
 namespace ChatApplication.DAL.Extensions;
 
 public static class ChatFuncQueryableExtensions
 {
-    public static IQueryable<ChatFuncResult> FilterByName(
-        this IQueryable<ChatFuncResult> chats,
+    public static IQueryable<ChatFunction> FilterByName(
+        this IQueryable<ChatFunction> chats,
         string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -17,8 +17,8 @@ public static class ChatFuncQueryableExtensions
         return chats.Where(c => c.Name.ToUpper().Contains(name.ToUpper()));
     }
 
-    public static IQueryable<ChatFuncResult> Sort(
-        this IQueryable<ChatFuncResult> chats,
+    public static IQueryable<ChatFunction> Sort(
+        this IQueryable<ChatFunction> chats,
         string? sortingOption)
     {
         if (string.IsNullOrWhiteSpace(sortingOption))
@@ -33,8 +33,8 @@ public static class ChatFuncQueryableExtensions
         };
     }
 
-    public static IQueryable<ChatFuncResult> Paginate(
-        this IQueryable<ChatFuncResult> chats,
+    public static IQueryable<ChatFunction> Paginate(
+        this IQueryable<ChatFunction> chats,
         int page,
         int count)
     {

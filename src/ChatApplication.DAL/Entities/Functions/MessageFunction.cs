@@ -1,6 +1,6 @@
-﻿namespace ChatApplication.DAL.Functions.Results;
+﻿namespace ChatApplication.DAL.Entities.Functions;
 
-public class MessageFuncResult
+public class MessageFunction
 {
     public int Id { get; set; }
     public int? ParentMessageId { get; set; }

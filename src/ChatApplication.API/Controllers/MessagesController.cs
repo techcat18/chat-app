@@ -1,9 +1,11 @@
 ﻿using ChatApplication.BLL.Models.Message;
 using ChatApplication.BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApplication.API.Controllers;
 
+[Authorize(AuthenticationSchemes = "Bearer")]
 [ApiController]
 [Route("api/messages")]
 public class MessagesController: ControllerBase

@@ -1,4 +1,4 @@
-﻿using ChatApplication.DAL.Views;
+﻿using ChatApplication.DAL.Entities.Views;
 using ChatApplication.Shared.Models;
 
 namespace ChatApplication.DAL.Extensions;

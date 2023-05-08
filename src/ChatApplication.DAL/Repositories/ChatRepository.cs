@@ -1,9 +1,9 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Entities.Functions;
+using ChatApplication.DAL.Entities.Views;
 using ChatApplication.DAL.Extensions;
-using ChatApplication.DAL.Functions.Results;
 using ChatApplication.DAL.Repositories.Interfaces;
-using ChatApplication.DAL.Views;
 using ChatApplication.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +26,7 @@ public class ChatRepository: GenericRepository<Chat>, IChatRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<ChatFuncResult>> GetAllByUserIdAsync(
+    public async Task<IEnumerable<ChatFunction>> GetAllByUserIdAsync(
         string userId,
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default)

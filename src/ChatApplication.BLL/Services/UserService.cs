@@ -1,12 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AutoMapper;
-using ChatApplication.BLL.Exceptions.Auth;
 using ChatApplication.BLL.Models.User;
 using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.Shared.Exceptions.Auth;
 using ChatApplication.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

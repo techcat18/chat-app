@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ChatApplication.BLL.Models.User;
 using ChatApplication.DAL.Entities;
-using ChatApplication.DAL.Views;
+using ChatApplication.DAL.Entities.Views;
 
 namespace ChatApplication.BLL.MappingProfiles;
 

@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.BLL.Exceptions.NotFound;
+﻿namespace ChatApplication.Shared.Exceptions.NotFound;
 
 public class ChatNotFoundException: NotFoundException
 {

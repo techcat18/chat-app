@@ -1,7 +1,7 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
-using ChatApplication.DAL.Views;
+using ChatApplication.DAL.Entities.Views;
 
 namespace ChatApplication.DAL.Extensions;
 

@@ -1,4 +1,4 @@
-﻿using ChatApplication.DAL.Views;
+﻿using ChatApplication.DAL.Entities.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

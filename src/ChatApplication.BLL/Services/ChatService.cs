@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using ChatApplication.BLL.Exceptions.NotFound;
 using ChatApplication.BLL.Models.Chat;
 using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.Shared.Exceptions.NotFound;
 using ChatApplication.Shared.Models;
 
 namespace ChatApplication.BLL.Services;
@@ -12,8 +12,6 @@ namespace ChatApplication.BLL.Services;
 public class ChatService: IChatService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IChatRepository _chatRepository;
-    private readonly IUserRepository _userRepository;
     private readonly IUserChatRepository _userChatRepository;
     private readonly IMapper _mapper;
 
@@ -22,15 +20,13 @@ public class ChatService: IChatService
         IMapper mapper)
     {
         _unitOfWork = unitOfWork;
-        _chatRepository = _unitOfWork.GetRepository<IChatRepository>();
-        _userRepository = _unitOfWork.GetRepository<IUserRepository>();
         _userChatRepository = _unitOfWork.GetRepository<IUserChatRepository>();
         _mapper = mapper;
     }
 
     public async Task<IEnumerable<ChatModel>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var chats = await _chatRepository
+        var chats = await _unitOfWork.GetRepository<IChatRepository>()
             .GetAllAsync(cancellationToken);
         
         return _mapper.Map<IEnumerable<ChatModel>>(chats);
@@ -40,12 +36,12 @@ public class ChatService: IChatService
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default)
     {
-        var chats = await _chatRepository
+        var chats = await _unitOfWork.GetRepository<IChatRepository>()
             .GetAllByFilterAsync(filterModel, cancellationToken);
         
         var chatModels = _mapper.Map<IEnumerable<ChatModel>>(chats);
 
-        var totalCount = await _chatRepository
+        var totalCount = await _unitOfWork.GetRepository<IChatRepository>()
             .GetTotalCountAsync(filterModel, cancellationToken);
         
         var pagedModel = PagedList<ChatModel>
@@ -59,7 +55,7 @@ public class ChatService: IChatService
         ChatFilterModel filterModel, 
         CancellationToken cancellationToken = default)
     {
-        var chats = await _chatRepository
+        var chats = await _unitOfWork.GetRepository<IChatRepository>()
             .GetAllByUserIdAsync(userId, filterModel, cancellationToken);
         
         var chatModels = _mapper.Map<IEnumerable<ChatModel>>(chats);
@@ -72,7 +68,7 @@ public class ChatService: IChatService
 
     public async Task<ChatModel?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var chat = await _chatRepository
+        var chat = await _unitOfWork.GetRepository<IChatRepository>()
             .GetByIdAsync(id, cancellationToken);
         
         return _mapper.Map<ChatModel>(chat);
@@ -82,7 +78,7 @@ public class ChatService: IChatService
     {
         var chat = _mapper.Map<Chat>(model);
 
-        await _chatRepository
+        await _unitOfWork.GetRepository<IChatRepository>()
             .CreateAsync(chat, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -108,23 +104,23 @@ public class ChatService: IChatService
 
     public async Task UpdateAsync(UpdateChatModel model, CancellationToken cancellationToken = default)
     {
-        var chat = await _chatRepository
+        var chat = await _unitOfWork.GetRepository<IChatRepository>()
                        .GetByIdAsync(model.Id, cancellationToken)
                         ?? throw new ChatNotFoundException("Chat was not found");
 
         chat.Name = model.Name;
 
-        _chatRepository.Update(chat);
+        _unitOfWork.GetRepository<IChatRepository>().Update(chat);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var chat = await _chatRepository
+        var chat = await _unitOfWork.GetRepository<IChatRepository>()
                        .GetByIdAsync(id, cancellationToken)
                         ?? throw new ChatNotFoundException("Group chat was not found");
 
-        _chatRepository.Delete(chat);
+        _unitOfWork.GetRepository<IChatRepository>().Delete(chat);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

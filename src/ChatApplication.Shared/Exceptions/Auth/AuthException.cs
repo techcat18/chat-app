@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.BLL.Exceptions.Auth;
+﻿namespace ChatApplication.Shared.Exceptions.Auth;
 
 public class AuthException: Exception
 {

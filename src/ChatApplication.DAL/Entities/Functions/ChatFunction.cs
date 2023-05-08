@@ -1,6 +1,6 @@
-﻿namespace ChatApplication.DAL.Functions.Results;
+﻿namespace ChatApplication.DAL.Entities.Functions;
 
-public class ChatFuncResult
+public class ChatFunction
 {
     public int Id { get; set; }
     public string Name { get; set; }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApplication.API.Controllers;
 
+[Authorize(AuthenticationSchemes = "Bearer")]
 [ApiController]
 [Route("api/chats")]
 public class ChatsController: ControllerBase
@@ -16,8 +17,7 @@ public class ChatsController: ControllerBase
     {
         _chatService = chatService;
     }
-
-    //[Authorize(AuthenticationSchemes = "Bearer")]
+    
     [HttpGet("all")]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {

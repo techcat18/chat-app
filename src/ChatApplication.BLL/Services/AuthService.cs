@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
-using ChatApplication.BLL.Exceptions.Auth;
 using ChatApplication.BLL.Models.Auth;
 using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.Shared.Exceptions.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChatApplication.BLL.Services;
@@ -16,7 +16,6 @@ public class AuthService: IAuthService
     private readonly SignInManager<User> _signInManager;
     private readonly IMapper _mapper;
     private readonly IJwtService _jwtHandler;
-    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public AuthService(
@@ -30,7 +29,6 @@ public class AuthService: IAuthService
         _signInManager = signInManager;
         _mapper = mapper;
         _jwtHandler = jwtHandler;
-        _userRepository = unitOfWork.GetRepository<IUserRepository>();
         _unitOfWork = unitOfWork;
     }
 

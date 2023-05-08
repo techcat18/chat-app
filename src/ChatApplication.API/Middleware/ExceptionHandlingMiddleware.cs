@@ -1,4 +1,4 @@
-﻿using ChatApplication.BLL.Exceptions.Auth;
+﻿using ChatApplication.Shared.Exceptions.Auth;
 using Newtonsoft.Json;
 
 namespace ChatApplication.API.Middleware;

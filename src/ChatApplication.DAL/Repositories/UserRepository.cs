@@ -1,8 +1,8 @@
 ﻿using ChatApplication.DAL.Data;
 using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Entities.Views;
 using ChatApplication.DAL.Extensions;
 using ChatApplication.DAL.Repositories.Interfaces;
-using ChatApplication.DAL.Views;
 using ChatApplication.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 

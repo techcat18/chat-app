@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using ChatApplication.DAL.Configurations;
 using ChatApplication.DAL.Entities;
+using ChatApplication.DAL.Entities.Functions;
 using ChatApplication.DAL.Entities.Interfaces;
-using ChatApplication.DAL.Functions.Results;
-using ChatApplication.DAL.Views;
+using ChatApplication.DAL.Entities.Views;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,13 +19,13 @@ public class ChatDbContext: IdentityDbContext<User>
     public DbSet<ChatView> ChatView { get; set; }
     public DbSet<UserView> UserView { get; set; }
 
-    public IQueryable<MessageFuncResult> MessagesByChatIdFunc(int chatId)
+    public IQueryable<MessageFunction> MessagesByChatIdFunc(int chatId)
         => FromExpression(() => MessagesByChatIdFunc(chatId));
 
-    public IQueryable<MessageFuncResult> MessageByIdFunc(int id)
+    public IQueryable<MessageFunction> MessageByIdFunc(int id)
         => FromExpression(() => MessageByIdFunc(id));
 
-    public IQueryable<ChatFuncResult> ChatsByUserIdFunc(string userId)
+    public IQueryable<ChatFunction> ChatsByUserIdFunc(string userId)
         => FromExpression(() => ChatsByUserIdFunc(userId));
 
     public ChatDbContext(DbContextOptions<ChatDbContext> options): base(options){}
