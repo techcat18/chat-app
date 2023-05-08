@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ChatApplication.BLL.Models.Chat;
+namespace ChatApplication.Shared.Models.Chat;
 
 public class UpdateChatModel
 {

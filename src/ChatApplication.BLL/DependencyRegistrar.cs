@@ -1,12 +1,10 @@
-﻿using System.Reflection;
+﻿using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.BLL.MappingProfiles;
 using ChatApplication.BLL.Services;
-using ChatApplication.BLL.Services.Interfaces;
 using ChatApplication.BLL.Validators.Auth;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
 
 namespace ChatApplication.BLL;
 

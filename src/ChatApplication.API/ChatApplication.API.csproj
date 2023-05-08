@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ChatApplication.BLL\ChatApplication.BLL.csproj" />
+      <ProjectReference Include="..\ChatApplication.Shared\ChatApplication.Shared.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.BLL.Models.User;
+﻿namespace ChatApplication.Shared.Models.User;
 
 public class UpdateUserModel
 {

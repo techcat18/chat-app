@@ -1,16 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AutoMapper;
-using ChatApplication.BLL.Models.User;
-using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
 using ChatApplication.Shared.Exceptions.Auth;
 using ChatApplication.Shared.Models;
+using ChatApplication.Shared.Models.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace ChatApplication.BLL.Services;
 

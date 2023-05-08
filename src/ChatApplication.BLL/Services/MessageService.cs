@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using ChatApplication.BLL.Models.Message;
-using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.Shared.Models.Message;
 
 namespace ChatApplication.BLL.Services;
 

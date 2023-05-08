@@ -1,7 +1,7 @@
-﻿using ChatApplication.BLL.Models.User;
-using ChatApplication.Shared.Models;
+﻿using ChatApplication.Shared.Models;
+using ChatApplication.Shared.Models.User;
 
-namespace ChatApplication.BLL.Services.Interfaces;
+namespace ChatApplication.BLL.Abstractions.Services;
 
 public interface IUserService
 {

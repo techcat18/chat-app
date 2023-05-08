@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.BLL.Models.Auth;
+﻿namespace ChatApplication.Shared.Models.Auth;
 
 public class LoginModel
 {

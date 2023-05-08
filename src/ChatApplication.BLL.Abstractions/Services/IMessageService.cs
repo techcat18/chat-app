@@ -1,6 +1,6 @@
-﻿using ChatApplication.BLL.Models.Message;
+﻿using ChatApplication.Shared.Models.Message;
 
-namespace ChatApplication.BLL.Services.Interfaces;
+namespace ChatApplication.BLL.Abstractions.Services;
 
 public interface IMessageService
 {

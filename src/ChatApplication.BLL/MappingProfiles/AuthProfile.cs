@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ChatApplication.BLL.Models.Auth;
 using ChatApplication.DAL.Entities;
+using ChatApplication.Shared.Models.Auth;
 
 namespace ChatApplication.BLL.MappingProfiles;
 

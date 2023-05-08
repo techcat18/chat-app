@@ -1,7 +1,7 @@
-﻿using ChatApplication.BLL.Models.Chat;
-using ChatApplication.Shared.Models;
+﻿using ChatApplication.Shared.Models;
+using ChatApplication.Shared.Models.Chat;
 
-namespace ChatApplication.BLL.Services.Interfaces;
+namespace ChatApplication.BLL.Abstractions.Services;
 
 public interface IChatService
 {

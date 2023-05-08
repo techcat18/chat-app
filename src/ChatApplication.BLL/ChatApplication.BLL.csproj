@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ChatApplication.BLL.Abstractions\ChatApplication.BLL.Abstractions.csproj" />
       <ProjectReference Include="..\ChatApplication.DAL\ChatApplication.DAL.csproj" />
     </ItemGroup>
 
@@ -16,10 +17,6 @@
       <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Models" />
     </ItemGroup>
 
 </Project>

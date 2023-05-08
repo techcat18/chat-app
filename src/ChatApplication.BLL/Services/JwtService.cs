@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ChatApplication.BLL.Models.Auth;
-using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.DAL.Entities;
+using ChatApplication.Shared.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -31,8 +31,10 @@ public class JwtService: IJwtService
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 
-    public async Task<List<Claim>> GetClaimsAsync(User user)
+    public async Task<List<Claim>> GetClaimsAsync(string userId)
     {
+        var user = await _userManager.FindByIdAsync(userId);
+        
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),

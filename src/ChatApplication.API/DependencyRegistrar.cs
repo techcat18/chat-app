@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using ChatApplication.API.Middleware;
-using ChatApplication.BLL.Models.Auth;
+using ChatApplication.Shared.Models.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 

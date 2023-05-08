@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.BLL.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

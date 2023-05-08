@@ -1,6 +1,6 @@
-﻿using ChatApplication.BLL.Models.Chat;
-using ChatApplication.BLL.Services.Interfaces;
+﻿using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.Shared.Models;
+using ChatApplication.Shared.Models.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-﻿namespace ChatApplication.BLL.Models.Message;
+﻿namespace ChatApplication.Shared.Models.Message;
 
 public class MessageModel
 {

@@ -1,4 +1,4 @@
-﻿using ChatApplication.BLL.Models.Chat;
+﻿using ChatApplication.Shared.Models.Chat;
 using FluentValidation;
 
 namespace ChatApplication.BLL.Validators.Chat;

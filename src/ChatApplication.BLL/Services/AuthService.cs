@@ -1,11 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
-using ChatApplication.BLL.Models.Auth;
-using ChatApplication.BLL.Services.Interfaces;
+using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
-using ChatApplication.DAL.Repositories.Interfaces;
 using ChatApplication.Shared.Exceptions.Auth;
+using ChatApplication.Shared.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChatApplication.BLL.Services;
@@ -47,7 +46,7 @@ public class AuthService: IAuthService
             throw new AuthException("Invalid email or password");
         }
 
-        var claims = await _jwtHandler.GetClaimsAsync(user);
+        var claims = await _jwtHandler.GetClaimsAsync(user.Id);
         var signingCredentials = _jwtHandler.GetSigningCredentials();
         var token = _jwtHandler.GenerateToken(signingCredentials, claims);
 
