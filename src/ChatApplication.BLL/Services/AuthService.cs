@@ -35,16 +35,6 @@ public class AuthService: IAuthService
         var user = await _userManager.FindByEmailAsync(model.Email)
             ?? throw new AuthException("Invalid email or password");
 
-        var newUser = new User()
-        {
-            Email = "fakemail@fakemail.com",
-            FirstName = "Kostia",
-            LastName = "Bondarenko",
-            UserName = "techcat"
-        };
-
-        var iUser = await _userManager.CreateAsync(newUser, "Kostia18@");
-
         var result = await _signInManager
             .PasswordSignInAsync(user, model.Password, false, false);
 

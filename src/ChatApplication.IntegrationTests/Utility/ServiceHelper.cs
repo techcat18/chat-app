@@ -27,6 +27,24 @@ public static class ServiceHelper
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped(_ => context);
+        services.AddHttpContextAccessor();
+        services.AddLogging(config =>
+        {
+            config.AddConsole();
+        });
+        
+        services.AddIdentity<User, IdentityRole>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedEmail = false;
+            })
+            .AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<ChatDbContext>();
         
         var serviceProvider = services.BuildServiceProvider();
 
@@ -51,41 +69,17 @@ public static class ServiceHelper
             })));
     }
 
-    public static UserManager<User> CreateUserManager(ChatDbContext context)
+    public static UserManager<User> CreateUserManager(ServiceProvider serviceProvider)
     {
-        var store = new UserStore<User>(context);
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-        var logger = loggerFactory.CreateLogger<UserManager<User>>();
-        
-        return new UserManager<User>(
-            store, 
-            null, 
-            new PasswordHasher<User>(),
-            null, 
-            null, 
-            null, 
-            null, 
-            null, 
-            logger);
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+        return userManager;
     }
 
-    public static SignInManager<User> CreateSignInManager(UserManager<User> userManager)
+    public static SignInManager<User> CreateSignInManager(
+        ServiceProvider serviceProvider)
     {
-        var httpContextAccessor = new HttpContextAccessor();
-        var httpContext = new DefaultHttpContext();
-        httpContextAccessor.HttpContext = httpContext;
-
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-        var logger = loggerFactory.CreateLogger<SignInManager<User>>();
-        
-        return new SignInManager<User>(
-            userManager,
-            httpContextAccessor,
-            new UserClaimsPrincipalFactory<User>(userManager, new OptionsManager<IdentityOptions>(new OptionsFactory<IdentityOptions>(new List<IConfigureOptions<IdentityOptions>>(), new List<IPostConfigureOptions<IdentityOptions>>()))),
-            null,
-            logger,
-            null,
-            null);
+        var signInManager = serviceProvider.GetRequiredService<SignInManager<User>>();
+        return signInManager;
     }
 
     public static IJwtService CreateJwtService(UserManager<User> userManager)
