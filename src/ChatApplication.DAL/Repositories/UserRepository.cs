@@ -33,14 +33,6 @@ public class UserRepository: IUserRepository
         return await _context.UserView.AsQueryable()
             .FilterBySearchString(filterModel.SearchString)
             .Sort(filterModel.OrderBy)
-            .Paginate(filterModel.Page, filterModel.Count)
-            .ToListAsync(cancellationToken);
-    }
-
-    public async Task<IEnumerable<User>> GetByEmailsAsync(IEnumerable<string> emails, CancellationToken cancellationToken = default)
-    {
-        return await _users
-            .Where(u => emails.Contains(u.Email))
             .ToListAsync(cancellationToken);
     }
 
@@ -75,6 +67,12 @@ public class UserRepository: IUserRepository
     {
         return await _users
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+    }
+
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await _users
+            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
     public void Update(User user)

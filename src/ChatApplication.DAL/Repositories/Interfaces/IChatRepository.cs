@@ -15,6 +15,7 @@ public interface IChatRepository: IGenericRepository<Chat>
         ChatFilterModel filterModel,
         CancellationToken cancellationToken = default);
     Task<Chat?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<Chat?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
     Task CreateAsync(Chat chat, CancellationToken cancellationToken = default);
     void Update(Chat chat);
     void Delete(Chat chat);

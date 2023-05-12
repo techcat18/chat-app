@@ -3,6 +3,7 @@ using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
+using ChatApplication.Shared.Exceptions.BadRequest;
 using ChatApplication.Shared.Exceptions.NotFound;
 using ChatApplication.Shared.Models;
 using ChatApplication.Shared.Models.Chat;
@@ -12,7 +13,6 @@ namespace ChatApplication.BLL.Services;
 public class ChatService: IChatService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserChatRepository _userChatRepository;
     private readonly IMapper _mapper;
 
     public ChatService(
@@ -20,7 +20,6 @@ public class ChatService: IChatService
         IMapper mapper)
     {
         _unitOfWork = unitOfWork;
-        _userChatRepository = _unitOfWork.GetRepository<IUserChatRepository>();
         _mapper = mapper;
     }
 
@@ -69,13 +68,22 @@ public class ChatService: IChatService
     public async Task<ChatModel?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var chat = await _unitOfWork.GetRepository<IChatRepository>()
-            .GetByIdAsync(id, cancellationToken);
-        
+                       .GetByIdAsync(id, cancellationToken)
+                   ?? throw new ChatNotFoundException(id);
+
         return _mapper.Map<ChatModel>(chat);
     }
 
     public async Task<ChatModel> CreateAsync(CreateChatModel model, CancellationToken cancellationToken = default)
     {
+        var sameNameChat = await _unitOfWork.GetRepository<IChatRepository>()
+            .GetByNameAsync(model.Name, cancellationToken);
+
+        if (sameNameChat != null)
+        {
+            throw new ChatAlreadyExistsException($"Chat with name {model.Name} already exists");
+        }
+        
         var chat = _mapper.Map<Chat>(model);
 
         await _unitOfWork.GetRepository<IChatRepository>()
@@ -83,21 +91,19 @@ public class ChatService: IChatService
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var userChats = model.UserIds.Select(x =>
+        if (model.UserIds.Any())
         {
-            var userChat = new UserChat
+            var userChats = model.UserIds.Select(x => new UserChat
             {
                 ChatId = chat.Id,
                 UserId = x,
                 DateJoined = DateTime.UtcNow
-            };
-
-            return userChat;
-        });
-
-        await _userChatRepository.AddUsersToChatAsync(userChats, cancellationToken);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+            });
+    
+            await _unitOfWork.GetRepository<IUserChatRepository>()
+                .CreateRangeAsync(userChats, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
         
         return _mapper.Map<ChatModel>(chat);
     }
@@ -118,7 +124,7 @@ public class ChatService: IChatService
     {
         var chat = await _unitOfWork.GetRepository<IChatRepository>()
                        .GetByIdAsync(id, cancellationToken)
-                        ?? throw new ChatNotFoundException("Group chat was not found");
+                        ?? throw new ChatNotFoundException("Chat was not found");
 
         _unitOfWork.GetRepository<IChatRepository>().Delete(chat);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -4,5 +4,5 @@ public class CreateChatModel
 {
     public string Name { get; set; }
     public int ChatTypeId { get; set; }
-    public IEnumerable<string> UserIds { get; set; }
+    public IEnumerable<string> UserIds { get; set; } = new List<string>();
 }

@@ -16,7 +16,7 @@ public class ChatHub: Hub
 
     public async Task SendMessageAsync(int messageId, int chatId)
     {
-        var message = await _messageService.GetMessageByIdAsync(messageId);
+        var message = await _messageService.GetByIdAsync(messageId);
         await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", message);
         await SendNotificationAsync(chatId);
     }

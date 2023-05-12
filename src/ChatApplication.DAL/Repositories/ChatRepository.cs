@@ -40,7 +40,12 @@ public class ChatRepository: GenericRepository<Chat>, IChatRepository
 
     public async Task<Chat?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.FirstOrDefaultAsync(gc => gc.Id == id, cancellationToken);
+        return await _dbSet.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
+
+    public async Task<Chat?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.FirstOrDefaultAsync(c => c.Name == name, cancellationToken);
     }
 
     public async Task CreateAsync(Chat chat, CancellationToken cancellationToken = default)

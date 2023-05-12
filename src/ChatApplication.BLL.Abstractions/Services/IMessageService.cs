@@ -4,15 +4,15 @@ namespace ChatApplication.BLL.Abstractions.Services;
 
 public interface IMessageService
 {
-    Task<IEnumerable<MessageModel>> GetMessagesByChatIdAsync(
+    Task<IEnumerable<MessageModel>> GetByChatIdAsync(
         int chatId, 
         CancellationToken cancellationToken = default);
 
-    Task<MessageModel> GetMessageByIdAsync(
+    Task<MessageModel> GetByIdAsync(
         int id,
         CancellationToken cancellationToken = default);
     
-    Task<MessageModel> CreateMessageAsync(
+    Task<MessageModel> CreateAsync(
         CreateMessageModel createMessageModel,
         CancellationToken cancellationToken = default);
 }

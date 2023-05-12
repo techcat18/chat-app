@@ -5,6 +5,8 @@ using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
 using ChatApplication.Shared.Exceptions.Auth;
+using ChatApplication.Shared.Exceptions.BadRequest;
+using ChatApplication.Shared.Exceptions.NotFound;
 using ChatApplication.Shared.Models;
 using ChatApplication.Shared.Models.User;
 using Microsoft.AspNetCore.Http;
@@ -15,27 +17,22 @@ namespace ChatApplication.BLL.Services;
 public class UserService: IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly UserManager<User> _userManager;
 
     public UserService(
         IUnitOfWork unitOfWork, 
-        IMapper mapper, 
-        IHttpContextAccessor httpContextAccessor,
-        UserManager<User> userManager)
+        IMapper mapper)
     {
         _unitOfWork = unitOfWork;
-        _userRepository = _unitOfWork.GetRepository<IUserRepository>();
         _mapper = mapper;
-        _httpContextAccessor = httpContextAccessor;
-        _userManager = userManager;
     }
-
+    
     public async Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository.GetAllAsync(cancellationToken);
+        var users = await _unitOfWork
+            .GetRepository<IUserRepository>()
+            .GetAllAsync(cancellationToken);
+        
         return _mapper.Map<IEnumerable<UserModel>>(users);
     }
 
@@ -43,12 +40,14 @@ public class UserService: IUserService
         UserFilterModel filterModel, 
         CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository
+        var users = await _unitOfWork
+            .GetRepository<IUserRepository>()
             .GetByFilterAsync(filterModel, cancellationToken);
 
         var userModels = _mapper.Map<IEnumerable<UserModel>>(users);
         
-        var totalCount = await _userRepository
+        var totalCount = await _unitOfWork
+            .GetRepository<IUserRepository>()
             .GetTotalCountAsync(filterModel, cancellationToken);
         
         var pagedModel = PagedList<UserModel>
@@ -61,7 +60,13 @@ public class UserService: IUserService
         int chatId, CancellationToken 
             cancellationToken = default)
     {
-        var users = await _userRepository
+        _ = await _unitOfWork
+                .GetRepository<IChatRepository>()
+                .GetByIdAsync(chatId, cancellationToken)
+            ?? throw new ChatNotFoundException(chatId);
+        
+        var users = await _unitOfWork
+            .GetRepository<IUserRepository>()
             .GetByChatIdAsync(chatId, cancellationToken);
 
         return _mapper.Map<IEnumerable<UserModel>>(users);
@@ -71,7 +76,13 @@ public class UserService: IUserService
         int chatId, 
         CancellationToken cancellationToken = default)
     {
-        var users = await _userRepository
+        _ = await _unitOfWork
+                .GetRepository<IChatRepository>()
+                .GetByIdAsync(chatId, cancellationToken)
+            ?? throw new ChatNotFoundException(chatId);
+        
+        var users = await _unitOfWork
+            .GetRepository<IUserRepository>()
             .GetAllExceptByChatIdAsync(chatId, cancellationToken);
 
         return _mapper.Map<IEnumerable<UserModel>>(users);
@@ -81,33 +92,34 @@ public class UserService: IUserService
         string id, 
         CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByIdAsync(id, cancellationToken)
-                   ?? throw new AuthException($"User with id {id} was not found");
+        var user = await _unitOfWork
+                       .GetRepository<IUserRepository>()
+                       .GetByIdAsync(id, cancellationToken)
+                   ?? throw new UserNotFoundException(id);
 
         return _mapper.Map<UserModel>(user);
     }
 
     public async Task UpdateAsync(UpdateUserModel updateUserModel, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByIdAsync(updateUserModel.Id, cancellationToken)
-                   ?? throw new AuthException($"User with id {updateUserModel.Id} was not found");
-
-        var currentUserId = GetCurrentUserId();
-
-        if (string.IsNullOrWhiteSpace(currentUserId) || currentUserId != user.Id)
-        {
-            throw new AuthException("Access denied");
-        }
+        var user = await _unitOfWork
+                       .GetRepository<IUserRepository>()
+                       .GetByIdAsync(updateUserModel.Id, cancellationToken)
+                   ?? throw new UserNotFoundException(updateUserModel.Id);
 
         if (!string.IsNullOrWhiteSpace(updateUserModel.Email)
             && user.Email != updateUserModel.Email)
         {
-            var result = await _userManager.SetEmailAsync(user, updateUserModel.Email);
+            var existingUser = await _unitOfWork
+                .GetRepository<IUserRepository>()
+                .GetByEmailAsync(updateUserModel.Email, cancellationToken);
 
-            if (!result.Succeeded)
+            if (existingUser != null)
             {
-                throw new AuthException("Failed to change the email");
+                throw new UserAlreadyExistsException($"User with email {updateUserModel.Email} already exists");
             }
+
+            user.Email = updateUserModel.Email;
         }
 
         if (!string.IsNullOrWhiteSpace(updateUserModel.FirstName)
@@ -133,14 +145,10 @@ public class UserService: IUserService
             user.Age = updateUserModel.Age.Value;
         }
 
-        _userRepository.Update(user);
+        _unitOfWork
+            .GetRepository<IUserRepository>()
+            .Update(user);
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-    
-    private string? GetCurrentUserId()
-    {
-        return _httpContextAccessor.HttpContext.User.Claims
-            .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
     }
 }

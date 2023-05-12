@@ -14,14 +14,14 @@ public class UserChatRepository: IUserChatRepository
         _userChats = context.Set<UserChat>();
     }
 
-    public async Task AddUserToChatAsync(
+    public async Task CreateAsync(
         UserChat userChat, 
         CancellationToken cancellationToken = default)
     {
         await _userChats.AddAsync(userChat, cancellationToken);
     }
 
-    public async Task AddUsersToChatAsync(
+    public async Task CreateRangeAsync(
         IEnumerable<UserChat> userChats, 
         CancellationToken cancellationToken = default)
     {

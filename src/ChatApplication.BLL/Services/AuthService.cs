@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using ChatApplication.BLL.Abstractions.Services;
-using ChatApplication.DAL.Data.Interfaces;
 using ChatApplication.DAL.Entities;
 using ChatApplication.Shared.Exceptions.Auth;
 using ChatApplication.Shared.Models.Auth;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChatApplication.BLL.Services;
@@ -15,20 +15,17 @@ public class AuthService: IAuthService
     private readonly SignInManager<User> _signInManager;
     private readonly IMapper _mapper;
     private readonly IJwtService _jwtHandler;
-    private readonly IUnitOfWork _unitOfWork;
 
     public AuthService(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         IMapper mapper, 
-        IJwtService jwtHandler,
-        IUnitOfWork unitOfWork)
+        IJwtService jwtHandler)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _mapper = mapper;
         _jwtHandler = jwtHandler;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<JwtModel> LoginAsync(
@@ -37,6 +34,16 @@ public class AuthService: IAuthService
     {
         var user = await _userManager.FindByEmailAsync(model.Email)
             ?? throw new AuthException("Invalid email or password");
+
+        var newUser = new User()
+        {
+            Email = "fakemail@fakemail.com",
+            FirstName = "Kostia",
+            LastName = "Bondarenko",
+            UserName = "techcat"
+        };
+
+        var iUser = await _userManager.CreateAsync(newUser, "Kostia18@");
 
         var result = await _signInManager
             .PasswordSignInAsync(user, model.Password, false, false);
@@ -50,7 +57,7 @@ public class AuthService: IAuthService
         var signingCredentials = _jwtHandler.GetSigningCredentials();
         var token = _jwtHandler.GenerateToken(signingCredentials, claims);
 
-        return new JwtModel()
+        return new JwtModel
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
         };
