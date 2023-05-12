@@ -18,6 +18,7 @@ public static class UnitTestHelper
             .Options;
 
         await using var context = new ChatDbContext(options);
+
         await SeedDataAsync(context);
 
         return options;
