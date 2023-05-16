@@ -1,6 +1,9 @@
 trigger:
 - main
 
+variables: 
+  solutionDir: src
+
 pool:
   name: OnPremisesAgentPool
   vmImage: winagent
@@ -14,3 +17,4 @@ steps:
 
 - script: dotnet build
   displayName: dotnet build
+  workingDirectory: $(solutionDir)
