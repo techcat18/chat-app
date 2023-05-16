@@ -15,6 +15,6 @@ steps:
 - script: dir
   displayName: what files are there?
 
-- script: msbuild
+- script: dotnet build --configuration "Release"
   displayName: Building Solution
   workingDirectory: $(solutionDir)
