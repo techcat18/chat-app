@@ -9,9 +9,10 @@ pool:
   vmImage: winagent
 
 steps:
-- script: dotnet build --configuration "Release"
+- script: dotnet build -c "Release"
   displayName: Building Solution
   workingDirectory: $(solutionDir)
 
-- script: dotnet test
+- script: dotnet test -c "Release"
   displayName: Testing
+  workingDirectory: $(solutionDir)
