@@ -68,8 +68,8 @@ public class ChatService: IChatService
     public async Task<ChatModel?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         var chat = await _unitOfWork.GetRepository<IChatRepository>()
-                       .GetByIdAsync(id, cancellationToken)
-                   ?? throw new ChatNotFoundException(id);
+                       .GetByIdAsync(id, cancellationToken);
+                   //?? throw new ChatNotFoundException(id);
 
         return _mapper.Map<ChatModel>(chat);
     }
