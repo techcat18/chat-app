@@ -1,5 +1,6 @@
 trigger:
-- main
+  - main
+
 
 variables: 
   solutionDir: src
@@ -9,6 +10,10 @@ pool:
   vmImage: winagent
 
 steps:
+- task: MSBuild@1
+  inputs:
+    solution: '**/*.sln'
+    
 - script: cd
   displayName: what directory are we in?
 
