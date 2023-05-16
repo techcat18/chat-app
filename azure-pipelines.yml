@@ -9,12 +9,15 @@ pool:
   vmImage: winagent
 
 steps:
-- script: cd
-  displayName: what directory are we in?
-
-- script: dir
-  displayName: what files are there?
-
 - script: dotnet build --configuration "Release"
   displayName: Building Solution
   workingDirectory: $(solutionDir)
+
+- script: dotnet publish -o $(build.artifactStagingDirectory)
+  displayName: Publish to Artifacts
+  workingDirectory: $(solutionDir)
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(build.artifactStagingDirectory)'
+    publishLocation: 'pipeline'
