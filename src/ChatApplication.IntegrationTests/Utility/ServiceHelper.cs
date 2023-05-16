@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 
 namespace ChatApplication.IntegrationTests.Utility;
 
