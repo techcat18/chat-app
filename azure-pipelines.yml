@@ -13,6 +13,8 @@ steps:
   displayName: Building Solution
   workingDirectory: $(solutionDir)
 
-- script: dotnet test -c "Release"
-  displayName: Testing
-  workingDirectory: $(solutionDir)
+- task: DotNetCoreCLI@2
+  displayName: Running Tests
+  inputs:
+    command: test
+    workingDirectory: $(solutionDir)
