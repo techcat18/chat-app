@@ -6,10 +6,10 @@ pool:
   vmImage: winagent
 
 steps:
-- script: pwd
+- script: cd
   displayName: what directory are we in?
 
-- script: ls -la
+- script: dir
   displayName: what files are there?
 
 - script: dotnet build
