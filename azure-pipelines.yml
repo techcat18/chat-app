@@ -15,6 +15,6 @@ steps:
 - script: dir
   displayName: what files are there?
 
-- script: dotnet build
-  displayName: dotnet build
+- script: msbuild
+  displayName: Building Solution
   workingDirectory: $(solutionDir)
