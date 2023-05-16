@@ -13,11 +13,11 @@ steps:
   displayName: Building Solution
   workingDirectory: $(solutionDir)
 
-- script: dotnet publish -o $(build.artifactStagingDirectory)
+- script: dotnet publish -o $(Build.artifactStagingDirectory)
   displayName: Publish to Artifacts
   workingDirectory: $(solutionDir)
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(build.artifactStagingDirectory)'
+    targetPath: '$(Build.artifactStagingDirectory)'
     publishLocation: 'pipeline'
