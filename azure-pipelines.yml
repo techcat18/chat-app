@@ -53,14 +53,8 @@ stages:
 
 - stage: Deploy
   jobs:
-   - job: Deploy_API
+   - job: Deploy_Database
      steps:
-     - task: DownloadPipelineArtifact@2
-       inputs:
-         buildType: 'current'
-         artifactName: 'api'
-         targetPath: '$(Pipeline.Workspace)/api'
-
      - task: DownloadPipelineArtifact@2
        inputs:
          buildType: 'current'
@@ -80,6 +74,14 @@ stages:
          DeploymentAction: 'Publish'
          DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
          IpDetectionMethod: 'AutoDetect'
+         
+   - job: Deploy_API
+     steps:
+     - task: DownloadPipelineArtifact@2
+       inputs:
+         buildType: 'current'
+         artifactName: 'api'
+         targetPath: '$(Pipeline.Workspace)/api'
 
      - task: ArchiveFiles@2
        inputs:
