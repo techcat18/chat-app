@@ -31,13 +31,20 @@ stages:
       inputs:
         Contents: '**/*.dacpac'
         TargetFolder: '$(build.artifactStagingDirectory)/dacpac'
+        
+    - task: PublishPipelineArtifact@1
+      displayName: Publish the database build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/dacpac'
+        artifact: dacpac
+        publishLocation: 'pipeline'
 
     - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)/api
       displayName: Publishing API project build to the artifact
       workingDirectory: $(solutionDir)
 
     - task: PublishPipelineArtifact@1
-      displayName: Publish the build artifact to the pipeline
+      displayName: Publish the API build artifact to the pipeline
       inputs:
         targetPath: '$(build.artifactStagingDirectory)/api'
         artifact: api
