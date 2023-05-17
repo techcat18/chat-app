@@ -25,6 +25,12 @@ stages:
       displayName: Building Database Project
       inputs:
         solution: '**/*.sqlproj'
+    
+    - task: CopyFiles@2
+      displayName: Copy dacpac files
+      inputs:
+        Contents: '**/*.dacpac'
+        TargetFolder: '$(build.artifactStagingDirectory)/dacpac'
 
     - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)/api
       displayName: Publishing API project build to the artifact
