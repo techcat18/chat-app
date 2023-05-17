@@ -40,11 +40,11 @@ stages:
        inputs:
          buildType: 'current'
          artifactName: 'apiProject'
-         targetPath: '$(Pipeline.Workspace)/apiProject'
+         targetPath: '$(Pipeline.Workspace)'
 
      - task: ArchiveFiles@2
        inputs:
-         rootFolderOrFile: '$(Pipeline.Workspace)/apiProject/'
+         rootFolderOrFile: '$(Pipeline.Workspace)'
          archiveType: 'zip'
          archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
          replaceExistingArchive: true
