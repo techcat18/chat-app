@@ -1,9 +1,6 @@
 trigger:
 - main
 
-variables: 
-  solutionDir: src
-
 pool:
   name: WindowsAgentPool
   vmImage: winagent
@@ -65,6 +62,16 @@ stages:
         targetPath: '$(build.artifactStagingDirectory)/dacpac'
         artifact: dacpac
         publishLocation: 'pipeline'
+
+- stage: Test
+  jobs:
+   - job: Test
+     steps:
+     - task: DotNetCoreCLI@2 
+       displayName: Running Tests 
+       inputs: 
+         command: test 
+         workingDirectory: $(solutionDir) 
 
 - stage: Deploy
   jobs:
