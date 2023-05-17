@@ -29,7 +29,7 @@ stages:
       displayName: Publish the build artifact to the pipeline
       inputs:
         targetPath: '$(build.artifactStagingDirectory)'
-        artifact: drop
+        artifact: apiProject
         publishLocation: 'pipeline'
 
 - stage: Deploy_To_Test
@@ -39,11 +39,12 @@ stages:
      - task: DownloadPipelineArtifact@2
        inputs:
          buildType: 'current'
-         artifactName: 'drop'
-         targetPath: '$(Pipeline.Workspace)/drop'
+         artifactName: 'apiProject'
+         targetPath: '$(Pipeline.Workspace)/apiProject'
+
      - task: ArchiveFiles@2
        inputs:
-         rootFolderOrFile: '$(Pipeline.Workspace)/drop'
+         rootFolderOrFile: '$(Pipeline.Workspace)/apiProject/'
          includeRootFolder: true
          archiveType: 'zip'
          archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
