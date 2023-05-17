@@ -55,3 +55,10 @@ stages:
      - script: dir
        displayName: 'What''s on the disk'
        workingDirectory: '$(Pipeline.Workspace)'
+     - task: AzureWebApp@1
+       inputs:
+        azureSubscription: 'Default Service Connection'
+        appType: 'webApp'
+        appName: 'ChatApplication-API'
+        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        deploymentMethod: 'auto'
