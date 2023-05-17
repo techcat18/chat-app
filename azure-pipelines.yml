@@ -67,6 +67,20 @@ stages:
          artifactName: 'dacpac'
          targetPath: '$(Pipeline.Workspace)/dacpac'
 
+     - task: SqlAzureDacpacDeployment@1
+       displayName: Publishing Database project to SQL Database
+       inputs:
+         azureSubscription: 'Default Service Connection'
+         AuthenticationType: 'server'
+         ServerName: 'default-db-server.database.windows.net'
+         DatabaseName: 'ChatApplication-DB'
+         SqlUsername: 'Kostia18@'
+         SqlPassword: 'Kxr7VPSM'
+         deployType: 'DacpacTask'
+         DeploymentAction: 'Publish'
+         DacpacFile: '$(Pipeline.Workspace)/dacpac'
+         IpDetectionMethod: 'AutoDetect'
+
      - task: ArchiveFiles@2
        inputs:
          rootFolderOrFile: '$(Pipeline.Workspace)/api/'
@@ -76,6 +90,7 @@ stages:
          replaceExistingArchive: true
 
      - task: AzureWebApp@1
+       displayName: Publishing API project to App Service
        inputs:
         azureSubscription: 'Default Service Connection'
         appType: 'webApp'
