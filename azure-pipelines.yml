@@ -21,9 +21,10 @@ stages:
       displayName: Building Blazor Project
       workingDirectory: $(solutionDir)
     
-    - script: msbuild ChatApplication.Database/ChatApplication.Database.sqlproj /t:Build /p:Configuration=Release /p:OutputPath="publish"
+    - task: MSBuild@1
       displayName: Building Database Project
-      workingDirectory: $(solutionDir)
+      inputs:
+        solution: '**/*.sqlproj'
 
     - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)/api
       displayName: Publishing API project build to the artifact
