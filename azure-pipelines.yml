@@ -31,6 +31,7 @@ stages:
       inputs:
         Contents: '**/*.dacpac'
         TargetFolder: '$(build.artifactStagingDirectory)/dacpac'
+        flattenFolders: true
         
     - task: PublishPipelineArtifact@1
       displayName: Publish the database build artifact to the pipeline
@@ -59,6 +60,12 @@ stages:
          buildType: 'current'
          artifactName: 'api'
          targetPath: '$(Pipeline.Workspace)/api'
+
+     - task: DownloadPipelineArtifact@2
+       inputs:
+         buildType: 'current'
+         artifactName: 'dacpac'
+         targetPath: '$(Pipeline.Workspace)/dacpac'
 
      - task: ArchiveFiles@2
        inputs:
