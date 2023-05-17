@@ -24,6 +24,7 @@ stages:
     - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)
       displayName: Publishing API project build to the artifact
       workingDirectory: $(solutionDir)
+    
 
     - task: PublishPipelineArtifact@1
       displayName: Publish the build artifact to the pipeline
@@ -32,9 +33,12 @@ stages:
         artifact: apiProject
         publishLocation: 'pipeline'
 
-- stage: Deploy_To_Test
+- stage: Deploy
   jobs:
-   - job: Deploy_API_To_Azure_App_Service
+   - job: Deploy_Database
+     steps:
+      
+   - job: Deploy_API
      steps:
      - task: DownloadPipelineArtifact@2
        inputs:
@@ -50,14 +54,6 @@ stages:
          archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
          replaceExistingArchive: true
 
-     - script: cd
-       displayName: 'What directory are we in'
-       workingDirectory: '$(Pipeline.Workspace)'
-
-     - script: dir
-       displayName: 'What''s on the disk'
-       workingDirectory: '$(Pipeline.Workspace)'
-
      - task: AzureWebApp@1
        inputs:
         azureSubscription: 'Default Service Connection'
@@ -65,3 +61,4 @@ stages:
         appName: 'ChatApplication-API'
         package: '$(Pipeline.Workspace)/PublishedApp.zip'
         deploymentMethod: 'auto'
+      
