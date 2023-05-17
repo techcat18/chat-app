@@ -8,13 +8,46 @@ pool:
   name: WindowsAgentPool
   vmImage: winagent
 
-steps:
-- script: dotnet build
-  displayName: Building Solution
-  workingDirectory: $(solutionDir)
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - script: dotnet build
+      displayName: Building Solution
+      workingDirectory: $(solutionDir)
 
-- task: DotNetCoreCLI@2
-  displayName: Running Tests
-  inputs:
-    command: test
-    workingDirectory: $(solutionDir)
+    - task: DotNetCoreCLI@2
+      displayName: Running Tests
+      inputs:
+        command: test
+        workingDirectory: $(solutionDir)
+
+    - script: dotnet publish -o $(build.artifactStagingDirectory)
+      displayName: Publishing build output to the artifact
+      workingDirectory: $(solutionDir)
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish the build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)'
+        artifact: drop
+        publishLocation: 'pipeline'
+
+- stage: Deploy_To_Test
+  jobs:
+   - job: Deploy_to_Azure_App_Service
+     steps:
+     - task: DownloadPipelineArtifact@2
+       inputs:
+         buildType: 'current'
+         artifactName: 'drop'
+         targetPath: '$(Pipeline.Workspace)/drop'
+
+     - script: cd
+       displayName: 'What directory are we in'
+       workingDirectory: '$(Pipeline.Workspace)'
+
+     - script: dir
+       displayName: 'What''s on the disk'
+       workingDirectory: '$(Pipeline.Workspace)'
