@@ -11,44 +11,48 @@ pool:
 stages:
 - stage: Build
   jobs:
-  - job: Build
+  - job: Build_API
     steps:
     - script: dotnet build ChatApplication.API
       displayName: Building API Project
       workingDirectory: $(solutionDir)
-
-    - script: dotnet build ChatApplication.Blazor
-      displayName: Building Blazor Project
-      workingDirectory: $(solutionDir)
-    
-    - task: MSBuild@1
-      displayName: Building Database Project
-      inputs:
-        solution: '**/*.sqlproj'
-    
-    - task: CopyFiles@2
-      displayName: Copy dacpac files
-      inputs:
-        Contents: '**/*.dacpac'
-        TargetFolder: '$(build.artifactStagingDirectory)/dacpac'
-        flattenFolders: true
-        
-    - task: PublishPipelineArtifact@1
-      displayName: Publish the database build artifact to the pipeline
-      inputs:
-        targetPath: '$(build.artifactStagingDirectory)/dacpac'
-        artifact: dacpac
-        publishLocation: 'pipeline'
 
     - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)/api
       displayName: Publishing API project build to the artifact
       workingDirectory: $(solutionDir)
 
     - task: PublishPipelineArtifact@1
-      displayName: Publish the API build artifact to the pipeline
+      displayName: Publishing the API build artifact to the pipeline
       inputs:
         targetPath: '$(build.artifactStagingDirectory)/api'
         artifact: api
+        publishLocation: 'pipeline'
+
+  - job: Build_Blazor
+    steps:
+    - script: dotnet build ChatApplication.Blazor
+      displayName: Building Blazor Project
+      workingDirectory: $(solutionDir)
+  
+  - job: Build_Database
+    steps:
+    - task: MSBuild@1
+      displayName: Building Database Project
+      inputs:
+        solution: '**/*.sqlproj'
+    
+    - task: CopyFiles@2
+      displayName: Copying dacpac files
+      inputs:
+        Contents: '**/*.dacpac'
+        TargetFolder: '$(build.artifactStagingDirectory)/dacpac'
+        flattenFolders: true
+        
+    - task: PublishPipelineArtifact@1
+      displayName: Publishing the database build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/dacpac'
+        artifact: dacpac
         publishLocation: 'pipeline'
 
 - stage: Deploy
@@ -74,7 +78,7 @@ stages:
          DeploymentAction: 'Publish'
          DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
          IpDetectionMethod: 'AutoDetect'
-         
+
    - job: Deploy_API
      steps:
      - task: DownloadPipelineArtifact@2
