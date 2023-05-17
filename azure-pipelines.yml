@@ -78,7 +78,7 @@ stages:
          SqlPassword: 'Kxr7VPSM'
          deployType: 'DacpacTask'
          DeploymentAction: 'Publish'
-         DacpacFile: '$(Pipeline.Workspace)/dacpac'
+         DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
          IpDetectionMethod: 'AutoDetect'
 
      - task: ArchiveFiles@2
