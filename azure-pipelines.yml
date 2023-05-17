@@ -33,6 +33,17 @@ stages:
     - script: dotnet build ChatApplication.Blazor
       displayName: Building Blazor Project
       workingDirectory: $(solutionDir)
+    
+    - script: dotnet publish ChatApplication.Blazor -o $(build.artifactStagingDirectory)/blazor
+      displayName: Publishing Blazor project build to the artifact
+      workingDirectory: $(solutionDir)
+    
+    - task: PublishPipelineArtifact@1
+      displayName: Publishing the Blazor build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/blazor'
+        artifact: blazor
+        publishLocation: 'pipeline'
   
   - job: Build_Database
     steps:
@@ -92,7 +103,7 @@ stages:
          rootFolderOrFile: '$(Pipeline.Workspace)/api/'
          includeRootFolder: false
          archiveType: 'zip'
-         archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
+         archiveFile: '$(Pipeline.Workspace)/PublishedApi.zip'
          replaceExistingArchive: true
 
      - task: AzureWebApp@1
@@ -101,6 +112,30 @@ stages:
         azureSubscription: 'Default Service Connection'
         appType: 'webApp'
         appName: 'ChatApplication-API'
-        package: '$(Pipeline.Workspace)/PublishedApp.zip'
+        package: '$(Pipeline.Workspace)/PublishedApi.zip'
         deploymentMethod: 'auto'
       
+   - job: Deploy_Blazor
+     steps:
+     - task: DownloadPipelineArtifact@2
+       inputs:
+         buildType: 'current'
+         artifactName: 'blazor'
+         targetPath: '$(Pipeline.Workspace)/blazor'
+
+     - task: ArchiveFiles@2
+       inputs:
+         rootFolderOrFile: '$(Pipeline.Workspace)/blazor/'
+         includeRootFolder: false
+         archiveType: 'zip'
+         archiveFile: '$(Pipeline.Workspace)/PublishedBlazor.zip'
+         replaceExistingArchive: true
+      
+     - task: AzureWebApp@1
+       displayName: Publishing Blazor project to App Service
+       inputs:
+        azureSubscription: 'Default Service Connection'
+        appType: 'webApp'
+        appName: 'ChatApplication-Blazor'
+        package: '$(Pipeline.Workspace)/PublishedBlazor.zip'
+        deploymentMethod: 'auto'
