@@ -20,35 +20,35 @@ stages:
     - script: dotnet build ChatApplication.Blazor
       displayName: Building Blazor Project
       workingDirectory: $(solutionDir)
+    
+    - script: msbuild ChatApplication.Database/ChatApplication.Database.sqlproj /t:Build /p:Configuration=Release /p:OutputPath="publish"
+      displayName: Building Database Project
+      workingDirectory: $(solutionDir)
 
-    - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)
+    - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)/api
       displayName: Publishing API project build to the artifact
       workingDirectory: $(solutionDir)
-    
 
     - task: PublishPipelineArtifact@1
       displayName: Publish the build artifact to the pipeline
       inputs:
-        targetPath: '$(build.artifactStagingDirectory)'
-        artifact: apiProject
+        targetPath: '$(build.artifactStagingDirectory)/api'
+        artifact: api
         publishLocation: 'pipeline'
 
 - stage: Deploy
   jobs:
-   - job: Deploy_Database
-     steps:
-      
    - job: Deploy_API
      steps:
      - task: DownloadPipelineArtifact@2
        inputs:
          buildType: 'current'
-         artifactName: 'apiProject'
-         targetPath: '$(Pipeline.Workspace)/apiproject'
+         artifactName: 'api'
+         targetPath: '$(Pipeline.Workspace)/api'
 
      - task: ArchiveFiles@2
        inputs:
-         rootFolderOrFile: '$(Pipeline.Workspace)/apiproject/'
+         rootFolderOrFile: '$(Pipeline.Workspace)/api/'
          includeRootFolder: false
          archiveType: 'zip'
          archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
