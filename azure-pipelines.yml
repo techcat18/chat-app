@@ -13,10 +13,14 @@ stages:
   jobs:
   - job: Build
     steps:
-    - script: dotnet build
-      displayName: Building Solution
+    - script: dotnet build ChatApplication.API
+      displayName: Building API Project
       workingDirectory: $(solutionDir)
 
+    - script: dotnet build ChatApplication.Blazor
+      displayName: Building Blazor Project
+      workingDirectory: $(solutionDir)
+      
     - task: DotNetCoreCLI@2
       displayName: Running Tests
       inputs:
