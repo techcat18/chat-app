@@ -5,7 +5,7 @@ variables:
   solutionDir: src
 
 pool:
-  name: OnPremisesAgentPool
+  name: WindowsAgentPool
   vmImage: winagent
 
 steps:
