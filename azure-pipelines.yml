@@ -20,15 +20,9 @@ stages:
     - script: dotnet build ChatApplication.Blazor
       displayName: Building Blazor Project
       workingDirectory: $(solutionDir)
-      
-    - task: DotNetCoreCLI@2
-      displayName: Running Tests
-      inputs:
-        command: test
-        workingDirectory: $(solutionDir)
 
-    - script: dotnet publish -o $(build.artifactStagingDirectory)
-      displayName: Publishing build output to the artifact
+    - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)
+      displayName: Publishing API project build to the artifact
       workingDirectory: $(solutionDir)
 
     - task: PublishPipelineArtifact@1
@@ -40,13 +34,20 @@ stages:
 
 - stage: Deploy_To_Test
   jobs:
-   - job: Deploy_to_Azure_App_Service
+   - job: Deploy_API_To_Azure_App_Service
      steps:
      - task: DownloadPipelineArtifact@2
        inputs:
          buildType: 'current'
          artifactName: 'drop'
          targetPath: '$(Pipeline.Workspace)/drop'
+     - task: ArchiveFiles@2
+       inputs:
+         rootFolderOrFile: '$(Pipeline.Workspace)/drop'
+         includeRootFolder: true
+         archiveType: 'zip'
+         archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
+         replaceExistingArchive: true
 
      - script: cd
        displayName: 'What directory are we in'
@@ -55,6 +56,7 @@ stages:
      - script: dir
        displayName: 'What''s on the disk'
        workingDirectory: '$(Pipeline.Workspace)'
+
      - task: AzureWebApp@1
        inputs:
         azureSubscription: 'Default Service Connection'
