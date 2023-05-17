@@ -62,5 +62,5 @@ stages:
         azureSubscription: 'Default Service Connection'
         appType: 'webApp'
         appName: 'ChatApplication-API'
-        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        package: '$(Pipeline.Workspace)/PublishedApp.zip'
         deploymentMethod: 'auto'
