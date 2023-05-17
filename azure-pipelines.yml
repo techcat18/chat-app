@@ -40,7 +40,7 @@ stages:
        inputs:
          buildType: 'current'
          artifactName: 'apiProject'
-         targetPath: '$(Pipeline.Workspace)'
+         targetPath: '$(Pipeline.Workspace)/apiproject'
 
      - task: ArchiveFiles@2
        inputs:
