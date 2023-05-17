@@ -45,7 +45,6 @@ stages:
      - task: ArchiveFiles@2
        inputs:
          rootFolderOrFile: '$(Pipeline.Workspace)/apiProject/'
-         includeRootFolder: true
          archiveType: 'zip'
          archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
          replaceExistingArchive: true
