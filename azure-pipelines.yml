@@ -20,48 +20,81 @@ stages:
     - script: dotnet build ChatApplication.Blazor
       displayName: Building Blazor Project
       workingDirectory: $(solutionDir)
+    
+    - task: MSBuild@1
+      displayName: Building Database Project
+      inputs:
+        solution: '**/*.sqlproj'
+    
+    - task: CopyFiles@2
+      displayName: Copy dacpac files
+      inputs:
+        Contents: '**/*.dacpac'
+        TargetFolder: '$(build.artifactStagingDirectory)/dacpac'
+        flattenFolders: true
+        
+    - task: PublishPipelineArtifact@1
+      displayName: Publish the database build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/dacpac'
+        artifact: dacpac
+        publishLocation: 'pipeline'
 
-    - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)
+    - script: dotnet publish ChatApplication.API -o $(build.artifactStagingDirectory)/api
       displayName: Publishing API project build to the artifact
       workingDirectory: $(solutionDir)
 
     - task: PublishPipelineArtifact@1
-      displayName: Publish the build artifact to the pipeline
+      displayName: Publish the API build artifact to the pipeline
       inputs:
-        targetPath: '$(build.artifactStagingDirectory)'
-        artifact: apiProject
+        targetPath: '$(build.artifactStagingDirectory)/api'
+        artifact: api
         publishLocation: 'pipeline'
 
-- stage: Deploy_To_Test
+- stage: Deploy
   jobs:
-   - job: Deploy_API_To_Azure_App_Service
+   - job: Deploy_API
      steps:
      - task: DownloadPipelineArtifact@2
        inputs:
          buildType: 'current'
-         artifactName: 'apiProject'
-         targetPath: '$(Pipeline.Workspace)/apiproject'
+         artifactName: 'api'
+         targetPath: '$(Pipeline.Workspace)/api'
+
+     - task: DownloadPipelineArtifact@2
+       inputs:
+         buildType: 'current'
+         artifactName: 'dacpac'
+         targetPath: '$(Pipeline.Workspace)/dacpac'
+
+     - task: SqlAzureDacpacDeployment@1
+       displayName: Publishing Database project to SQL Database
+       inputs:
+         azureSubscription: 'Default Service Connection'
+         AuthenticationType: 'server'
+         ServerName: 'default-db-server.database.windows.net'
+         DatabaseName: 'ChatApplication-DB'
+         SqlUsername: 'Kostia18@'
+         SqlPassword: 'Kxr7VPSM'
+         deployType: 'DacpacTask'
+         DeploymentAction: 'Publish'
+         DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
+         IpDetectionMethod: 'AutoDetect'
 
      - task: ArchiveFiles@2
        inputs:
-         rootFolderOrFile: '$(Pipeline.Workspace)/apiproject/'
+         rootFolderOrFile: '$(Pipeline.Workspace)/api/'
          includeRootFolder: false
          archiveType: 'zip'
          archiveFile: '$(Pipeline.Workspace)/PublishedApp.zip'
          replaceExistingArchive: true
 
-     - script: cd
-       displayName: 'What directory are we in'
-       workingDirectory: '$(Pipeline.Workspace)'
-
-     - script: dir
-       displayName: 'What''s on the disk'
-       workingDirectory: '$(Pipeline.Workspace)'
-
      - task: AzureWebApp@1
+       displayName: Publishing API project to App Service
        inputs:
         azureSubscription: 'Default Service Connection'
         appType: 'webApp'
         appName: 'ChatApplication-API'
         package: '$(Pipeline.Workspace)/PublishedApp.zip'
         deploymentMethod: 'auto'
+      
