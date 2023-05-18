@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApplication.API.Hubs;
 
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class VideoHub: Hub
 {
     private readonly IUserService _userService;

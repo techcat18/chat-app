@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApplication.API.Hubs;
 
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class ChatHub: Hub
 {
     private readonly IMessageService _messageService;
