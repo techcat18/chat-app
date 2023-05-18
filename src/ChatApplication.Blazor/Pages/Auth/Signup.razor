@@ -59,7 +59,7 @@
         }
         else
         {
-            Snackbar.Add("Something went wrong", Severity.Error);
+            Snackbar.Add($"Something went wrong: {response.ErrorMessage}", Severity.Error);
         }
     }
 }
