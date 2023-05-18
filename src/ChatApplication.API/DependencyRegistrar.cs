@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Azure.Identity;
 using ChatApplication.API.Middleware;
 using ChatApplication.Shared.Models.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,7 +48,7 @@ public static class DependencyRegistrar
                 };
             });
     }
-    
+
     public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder app)
     {
         return app.UseMiddleware<ExceptionHandlingMiddleware>();

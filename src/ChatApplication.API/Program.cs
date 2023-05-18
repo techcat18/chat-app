@@ -1,3 +1,4 @@
+using Azure.Identity;
 using ChatApplication.API;
 using ChatApplication.API.Hubs;
 using ChatApplication.BLL;
@@ -10,11 +11,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
+if (builder.Environment.IsProduction())
+{
+    var keyVaultUrl = new Uri(builder.Configuration.GetSection("AzureKeyVaultUrl").Value!);
+    var azureCredential = new DefaultAzureCredential();
+    
+    builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
         x => x
-            .WithOrigins(builder.Configuration.GetSection("FrontUrl").Value)
+            .WithOrigins(builder.Configuration.GetSection("FrontUrl").Value!)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
