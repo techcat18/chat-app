@@ -104,41 +104,41 @@
                         .Build();
 
                     await HubConnection.StartAsync();
-                }
+                    
+                    VideoHubConnection = new HubConnectionBuilder()
+                        .WithUrl($"{Configuration.GetSection("APIUrl").Value}videoHub?access_token={jwtToken}")
+                        .Build();
 
-                @*VideoHubConnection = new HubConnectionBuilder()
-                    .WithUrl($"{Configuration.GetSection("APIUrl").Value}videoHub?access_token={jwtToken}")
-                    .Build();
-
-                VideoHubConnection.On<string, string>("AnswerCall", async (userId, callerEmail) =>
-                {
-                    await InvokeAsync(() =>
+                    VideoHubConnection.On<string, string>("AnswerCall", async (userId, callerEmail) =>
                     {
-                        var parameters = new DialogParameters 
+                        await InvokeAsync(() =>
                         {
-                            ["CallerId"] = userId, ["ReceiverId"] = id,
-                            ["VideoHubConnection"] = VideoHubConnection, 
-                            ["CallerEmail"] = callerEmail 
-                        };
+                            var parameters = new DialogParameters 
+                            {
+                                ["CallerId"] = userId, ["ReceiverId"] = id,
+                                ["VideoHubConnection"] = VideoHubConnection, 
+                                ["CallerEmail"] = callerEmail 
+                            };
                         
-                        DialogService.Show<AcceptRejectCallDialog>("Accept or reject the call", parameters);
+                            DialogService.Show<AcceptRejectCallDialog>("Accept or reject the call", parameters);
+                        });
                     });
-                });
 
-                VideoHubConnection.On<string>("CallAccepted", async peerId =>
-                {
-                    var stream = await JsRuntime.InvokeAsync<IJSObjectReference>("getLocalStream");
-                    var peer = await JsRuntime.InvokeAsync<IJSObjectReference>("getPeer");
-                    await JsRuntime.InvokeVoidAsync("connectToNewUser", peerId, peer, stream);
-                });
+                    VideoHubConnection.On<string>("CallAccepted", async peerId =>
+                    {
+                        var stream = await JsRuntime.InvokeAsync<IJSObjectReference>("getLocalStream");
+                        var peer = await JsRuntime.InvokeAsync<IJSObjectReference>("getPeer");
+                        await JsRuntime.InvokeVoidAsync("connectToNewUser", peerId, peer, stream);
+                    });
 
-                VideoHubConnection.On("CallRejected", () =>
-                {
-                    SnackBar.Add("Call rejected", Severity.Error);
-                    NavigationManager.NavigateTo("/");
-                });
+                    VideoHubConnection.On("CallRejected", () =>
+                    {
+                        SnackBar.Add("Call rejected", Severity.Error);
+                        NavigationManager.NavigateTo("/");
+                    });
 
-                await VideoHubConnection.StartAsync();*@
+                    await VideoHubConnection.StartAsync();
+                }
             }
 
             StateHasChanged();
