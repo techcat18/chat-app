@@ -96,7 +96,16 @@
                 var id = authState.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
                 var jwtToken = await JsRuntime.InvokeAsync<string>("getJwtToken");
-                
+
+                if (!string.IsNullOrWhiteSpace(jwtToken))
+                {
+                    HubConnection = new HubConnectionBuilder()
+                        .WithUrl($"{Configuration.GetSection("APIUrl").Value}chatHub?access_token={jwtToken}")
+                        .Build();
+
+                    await HubConnection.StartAsync();
+                }
+
                 @*VideoHubConnection = new HubConnectionBuilder()
                     .WithUrl($"{Configuration.GetSection("APIUrl").Value}videoHub?access_token={jwtToken}")
                     .Build();
@@ -185,13 +194,4 @@
                 }
             }
         };
-
-    @*protected override async Task OnInitializedAsync()
-    {
-        HubConnection = new HubConnectionBuilder()
-            .WithUrl($"{Configuration.GetSection("APIUrl").Value}chatHub")
-            .Build();
-        
-        await HubConnection.StartAsync();
-    }*@
 }
