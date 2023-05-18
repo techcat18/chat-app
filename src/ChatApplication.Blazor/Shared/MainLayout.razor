@@ -97,7 +97,7 @@
 
                 var jwtToken = await JsRuntime.InvokeAsync<string>("getJwtToken");
                 
-                VideoHubConnection = new HubConnectionBuilder()
+                @*VideoHubConnection = new HubConnectionBuilder()
                     .WithUrl($"{Configuration.GetSection("APIUrl").Value}videoHub?access_token={jwtToken}")
                     .Build();
 
@@ -129,7 +129,7 @@
                     NavigationManager.NavigateTo("/");
                 });
 
-                await VideoHubConnection.StartAsync();
+                await VideoHubConnection.StartAsync();*@
             }
 
             StateHasChanged();
@@ -186,12 +186,12 @@
             }
         };
 
-    protected override async Task OnInitializedAsync()
+    @*protected override async Task OnInitializedAsync()
     {
         HubConnection = new HubConnectionBuilder()
             .WithUrl($"{Configuration.GetSection("APIUrl").Value}chatHub")
             .Build();
         
         await HubConnection.StartAsync();
-    }
+    }*@
 }
