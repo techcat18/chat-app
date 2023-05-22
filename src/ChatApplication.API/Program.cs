@@ -15,7 +15,7 @@ if (builder.Environment.IsProduction())
 {
     var keyVaultUrl = new Uri(builder.Configuration.GetSection("AzureKeyVaultUrl").Value!);
     var azureCredential = new DefaultAzureCredential();
-    
+            
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
 }
 
@@ -30,7 +30,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.ConfigureDataAccessLayer(builder.Configuration);
-builder.Services.ConfigureBusinessLogicLayer();
+builder.Services.ConfigureBusinessLogicLayer(builder.Configuration);
 builder.Services.ConfigureApiLayer(builder.Configuration);
 
 var app = builder.Build();

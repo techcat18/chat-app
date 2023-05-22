@@ -44,7 +44,7 @@
                 <div class="container__messages__item">
                     @if (message.SenderProfilePicture != null)
                     {
-                        <img class="container__messages__item-image" src="data:image/jpeg;base64,@message.SenderProfilePicture" alt="Profile picture"/>
+                        <img class="container__messages__item-image" src="@message.SenderProfilePicture" alt="Profile picture"/>
                     }
                     <div class="container__messages__item-info--left-side">
                         <p class="container__messages__item-email">@message.SenderEmail</p>

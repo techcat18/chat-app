@@ -1,16 +1,11 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.DAL.Data.Interfaces;
-using ChatApplication.DAL.Entities;
 using ChatApplication.DAL.Repositories.Interfaces;
-using ChatApplication.Shared.Exceptions.Auth;
 using ChatApplication.Shared.Exceptions.BadRequest;
 using ChatApplication.Shared.Exceptions.NotFound;
 using ChatApplication.Shared.Models;
 using ChatApplication.Shared.Models.User;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace ChatApplication.BLL.Services;
 
@@ -18,13 +13,16 @@ public class UserService: IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IStorageService _blobStorageService;
 
     public UserService(
         IUnitOfWork unitOfWork, 
-        IMapper mapper)
+        IMapper mapper, 
+        IStorageService blobStorageService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _blobStorageService = blobStorageService;
     }
     
     public async Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -32,7 +30,7 @@ public class UserService: IUserService
         var users = await _unitOfWork
             .GetRepository<IUserRepository>()
             .GetAllAsync(cancellationToken);
-        
+
         return _mapper.Map<IEnumerable<UserModel>>(users);
     }
 
@@ -97,10 +95,14 @@ public class UserService: IUserService
                        .GetByIdAsync(id, cancellationToken)
                    ?? throw new UserNotFoundException(id);
 
+        user.Image += "?" + await _blobStorageService.GetSasTokenAsync("user-photos", user.Email);
+
         return _mapper.Map<UserModel>(user);
     }
 
-    public async Task UpdateAsync(UpdateUserModel updateUserModel, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(
+        UpdateUserModel updateUserModel, 
+        CancellationToken cancellationToken = default)
     {
         var user = await _unitOfWork
                        .GetRepository<IUserRepository>()
@@ -136,8 +138,12 @@ public class UserService: IUserService
 
         if (updateUserModel.ImageBytes != null)
         {
-            var imageString = Convert.ToBase64String(updateUserModel.ImageBytes);
-            user.Image = imageString;
+            var stream = new MemoryStream(updateUserModel.ImageBytes);
+
+            var blobUri = 
+                await _blobStorageService.UploadAsync(stream, "user-photos", user.Email);
+
+            user.Image = blobUri;
         }
 
         if (updateUserModel.Age != null)
