@@ -16,7 +16,7 @@
         {
             "name": "[parameters('resourceGroupName')]",
             "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2021-05-01",
+            "apiVersion": "2022-09-01",
             "location": "eastus",
             "dependsOn": [],
             "tags": {}
