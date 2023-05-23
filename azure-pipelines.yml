@@ -5,7 +5,46 @@ pool:
   name: WindowsAgentPool
   vmImage: winagent
 
+variables: 
+  resourceGroupName: 'chatapp-rg'
+  subscription: 'Default Service Connection'
+  location: 'eastus'
+
 stages:
+- stage: Provision
+  jobs: 
+  - job: Provision_Resources
+    steps:
+    - task: AzureCLI@2  
+      displayName: 'Build bicep artifact' 
+      inputs: 
+        azureSubscription: $(subscription) 
+        scriptType: 'pscore'  
+        scriptLocation: 'inlineScript'  
+        inlineScript: 'az bicep build --file bicepdepl.bicep'  
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/main.json'
+        ArtifactName: 'bicepTemplate'
+        publishLocation: 'Container'
+    
+    - task: AzureCLI@2
+      displayName: 'Deploy bicep template'
+      inputs:
+        azureSubscription: $(subscription) 
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az group create --name $(resourceGroupName) --location $(location) \
+          az deployment group create  \
+          --resource-group $(resourceGroupName) \
+          --template-file $(Build.SourcesDirectory)/bicepdepl.bicep \
+          --parameters \
+          rg_name=$(resourceGroupName)
+          location=$(location)
+          
+
 - stage: Build
   jobs:
   - job: Build_API
@@ -86,7 +125,7 @@ stages:
      - task: SqlAzureDacpacDeployment@1
        displayName: Publishing Database project to SQL Database
        inputs:
-         azureSubscription: 'Default Service Connection'
+         azureSubscription: $(subscription)
          AuthenticationType: 'server'
          ServerName: 'default-db-server.database.windows.net'
          DatabaseName: 'ChatApplication-DB'
@@ -116,7 +155,7 @@ stages:
      - task: AzureWebApp@1
        displayName: Publishing API project to App Service
        inputs:
-        azureSubscription: 'Default Service Connection'
+        azureSubscription: $(subscription)
         appType: 'webApp'
         appName: 'ChatApplication-API'
         package: '$(Pipeline.Workspace)/PublishedApi.zip'
@@ -141,7 +180,7 @@ stages:
      - task: AzureWebApp@1
        displayName: Publishing Blazor project to App Service
        inputs:
-        azureSubscription: 'Default Service Connection'
+        azureSubscription: $(subscription)
         appType: 'webApp'
         appName: 'ChatApplication-Blazor'
         package: '$(Pipeline.Workspace)/PublishedBlazor.zip'

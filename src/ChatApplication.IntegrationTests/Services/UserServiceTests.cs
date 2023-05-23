@@ -28,7 +28,8 @@ public class UserServiceTests
 
         _userService = new UserService(
             unitOfWork,
-            mapper);
+            mapper,
+            null); //TODO: fix later
     }
     
     [SetUp]
