@@ -11,7 +11,7 @@
         "location": {
             "type": "string",
             "metadata": {
-                "description": "eastus"
+                "description": "Location for the storage account"
             }
         },
         "sku": {

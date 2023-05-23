@@ -6,7 +6,7 @@
             "value": "stg-test1212" 
         },
         "location": {
-            "value": "useast" 
+            "value": "eastus" 
         },
         "sku": {
             "value": "Standard_LRS" 
