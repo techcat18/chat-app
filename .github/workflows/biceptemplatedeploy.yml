@@ -44,7 +44,7 @@ jobs:
         with:
           inlineScript: |
             az deployment group create \
-            --resource-group ${{ env.rg_name }}
+            --resource-group ${{ env.rg_name }} \
             --template-file ./bicep-templates/virtualnetwork.bicep \
             --parameters \
             vNetPrefix=bicepazclitest
