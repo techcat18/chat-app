@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "storageAccountName": {
-            "value": "stg-test1212" 
+            "value": "stgtest1212" 
         },
         "location": {
             "value": "eastus" 
