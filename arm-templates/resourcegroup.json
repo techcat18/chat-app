@@ -5,7 +5,7 @@
         "resourceGroupName": {
             "type": "string",
             "metadata": {
-                "description": "The name for the resource group"
+                "description": "Name for the resource group"
             },
             "defaultValue": "rg-test"
         }
