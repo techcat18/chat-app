@@ -21,7 +21,10 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }} 
 
       - name: Deploy Resource Group
-        uses: Azure/cli@1.0.4
+        uses: Azure/arm-deploy@v1
         with:
-          inlinescript: |
-            az deployment sub create --location eastus --template-file ./arm-templates/resourcegroup.json
+          scope: subscription
+          subscriptionId: c95fc188-feb0-42fb-86ac-27763f04107a
+          region: US East
+          template: ./arm-templates/resourcegroup.json
+          deploymentName: rg-test
