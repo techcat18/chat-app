@@ -5,6 +5,8 @@ on:
     branches:
       - "main"
 
+  workflow_dispatch:
+
 env:
   subscriptionId: c95fc188-feb0-42fb-86ac-27763f04107a
 
@@ -32,7 +34,7 @@ jobs:
             az deployment sub create \
             --name ${{ env.rg_name }} \
             --location ${{ env.location }} \
-            --template-file ./bicep-templates/resourcegroup.bicep
+            --template-file ./bicep-templates/resourcegroup.bicep \
             --parameters \
             resourceGroupName=${{ env.rg_name }} \
             location=${{ env.location }} \
@@ -43,7 +45,7 @@ jobs:
           inlineScript: |
             az deployment group create \
             --resource-group ${{ env.rg_name }}
-            --template-file ./bicep-templates/virtualnetwork.bicep
+            --template-file ./bicep-templates/virtualnetwork.bicep \
             --parameters \
             vNetPrefix=bicepazclitest
             location=${{ env.location }}
