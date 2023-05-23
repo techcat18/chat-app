@@ -79,7 +79,7 @@ jobs:
           scope: resourcegroup
           resourceGroupName: ${{ env.rg_name }}
           subscriptionId: c95fc188-feb0-42fb-86ac-27763f04107a
-          template: ./bicep-templates/resourcegroup.bicep
+          template: ./bicep-templates/virtualnetwork.bicep
           parameters:
             vNetPrefix=bicepamrtest
             location=${{ env.location }}
