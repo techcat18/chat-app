@@ -19,3 +19,9 @@ jobs:
         uses: Azure/Login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }} 
+
+      - name: Deploy Resource Group
+        uses: Azure/cli@1.0.4
+        with:
+          inlinescript: |
+            az deployment sub create --location eastus --template-file ./arm-templates/resourcegroup.json
