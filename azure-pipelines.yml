@@ -19,7 +19,7 @@ stages:
       displayName: 'Build bicep artifact' 
       inputs: 
         azureSubscription: $(subscription) 
-        scriptType: 'pscore'  
+        scriptType: 'ps'  
         scriptLocation: 'inlineScript'  
         inlineScript: 'az bicep build --file bicepdepl.bicep'  
 
@@ -33,7 +33,7 @@ stages:
       displayName: 'Deploy bicep template'
       inputs:
         azureSubscription: $(subscription) 
-        scriptType: 'pscore'
+        scriptType: 'ps'
         scriptLocation: 'inlineScript'
         inlineScript: |
           az group create --name $(resourceGroupName) --location $(location) \
@@ -41,7 +41,7 @@ stages:
           --resource-group $(resourceGroupName) \
           --template-file $(Build.SourcesDirectory)/bicepdepl.bicep \
           --parameters \
-          rg_name=$(resourceGroupName)
+          rg_name=testRG
           location=$(location)
           
 
