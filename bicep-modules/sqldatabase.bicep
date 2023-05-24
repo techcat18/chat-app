@@ -1,6 +1,6 @@
-param location string
-param sqlServerName string
-param sqlServerDatabaseName string
+param location string = resourceGroup().location
+param sqlServerName string = 'chatappsqlserver'
+param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
 @secure()
 param dbLogin string
 @secure()
@@ -11,16 +11,18 @@ targetScope = 'resourceGroup'
 resource sqlServer 'Microsoft.Sql/servers@2014-04-01' ={
   name: sqlServerName
   location: location
+  properties:{
+    administratorLogin: dbLogin
+    administratorLoginPassword: dbPassword
+  }
 }
 
-resource sqlServerDatabase 'Microsoft.Sql/servers/databases@2014-04-01' = {
+resource sqlServerDatabase 'Microsoft.Sql/servers/databases@2021-11-01' = {
   parent: sqlServer
   name: sqlServerDatabaseName
   location: location
-  properties: {
-    collation: 'collation'
-    edition: 'Basic'
-    maxSizeBytes: 'maxSizeBytes'
-    requestedServiceObjectiveName: 'Basic'
+  sku: {
+    name: 'Basic'
+    tier: 'Basic'
   }
 }

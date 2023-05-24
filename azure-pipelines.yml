@@ -28,6 +28,9 @@ stages:
 
     - task: AzureCLI@2
       displayName: Creating resources defined in main.bicep
+      env:
+        SQL_LOGIN: $(db_login)
+        SQL_PASSWORD: $(db_password)
       inputs:
         azureSubscription: $(subscription)
         scriptType: 'ps'
@@ -37,7 +40,7 @@ stages:
           az deployment group create \
           --resource-group $(resourceGroupName) \
           --template-file $(templateFile) \
-          --parameters location=eastus
+          --parameters location=$(location) dbLogin=$SQL_LOGIN dbPassword=$SQL_PASSWORD
 
 - stage: Build
   jobs:

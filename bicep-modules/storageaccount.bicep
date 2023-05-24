@@ -4,7 +4,7 @@ param storageAccountName string
 
 targetScope = 'resourceGroup'
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: storageAccountName
   location: location
   kind: 'StorageV2'
@@ -13,4 +13,4 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   }
 }
 
-output storageEndpoint object = storageaccount.properties.primaryEndpoints
+output storageEndpoint object = storageAccount.properties.primaryEndpoints
