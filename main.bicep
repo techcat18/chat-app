@@ -33,4 +33,13 @@ module appServicePlan './bicep-modules/appserviceplan.bicep' = {
   }
 }
 
-output appServicePlanId string = appServicePlan.outputs.appServicePlanId
+module appService './bicep-modules/appservice.bicep' = {
+  name: 'appServiceDeploy'
+  params: {
+    location: location
+    appServicePlanId: appServicePlan.outputs.appServicePlanId
+  }
+  dependsOn: [
+    appServicePlan
+  ]
+}
