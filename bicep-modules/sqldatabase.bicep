@@ -8,7 +8,7 @@ param dbPassword string
 
 targetScope = 'resourceGroup'
 
-resource sqlServer 'Microsoft.Sql/servers@2014-04-01' ={
+resource sqlServer 'Microsoft.Sql/servers@2021-11-01' ={
   name: sqlServerName
   location: location
   properties:{
