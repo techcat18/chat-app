@@ -19,7 +19,7 @@ stages:
     - task: AzureCLI@2
       inputs:
         azureSubscription: $(subscription)
-        scriptType: bash
+        scriptType: 'ps'
         scriptLocation: inlineScript
         useGlobalConfig: false
         inlineScript: |
