@@ -26,9 +26,11 @@ module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
   }
 }
 
-module appService './bicep-modules/appservice.bicep' = {
-  name: 'appServiceDeploy'
+module appServicePlan './bicep-modules/appserviceplan.bicep' = {
+  name: 'appServicePlanDeploy'
   params: {
     location: location
   }
 }
+
+output appServicePlanId string = appServicePlan.outputs.appServicePlanId
