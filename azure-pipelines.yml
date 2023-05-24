@@ -23,9 +23,6 @@ stages:
         scriptLocation: inlineScript
         useGlobalConfig: true
         inlineScript: |
-          az --version
-          az config set bicep.use_binary_from_path=False
-          az bicep install
           az group create --name $(resourceGroupName) --location $(location)
           az deployment group create --resource-group $(resourceGroupName) --template-file $(templateFile) --parameters location=eastus
 

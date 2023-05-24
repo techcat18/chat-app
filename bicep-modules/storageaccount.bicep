@@ -1,10 +1,11 @@
 param location string
 param storageSkuName string = 'Standard_LRS'
+param storageAccountName string
 
 targetScope = 'resourceGroup'
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: 'chatappstorageacc18'
+  name: storageAccountName
   location: location
   kind: 'StorageV2'
   sku: {

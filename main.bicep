@@ -1,12 +1,14 @@
 param location string
 param storageSkuName string = 'Standard_LRS'
+param storageAccountName string = 'chatappstorageacc18'
 
-module saModule './bicep-modules/storageaccount.bicep' = {
+module storageAccountModule './bicep-modules/storageaccount.bicep' = {
   name: 'storageAccountDeploy'
   params: {
     location: location
     storageSkuName: storageSkuName
+    storageAccountName: storageAccountName
   }
 }
 
-output storageEndpoint object = saModule.outputs.storageEndpoint
+output storageEndpoint object = storageAccountModule.outputs.storageEndpoint
