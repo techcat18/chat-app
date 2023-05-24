@@ -21,9 +21,9 @@ stages:
         azureSubscription: $(subscription)
         scriptType: 'ps'
         scriptLocation: inlineScript
-        useGlobalConfig: false
         inlineScript: |
           az --version
+          az bicep install
           az group create --name $(resourceGroupName) --location $(location)
           az deployment group create --resource-group $(resourceGroupName) --template-file $(templateFile)
 
