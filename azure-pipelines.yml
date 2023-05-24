@@ -9,41 +9,23 @@ variables:
   resourceGroupName: 'chatapp-rg'
   subscription: 'Default Service Connection'
   location: 'eastus'
+  templateFile: 'main.bicep'
 
 stages:
 - stage: Provision
   jobs: 
   - job: Provision_Resources
     steps:
-    - task: AzureCLI@2  
-      displayName: 'Build bicep artifact' 
-      inputs: 
-        azureSubscription: $(subscription) 
-        scriptType: 'ps'  
-        scriptLocation: 'inlineScript'  
-        inlineScript: 'az bicep build --file bicepdepl.bicep'  
-
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/main.json'
-        ArtifactName: 'bicepTemplate'
-        publishLocation: 'Container'
-    
     - task: AzureCLI@2
-      displayName: 'Deploy bicep template'
       inputs:
-        azureSubscription: $(subscription) 
-        scriptType: 'ps'
-        scriptLocation: 'inlineScript'
+        azureSubscription: $(subscription)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
         inlineScript: |
-          az group create --name $(resourceGroupName) --location $(location) \
-          az deployment group create  \
-          --resource-group $(resourceGroupName) \
-          --template-file $(Build.SourcesDirectory)/bicepdepl.bicep \
-          --parameters \
-          rg_name=testRG
-          location=$(location)
-          
+          az --version
+          az group create --name $(resourceGroupName) --location $(location)
+          az deployment group create --resource-group $(resourceGroupName) --template-file $(templateFile)
 
 - stage: Build
   jobs:
