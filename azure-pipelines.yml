@@ -17,6 +17,7 @@ stages:
   - job: Provision_Resources
     steps:
     - task: AzureCLI@2
+      displayName: Creating Resource Group
       inputs:
         azureSubscription: $(subscription)
         scriptType: 'ps'
@@ -24,7 +25,19 @@ stages:
         useGlobalConfig: true
         inlineScript: |
           az group create --name $(resourceGroupName) --location $(location)
-          az deployment group create --resource-group $(resourceGroupName) --template-file $(templateFile) --parameters location=eastus
+
+    - task: AzureCLI@2
+      displayName: Creating resources defined in main.bicep
+      inputs:
+        azureSubscription: $(subscription)
+        scriptType: 'ps'
+        scriptLocation: inlineScript
+        useGlobalConfig: true
+        inlineScript: |
+          az deployment group create \
+          --resource-group $(resourceGroupName) \
+          --template-file $(templateFile) \
+          --parameters location=eastus
 
 - stage: Build
   jobs:
