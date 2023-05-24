@@ -40,7 +40,7 @@ stages:
           az deployment group create `
           --resource-group $(resourceGroupName) `
           --template-file $(templateFile) `
-          --parameters location=$(location) dbLogin=$SQL_LOGIN dbPassword=$SQL_PASSWORD `
+          --parameters location=$(location) dbLogin=$SQL_LOGIN dbPassword=$SQL_PASSWORD
 
 - stage: Build
   jobs:
