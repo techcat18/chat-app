@@ -21,6 +21,7 @@ stages:
         azureSubscription: $(subscription)
         scriptType: 'ps'
         scriptLocation: inlineScript
+        useGlobalConfig: true
         inlineScript: |
           az --version
           az config set bicep.use_binary_from_path=False
