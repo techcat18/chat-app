@@ -25,3 +25,10 @@ module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
     dbPassword: dbPassword
   }
 }
+
+module appService './bicep-modules/appservice.bicep' = {
+  name: 'appServiceDeploy'
+  params: {
+    location: location
+  }
+}
