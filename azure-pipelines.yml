@@ -30,8 +30,7 @@ stages:
           az deployment group create \
           --resource-group $(resourceGroupName) \
           --template-file $(templateFile) \
-          --parameters \
-          location=location
+          --parameters location=eastus
 
 - stage: Build
   jobs:
