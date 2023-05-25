@@ -22,3 +22,4 @@ resource blazorAppService 'Microsoft.Web/sites@2021-01-15' = {
   }
 }
 
+output apiAppServicePrincipalId string = apiAppService.identity.principalId

@@ -1,6 +1,7 @@
 param location string = resourceGroup().location
 param sqlServerName string = 'chatappsqlserver'
 param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
+param initialCatalog string = 'chatdb'
 @secure()
 param dbLogin string
 @secure()
@@ -26,3 +27,6 @@ resource sqlServerDatabase 'Microsoft.Sql/servers/databases@2021-11-01' = {
     tier: 'Basic'
   }
 }
+
+output sqlServerDatabaseConnection string = 'Server=tcp:${sqlServerDatabase.name}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=db${initialCatalog};Persist Security Info=False;User ID=username;Password=password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+

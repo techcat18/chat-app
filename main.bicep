@@ -15,7 +15,7 @@ module storageAccountModule './bicep-modules/storageaccount.bicep' = {
   }
 }
 
-output storageEndpoint object = storageAccountModule.outputs.storageEndpoint
+var storageEndpoint = storageAccountModule.outputs.storageEndpoint
 
 module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
   name: 'sqlDatabaseDeploy'
@@ -42,4 +42,13 @@ module appService './bicep-modules/appservice.bicep' = {
   dependsOn: [
     appServicePlan
   ]
+}
+
+module keyVault './bicep-modules/keyvault.bicep' = {
+  name: 'KeyVaultDeploy'
+  params: {
+    location: location
+    apiAppServicePrincipalId: appService.outputs.apiAppServicePrincipalId
+    sqlServerDatabaseConnection: sqlServerDatabase.outputs.sqlServerDatabaseConnection
+  }
 }
