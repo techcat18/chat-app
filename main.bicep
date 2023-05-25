@@ -24,6 +24,7 @@ module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
   }
 }
 
+output myOutput string = 'Hello there'
 output sqlServerName string = sqlServerDatabase.outputs.sqlServerName
 
 module appServicePlan './bicep-modules/appserviceplan.bicep' = {
