@@ -1,5 +1,5 @@
 param location string = resourceGroup().location
-param keyVaultName string = 'chatappkeyvault18'
+param keyVaultName string = 'chatappkeyvaulttttt'
 param apiAppServicePrincipalId string
 @secure()
 param sqlServerDatabaseConnection string
