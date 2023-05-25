@@ -1,4 +1,5 @@
-﻿using ChatApplication.BLL.Services;
+﻿using ChatApplication.BLL.Abstractions.Services;
+using ChatApplication.BLL.Services;
 using ChatApplication.DAL.Data;
 using ChatApplication.IntegrationTests.Utility;
 using ChatApplication.Shared.Exceptions.BadRequest;
@@ -6,6 +7,7 @@ using ChatApplication.Shared.Exceptions.NotFound;
 using ChatApplication.Shared.Models.User;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 
 namespace ChatApplication.IntegrationTests.Services;
@@ -26,10 +28,16 @@ public class UserServiceTests
         var unitOfWork = ServiceHelper.CreateUnitOfWork(_context, serviceProvider);
         var mapper = ServiceHelper.CreateMapper();
 
+        var mockBlobStorage = new Mock<IStorageService>();
+
+        mockBlobStorage
+            .Setup(x => x.GetSasTokenAsync(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync("link");
+
         _userService = new UserService(
             unitOfWork,
             mapper,
-            null); //TODO: fix later
+            mockBlobStorage.Object);
     }
     
     [SetUp]
