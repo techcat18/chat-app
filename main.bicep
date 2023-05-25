@@ -15,8 +15,6 @@ module storageAccount './bicep-modules/storageaccount.bicep' = {
   }
 }
 
-var storageEndpoint = storageAccount.outputs.storageEndpoint
-
 module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
   name: 'sqlDatabaseDeploy'
   params: {

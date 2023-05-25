@@ -25,7 +25,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
       }
       {
         tenantId: subscription().tenantId
-        objectId: subscription().subscriptionId
+        objectId: 'c95fc188-feb0-42fb-86ac-27763f04107a'
         permissions: {
           secrets: [
             'get'
