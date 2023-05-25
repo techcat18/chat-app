@@ -168,7 +168,7 @@ stages:
        inputs:
         azureSubscription: $(subscription)
         appType: 'webApp'
-        appName: 'ChatApplication-API'
+        appName: '$(apiAppServiceName)'
         package: '$(Pipeline.Workspace)/PublishedApi.zip'
         deploymentMethod: 'auto'
       
@@ -193,6 +193,6 @@ stages:
        inputs:
         azureSubscription: $(subscription)
         appType: 'webApp'
-        appName: 'ChatApplication-Blazor'
+        appName: '$(blazorAppServiceName)'
         package: '$(Pipeline.Workspace)/PublishedBlazor.zip'
         deploymentMethod: 'auto'
