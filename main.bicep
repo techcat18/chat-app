@@ -1,6 +1,10 @@
 param location string
 param storageSkuName string = 'Standard_LRS'
 param storageAccountName string = 'chatappstorageacc18'
+param sqlServerName string = 'chatappsqlserver'
+param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
+param apiAppServiceName string
+param blazorAppServiceName string
 @secure()
 param dbLogin string
 @secure()
@@ -21,11 +25,10 @@ module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
     location: location
     dbLogin: dbLogin
     dbPassword: dbPassword
+    sqlServerName: sqlServerName
+    sqlServerDatabaseName: sqlServerDatabaseName
   }
 }
-
-output myOutput string = 'Hello there'
-output sqlServerName string = sqlServerDatabase.outputs.sqlServerName
 
 module appServicePlan './bicep-modules/appserviceplan.bicep' = {
   name: 'appServicePlanDeploy'
@@ -39,6 +42,8 @@ module appService './bicep-modules/appservice.bicep' = {
   params: {
     location: location
     appServicePlanId: appServicePlan.outputs.appServicePlanId
+    apiAppServiceName: apiAppServiceName
+    blazorAppServiceName: blazorAppServiceName
   }
   dependsOn: [
     appServicePlan

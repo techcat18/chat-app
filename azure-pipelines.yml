@@ -10,6 +10,10 @@ variables:
   subscription: 'Default Service Connection'
   location: 'eastus'
   templateFile: 'main.bicep'
+  sqlServerName: 'chatappsqlserver'
+  sqlServerDatabaseName: 'chatappsqlserverdatabase'
+  apiAppServiceName: 'chatapiappservice'
+  blazorAppServiceName: 'chatblazorappservice'
 
 stages:
 - stage: Provision
@@ -40,18 +44,14 @@ stages:
           az deployment group create `
           --resource-group $(resourceGroupName) `
           --template-file $(templateFile) `
-          --parameters location=$(location) dbLogin=$env:SQL_LOGIN dbPassword=$env:SQL_PASSWORD
-
-    - task: AzurePowerShell@5
-      inputs:
-        azureSubscription: $(subscription)
-        ScriptType: 'InlineScript'
-        Inline: |
-          $outputValue = az bicep build --file main.bicep --query 'outputs.myOutput' -o tsv
-          Write-Host "##vso[task.setvariable variable=myOutput]$outputValue"
-
-    - script: echo $(outputValue)
-      displayName: 'Dummy stuff'
+          --parameters `
+            location=$(location) `
+            dbLogin=$env:SQL_LOGIN `
+            dbPassword=$env:SQL_PASSWORD `
+            sqlServerName=$(sqlServerName) `
+            sqlServerDatabaseName=$(sqlServerDatabaseName) `
+            apiAppServiceName=$(apiAppServiceName) `
+            blazorAppServiceName=$(blazorAppServiceName)
 
 - stage: Build
   jobs:
@@ -138,8 +138,8 @@ stages:
        inputs:
          azureSubscription: $(subscription)
          AuthenticationType: 'server'
-         ServerName: '$(sqlServerName.outputs.sqlServerName).database.windows.net'
-         DatabaseName: '$(sqlServerDataba)'
+         ServerName: '$(sqlServerName).database.windows.net'
+         DatabaseName: '$(sqlServerDatabaseName)'
          SqlUsername: $env:SQL_LOGIN
          SqlPassword: $env:SQL_PASSWORD
          deployType: 'DacpacTask'
