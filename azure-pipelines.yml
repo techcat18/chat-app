@@ -45,7 +45,7 @@ stages:
     - task: AzureCLI@2
       displayName: Set Pipeline Varaibles
       inputs:
-        azureSubscription: $(azureServiceConnection)
+        azureSubscription: $(subscription)
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
