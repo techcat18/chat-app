@@ -18,6 +18,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
           ]
         }
       }
+      {
+        tenantId: subscription().tenantId
+        objectId: subscription().id
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+      }
     ]
     sku: {
       name: 'standard'
