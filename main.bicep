@@ -6,7 +6,7 @@ param dbLogin string
 @secure()
 param dbPassword string
 
-module storageAccountModule './bicep-modules/storageaccount.bicep' = {
+module storageAccount './bicep-modules/storageaccount.bicep' = {
   name: 'storageAccountDeploy'
   params: {
     location: location
@@ -15,7 +15,7 @@ module storageAccountModule './bicep-modules/storageaccount.bicep' = {
   }
 }
 
-var storageEndpoint = storageAccountModule.outputs.storageEndpoint
+var storageEndpoint = storageAccount.outputs.storageEndpoint
 
 module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
   name: 'sqlDatabaseDeploy'
@@ -50,5 +50,7 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     location: location
     apiAppServicePrincipalId: appService.outputs.apiAppServicePrincipalId
     sqlServerDatabaseConnection: sqlServerDatabase.outputs.sqlServerDatabaseConnection
+    storageAccessKey: storageAccount.outputs.storageAccessKey
+    storageConnectionString: storageAccount.outputs.storageConnectionString
   }
 }

@@ -1,7 +1,12 @@
 param location string = resourceGroup().location
 param keyVaultName string = 'chatappkeyvault18'
 param apiAppServicePrincipalId string
+@secure()
 param sqlServerDatabaseConnection string
+@secure()
+param storageAccessKey string
+@secure()
+param storageConnectionString string
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
   name: keyVaultName
@@ -48,7 +53,7 @@ resource blobStorageAccessKey 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   parent: keyVault
   name: 'Azure--Blob--AccessKey'
   properties: {
-    value: 'value'
+    value: storageAccessKey
   }
 }
 
@@ -56,6 +61,6 @@ resource blobStorageConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-
   parent: keyVault
   name: 'Azure--Blob--ConnectionString'
   properties: {
-    value: 'value'
+    value: storageConnectionString
   }
 }
