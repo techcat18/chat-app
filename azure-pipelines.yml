@@ -42,6 +42,23 @@ stages:
           --template-file $(templateFile) `
           --parameters location=$(location) dbLogin=$env:SQL_LOGIN dbPassword=$env:SQL_PASSWORD
 
+    - task: AzureCLI@2
+      displayName: Set Pipeline Varaibles
+      inputs:
+        azureSubscription: $(azureServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          deploymentOutputs=$(az deployment group show \
+          --resource-group $(azureResourceGroup) \
+          --name $(deploymentName) \
+          --query properties.outputs | jq -c 'to_entries[] | [.key, .value.value]')
+          echo "$deploymentOutputs" | while IFS=$'\n' read -r c; do
+            outputname=$(echo "$c" | jq -r '.[0]')
+            outputvalue=$(echo "$c" | jq -r '.[1]')
+            echo "##vso[task.setvariable variable=$outputname;]$outputvalue"
+          done
+
 - stage: Build
   jobs:
   - job: Build_API
@@ -121,13 +138,16 @@ stages:
 
      - task: SqlAzureDacpacDeployment@1
        displayName: Publishing Database project to SQL Database
+       env:
+        SQL_LOGIN: $(db_login)
+        SQL_PASSWORD: $(db_password)
        inputs:
          azureSubscription: $(subscription)
          AuthenticationType: 'server'
-         ServerName: 'default-db-server.database.windows.net'
-         DatabaseName: 'ChatApplication-DB'
-         SqlUsername: '$(db_username)'
-         SqlPassword: '$(db_password)'
+         ServerName: '$(sqlServerName.outputs.sqlServerName).database.windows.net'
+         DatabaseName: '$(sqlServerDataba)'
+         SqlUsername: $env:SQL_LOGIN
+         SqlPassword: $env:SQL_PASSWORD
          deployType: 'DacpacTask'
          DeploymentAction: 'Publish'
          DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'

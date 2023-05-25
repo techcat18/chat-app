@@ -24,6 +24,8 @@ module sqlServerDatabase './bicep-modules/sqldatabase.bicep' = {
   }
 }
 
+output sqlServerName string = sqlServerDatabase.outputs.sqlServerName
+
 module appServicePlan './bicep-modules/appserviceplan.bicep' = {
   name: 'appServicePlanDeploy'
   params: {
