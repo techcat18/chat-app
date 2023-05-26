@@ -142,7 +142,7 @@ stages:
          AuthenticationType: 'server'
          ServerName: '$(sqlServerName).database.windows.net'
          DatabaseName: '$(sqlServerDatabaseName)'
-         SqlUsername: $env:SQL_LOGIN
+         SqlUsername: Kostia18
          SqlPassword: $env:SQL_PASSWORD
          deployType: 'DacpacTask'
          DeploymentAction: 'Publish'
