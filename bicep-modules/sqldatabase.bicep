@@ -32,7 +32,7 @@ resource sqlFirewallRuleForAzureResources 'Microsoft.Sql/servers/firewallRules@2
   name: 'AllowAllAzureResources'
   properties: {
     startIpAddress: '0.0.0.0'
-    endIpAddress: '0.0.0.0'
+    endIpAddress: '0.0.0.0' 
   }
 }
 
