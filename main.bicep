@@ -3,7 +3,7 @@ param storageSkuName string = 'Standard_LRS'
 param storageAccountName string = 'chatappstorageacc18'
 param sqlServerName string = 'chatappsqlserver'
 param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
-param initialCatalog string = 'chatappdb'
+param initialCatalog string = 'chatappsqlserverdatabase'
 param apiAppServiceName string
 param blazorAppServiceName string
 param keyVaultName string
@@ -64,7 +64,7 @@ module keyVault './bicep-modules/keyvault.bicep' = {
   }
 }
 
-module appSettings './bicep-modules/appserviceconfig.bicep' = {
+module ApiAppSettings './bicep-modules/appserviceconfig.bicep' = {
   name: '${apiAppServiceName}-appsettings'
   params: {
     webAppName: apiAppServiceName
@@ -78,6 +78,20 @@ module appSettings './bicep-modules/appserviceconfig.bicep' = {
       ConnectionStrings__SQLConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=db${initialCatalog};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
       Azure__Blob__ConnectionString: storageAccount.outputs.storageConnectionString
       Azure__Blob__AccessKey: storageAccount.outputs.storageAccessKey
+    }
+  }
+  dependsOn: [
+    keyVault
+  ]
+}
+
+module BlazorAppSettings './bicep-modules/appserviceconfig.bicep' = {
+  name: '${blazorAppServiceName}-appsettings'
+  params: {
+    webAppName: blazorAppServiceName
+    currentAppSettings: list(resourceId('Microsoft.Web/sites/config', blazorAppServiceName, 'appsettings'), '2022-03-01').properties
+    appSettings: {
+      APIUrl: 'http://${apiAppServiceName}.azurewebsites.net/'
     }
   }
   dependsOn: [
