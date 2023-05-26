@@ -18,12 +18,21 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01' ={
   }
 }
 
-resource sqlServerFirewallRules 'Microsoft.Sql/servers/firewallRules@2021-02-01-preview' = {
+resource sqlFirewallRuleForMyIP 'Microsoft.Sql/servers/firewallRules@2021-02-01-preview' = {
   parent: sqlServer
-  name: 'name'
+  name: 'AllowMyIp'
   properties: {
     startIpAddress: '159.224.53.92'
     endIpAddress: '159.224.53.92'
+  }
+}
+
+resource sqlFirewallRuleForAzureResources 'Microsoft.Sql/servers/firewallRules@2021-02-01-preview' = {
+  parent: sqlServer
+  name: 'AllowAllAzureResources'
+  properties: {
+    startIpAddress: '0.0.0.0'
+    endIpAddress: '0.0.0.0'
   }
 }
 
