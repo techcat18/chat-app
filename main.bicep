@@ -3,6 +3,7 @@ param storageSkuName string = 'Standard_LRS'
 param storageAccountName string = 'chatappstorageacc18'
 param sqlServerName string = 'chatappsqlserver'
 param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
+param initialCatalog string = 'chatappdb'
 param apiAppServiceName string
 param blazorAppServiceName string
 param keyVaultName string
@@ -57,7 +58,7 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     location: location
     keyVaultName: keyVaultName
     apiAppServicePrincipalId: appService.outputs.apiAppServicePrincipalId
-    sqlServerDatabaseConnection: sqlServerDatabase.outputs.sqlServerDatabaseConnection
+    sqlServerDatabaseConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=db${initialCatalog};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
   }
@@ -74,7 +75,7 @@ module appSettings './bicep-modules/appserviceconfig.bicep' = {
       JwtSettings__Key: 'ChatApp123091204890128308120'
       JwtSettings__Audience: 'BlazorApp'
       JwtSettings__Issuer: 'ChatAppAPI'
-      ConnectionStrings__SQLConnection: sqlServerDatabase.outputs.sqlServerDatabaseConnection
+      ConnectionStrings__SQLConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=db${initialCatalog};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
       Azure__Blob__ConnectionString: storageAccount.outputs.storageConnectionString
       Azure__Blob__AccessKey: storageAccount.outputs.storageAccessKey
     }
