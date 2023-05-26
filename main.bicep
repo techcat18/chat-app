@@ -70,6 +70,13 @@ module appSettings './bicep-modules/appserviceconfig.bicep' = {
     currentAppSettings: list(resourceId('Microsoft.Web/sites/config', apiAppServiceName, 'appsettings'), '2022-03-01').properties
     appSettings: {
       AzureKeyVaultUrl: keyVault.outputs.keyVaultUri
+      FrontUrl: 'http://${blazorAppServiceName}.azurewebsites.net/'
+      JwtSettings__Key: 'ChatApp123091204890128308120'
+      JwtSettings__Audience: 'BlazorApp'
+      JwtSettings__Issuer: 'ChatAppAPI'
+      ConnectionStrings__SQLConnection: sqlServerDatabase.outputs.sqlServerDatabaseConnection
+      Azure__Blob__ConnectionString: storageAccount.outputs.storageConnectionString
+      Azure__Blob__AccessKey: storageAccount.outputs.storageAccessKey
     }
   }
   dependsOn: [
