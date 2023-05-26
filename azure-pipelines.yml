@@ -14,7 +14,7 @@ variables:
   sqlServerDatabaseName: 'chatappsqlserverdatabase'
   apiAppServiceName: 'chatapiappservice'
   blazorAppServiceName: 'chatblazorappservice'
-  keyVaultName: 'chatappkeyvaulttttt'
+  keyVaultName: 'chatappvault18'
 
 stages:
 - stage: Provision
