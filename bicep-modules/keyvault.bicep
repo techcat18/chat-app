@@ -64,3 +64,5 @@ resource blobStorageConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-
     value: storageConnectionString
   }
 }
+
+output keyVaultUri string = keyVault.properties.vaultUri

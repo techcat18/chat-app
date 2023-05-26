@@ -1,12 +1,8 @@
-param location string
-param configStoreName string = 'appserviceconfigstore'
+param webAppName string
+param appSettings object
+param currentAppSettings object
 
-
-resource configStore 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
-  name: configStoreName
-  sku: {
-    name: 'standard'
-  }
+resource siteconfig 'Microsoft.Web/sites/config@2022-03-01' = {
+  name: '${webAppName}/appsettings'
+  properties: union(currentAppSettings, appSettings)
 }
-
-output configStoreUri string = configStore.properties.endpoint

@@ -5,6 +5,7 @@ param sqlServerName string = 'chatappsqlserver'
 param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
 param apiAppServiceName string
 param blazorAppServiceName string
+param keyVaultName string
 @secure()
 param dbLogin string
 @secure()
@@ -54,9 +55,24 @@ module keyVault './bicep-modules/keyvault.bicep' = {
   name: 'KeyVaultDeploy'
   params: {
     location: location
+    keyVaultName: keyVaultName
     apiAppServicePrincipalId: appService.outputs.apiAppServicePrincipalId
     sqlServerDatabaseConnection: sqlServerDatabase.outputs.sqlServerDatabaseConnection
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
   }
+}
+
+module appSettings './bicep-modules/appserviceconfig.bicep' = {
+  name: '${apiAppServiceName}-appsettings'
+  params: {
+    webAppName: apiAppServiceName
+    currentAppSettings: list(resourceId('Microsoft.Web/sites/config', apiAppServiceName, 'appsettings'), '2022-03-01').properties
+    appSettings: {
+      AzureKeyVaultUrl: keyVault.outputs.keyVaultUri
+    }
+  }
+  dependsOn: [
+    keyVault
+  ]
 }
