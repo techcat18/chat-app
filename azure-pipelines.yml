@@ -14,7 +14,7 @@ variables:
   sqlServerDatabaseName: 'chatappsqlserverdatabase'
   apiAppServiceName: 'chatapiappservice'
   blazorAppServiceName: 'chatblazorappservice'
-  keyVaultName: 'chatappvault18'
+  keyVaultName: 'chatappkeyvaulttttt'
 
 stages:
 - stage: Provision
@@ -53,7 +53,7 @@ stages:
             sqlServerDatabaseName=$(sqlServerDatabaseName) `
             apiAppServiceName=$(apiAppServiceName) `
             blazorAppServiceName=$(blazorAppServiceName) `
-            keyVaultName=$(keyVaultName)`
+            keyVaultName=$(keyVaultName)
 
 - stage: Build
   jobs:
