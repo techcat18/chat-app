@@ -61,6 +61,10 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     sqlServerDatabaseConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=db${initialCatalog};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
+    frontUrlString: 'http://${blazorAppServiceName}.azurewebsites.net/'
+    jwtSettingsKeyString: 'ChatApp123091204890128308120'
+    jwtSettingsAudienceString: 'BlazorApp'
+    jwtSettingsIssuerString: 'ChatAppAPI'
   }
 }
 
@@ -71,13 +75,6 @@ module ApiAppSettings './bicep-modules/appserviceconfig.bicep' = {
     currentAppSettings: list(resourceId('Microsoft.Web/sites/config', apiAppServiceName, 'appsettings'), '2022-03-01').properties
     appSettings: {
       AzureKeyVaultUrl: keyVault.outputs.keyVaultUri
-      FrontUrl: 'http://${blazorAppServiceName}.azurewebsites.net/'
-      JwtSettings__Key: 'ChatApp123091204890128308120'
-      JwtSettings__Audience: 'BlazorApp'
-      JwtSettings__Issuer: 'ChatAppAPI'
-      ConnectionStrings__SQLConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=db${initialCatalog};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
-      Azure__Blob__ConnectionString: storageAccount.outputs.storageConnectionString
-      Azure__Blob__AccessKey: storageAccount.outputs.storageAccessKey
     }
   }
   dependsOn: [

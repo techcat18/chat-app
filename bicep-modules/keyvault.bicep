@@ -1,6 +1,10 @@
 param location string = resourceGroup().location
 param keyVaultName string = 'chatappkeyvaulttttt'
 param apiAppServicePrincipalId string
+param frontUrlString string
+param jwtSettingsKeyString string
+param jwtSettingsAudienceString string
+param jwtSettingsIssuerString string
 @secure()
 param sqlServerDatabaseConnection string
 @secure()
@@ -63,6 +67,38 @@ resource blobStorageConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-
   name: 'Azure--Blob--ConnectionString'
   properties: {
     value: storageConnectionString
+  }
+}
+
+resource frontUrl 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'FrontUrl'
+  properties: {
+    value: frontUrlString
+  }
+}
+
+resource jwtSettingsKey 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'JwtSettings--Key'
+  properties: {
+    value: jwtSettingsKeyString
+  }
+}
+
+resource jwtSettingsAudience 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'JwtSettings--Audience'
+  properties: {
+    value: jwtSettingsAudienceString
+  }
+}
+
+resource jwtSettingsIssuer 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'JwtSettings--Issuer'
+  properties: {
+    value: jwtSettingsIssuerString
   }
 }
 
