@@ -83,6 +83,7 @@ module ApiAppSettings './bicep-modules/appserviceconfig.bicep' = {
   ]
 }
 
+
 module BlazorAppSettings './bicep-modules/appserviceconfig.bicep' = {
   name: '${blazorAppServiceName}-appsettings'
   params: {
