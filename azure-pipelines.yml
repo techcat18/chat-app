@@ -15,6 +15,7 @@ variables:
   apiAppServiceName: 'chatapiappservicenew'
   blazorAppServiceName: 'chatblazorappservicenew'
   storageAccountName: 'chatappstorageaccnew'
+  initialCatalog: 'chatdb'
   keyVaultName: 'chatkeyvault18new'
 
 stages:
@@ -54,7 +55,9 @@ stages:
             sqlServerDatabaseName=$(sqlServerDatabaseName) `
             apiAppServiceName=$(apiAppServiceName) `
             blazorAppServiceName=$(blazorAppServiceName) `
-            keyVaultName=$(keyVaultName)
+            keyVaultName=$(keyVaultName) `
+            initialCatalog=$(initialCatalog) `
+            storageAccountName=$(storageAccountName)
 
 - stage: Build
   jobs:
