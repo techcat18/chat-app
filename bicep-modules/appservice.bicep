@@ -16,7 +16,7 @@ resource apiAppService 'Microsoft.Web/sites@2021-01-15' = {
       appSettings: [
         {
           name: 'AzureKeyVaultUrl'
-          value: 'https://${keyVaultName}}.vault.azure.net/'
+          value: 'https://${keyVaultName}.vault.azure.net/'
         }
       ]
     }
