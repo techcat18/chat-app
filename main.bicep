@@ -1,9 +1,9 @@
 param location string
 param storageSkuName string = 'Standard_LRS'
-param storageAccountName string = 'chatappstorageacc18'
-param sqlServerName string = 'chatappsqlserver18'
-param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
-param initialCatalog string = 'chatappsqlserverdatabase'
+param storageAccountName string
+param sqlServerName string
+param sqlServerDatabaseName string
+param initialCatalog string
 param apiAppServiceName string
 param blazorAppServiceName string
 param keyVaultName string
