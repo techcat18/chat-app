@@ -1,5 +1,5 @@
 param location string = resourceGroup().location
-param keyVaultName string = 'chatappkeyvaulttttt'
+param keyVaultName string
 param apiAppServicePrincipalId string
 param frontUrlString string
 param jwtSettingsKeyString string
