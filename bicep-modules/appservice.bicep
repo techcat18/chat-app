@@ -2,6 +2,7 @@ param location string = resourceGroup().location
 param apiAppServiceName string = 'chatapiappservice'
 param blazorAppServiceName string = 'chatblazorappservice'
 param appServicePlanId string
+param keyVaultName string
 
 resource apiAppService 'Microsoft.Web/sites@2021-01-15' = {
   name: apiAppServiceName
@@ -15,7 +16,7 @@ resource apiAppService 'Microsoft.Web/sites@2021-01-15' = {
       appSettings: [
         {
           name: 'AzureKeyVaultUrl'
-          value: ''
+          value: 'https://${keyVaultName}}.vault.azure.net/'
         }
       ]
     }

@@ -6,7 +6,7 @@ param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
 param initialCatalog string = 'chatappsqlserverdatabase'
 param apiAppServiceName string
 param blazorAppServiceName string
-param keyVaultName string
+param keyVaultName string = 'chatappkeyvaulttttt'
 @secure()
 param dbLogin string
 @secure()
@@ -46,6 +46,7 @@ module appService './bicep-modules/appservice.bicep' = {
     appServicePlanId: appServicePlan.outputs.appServicePlanId
     apiAppServiceName: apiAppServiceName
     blazorAppServiceName: blazorAppServiceName
+    keyVaultName: keyVaultName
   }
   dependsOn: [
     appServicePlan
