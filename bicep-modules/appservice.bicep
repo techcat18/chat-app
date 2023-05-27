@@ -1,6 +1,6 @@
 param location string = resourceGroup().location
-param apiAppServiceName string = 'chatapiappservice'
-param blazorAppServiceName string = 'chatblazorappservice'
+param apiAppServiceName string
+param blazorAppServiceName string
 param appServicePlanId string
 param keyVaultName string
 

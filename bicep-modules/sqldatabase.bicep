@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
-param sqlServerName string = 'chatappsqlserver'
-param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
-param initialCatalog string = 'chatdb'
+param sqlServerName string
+param sqlServerDatabaseName string
+
 @secure()
 param dbLogin string
 @secure()

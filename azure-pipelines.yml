@@ -6,15 +6,15 @@ pool:
   vmImage: winagent
 
 variables: 
-  resourceGroupName: 'chatapp-rg-18'
+  resourceGroupName: 'chatapp-rg-182'
   subscription: 'Default Service Connection'
   location: 'eastus'
   templateFile: 'main.bicep'
-  sqlServerName: 'chatappsqlserver'
-  sqlServerDatabaseName: 'chatappsqlserverdatabase'
-  apiAppServiceName: 'chatapiappservice'
-  blazorAppServiceName: 'chatblazorappservice'
-  keyVaultName: 'chatkeyvault18'
+  sqlServerName: 'chatappsqlservernew'
+  sqlServerDatabaseName: 'chatappsqlserverdatabasenew'
+  apiAppServiceName: 'chatapiappservicenew'
+  blazorAppServiceName: 'chatblazorappservicenew'
+  keyVaultName: 'chatkeyvault18new'
 
 stages:
 - stage: Provision
