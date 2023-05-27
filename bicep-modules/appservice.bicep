@@ -32,7 +32,7 @@ resource blazorAppService 'Microsoft.Web/sites@2021-01-15' = {
       appSettings: [
         {
           name: 'APIUrl'
-          value: 'http://${apiAppServiceName}.azurewebsites.net/'
+          value: 'http://${apiAppServiceName}.azurewebsites.net/api/'
         }
       ]
     }
