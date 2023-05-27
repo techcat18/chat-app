@@ -12,30 +12,10 @@ namespace ChatApplication.API.Controllers;
 public class AuthController: ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly IConfiguration _configuration;
 
-    public AuthController(IAuthService authService, IConfiguration configuration)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
-        _configuration = configuration;
-    }
-
-    [AllowAnonymous]
-    [HttpGet("test")]
-    public async Task<IActionResult> Test()
-    {
-        var sqlConnection = _configuration.GetSection("ConnectionStrings")["SQLConnection"];
-        var blobConnection = _configuration.GetSection("Azure:Blob:ConnectionString").Value;
-        var blobAccessKey = _configuration.GetSection("Azure:Blob:AccessKey").Value;
-
-        var list = new List<string>
-        {
-            sqlConnection,
-            blobConnection,
-            blobAccessKey
-        };
-
-        return Ok(list);
     }
 
     [AllowAnonymous]
