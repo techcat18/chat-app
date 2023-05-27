@@ -1,4 +1,5 @@
-﻿using ChatApplication.BLL.Abstractions.Services;
+﻿using System.Drawing;
+using ChatApplication.BLL.Abstractions.Services;
 using ChatApplication.Shared.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,30 @@ namespace ChatApplication.API.Controllers;
 public class AuthController: ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IConfiguration configuration)
     {
         _authService = authService;
+        _configuration = configuration;
+    }
+
+    [AllowAnonymous]
+    [HttpGet("test")]
+    public async Task<IActionResult> Test()
+    {
+        var sqlConnection = _configuration.GetSection("ConnectionString")["SQLConnection"];
+        var blobConnection = _configuration.GetSection("Azure:Blob:ConnectionString").Value;
+        var blobAccessKey = _configuration.GetSection("Azure:Blob:AccessKey").Value;
+
+        var list = new List<string>
+        {
+            sqlConnection,
+            blobConnection,
+            blobAccessKey
+        };
+
+        return Ok(list);
     }
 
     [AllowAnonymous]
