@@ -3,7 +3,6 @@ param storageSkuName string = 'Standard_LRS'
 param storageAccountName string
 param sqlServerName string
 param sqlServerDatabaseName string
-param initialCatalog string
 param apiAppServiceName string
 param blazorAppServiceName string
 param keyVaultName string
@@ -59,7 +58,7 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     location: location
     keyVaultName: keyVaultName
     apiAppServicePrincipalId: appService.outputs.apiAppServicePrincipalId
-    sqlServerDatabaseConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${initialCatalog};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+    sqlServerDatabaseConnection: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlServerDatabaseName};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
     frontUrlString: 'http://${blazorAppServiceName}.azurewebsites.net/'
