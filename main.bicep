@@ -6,7 +6,7 @@ param sqlServerDatabaseName string = 'chatappsqlserverdatabase'
 param initialCatalog string = 'chatappsqlserverdatabase'
 param apiAppServiceName string
 param blazorAppServiceName string
-param keyVaultName string = 'chatappkeyvaulttttt'
+param keyVaultName string = 'chatappkeyvault18'
 @secure()
 param dbLogin string
 @secure()
