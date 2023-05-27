@@ -24,7 +24,7 @@ public class AuthController: ControllerBase
     [HttpGet("test")]
     public async Task<IActionResult> Test()
     {
-        var sqlConnection = _configuration.GetSection("ConnectionString")["SQLConnection"];
+        var sqlConnection = _configuration.GetSection("ConnectionStrings")["SQLConnection"];
         var blobConnection = _configuration.GetSection("Azure:Blob:ConnectionString").Value;
         var blobAccessKey = _configuration.GetSection("Azure:Blob:AccessKey").Value;
 
