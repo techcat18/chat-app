@@ -68,32 +68,3 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     jwtSettingsIssuerString: 'ChatAppAPI'
   }
 }
-
-module ApiAppSettings './bicep-modules/appserviceconfig.bicep' = {
-  name: '${apiAppServiceName}-appsettings'
-  params: {
-    webAppName: apiAppServiceName
-    currentAppSettings: list(resourceId('Microsoft.Web/sites/config', apiAppServiceName, 'appsettings'), '2022-03-01').properties
-    appSettings: {
-      AzureKeyVaultUrl: keyVault.outputs.keyVaultUri
-    }
-  }
-  dependsOn: [
-    keyVault
-  ]
-}
-
-
-module BlazorAppSettings './bicep-modules/appserviceconfig.bicep' = {
-  name: '${blazorAppServiceName}-appsettings'
-  params: {
-    webAppName: blazorAppServiceName
-    currentAppSettings: list(resourceId('Microsoft.Web/sites/config', blazorAppServiceName, 'appsettings'), '2022-03-01').properties
-    appSettings: {
-      APIUrl: 'http://${apiAppServiceName}.azurewebsites.net/'
-    }
-  }
-  dependsOn: [
-    keyVault
-  ]
-}

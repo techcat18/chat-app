@@ -28,6 +28,14 @@ resource blazorAppService 'Microsoft.Web/sites@2021-01-15' = {
   location: location
   properties: {
     serverFarmId: appServicePlanId
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'APIUrl'
+          value: 'http://${apiAppServiceName}.azurewebsites.net/'
+        }
+      ]
+    }
   }
 }
 
