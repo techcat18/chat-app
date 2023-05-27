@@ -6,7 +6,7 @@ pool:
   vmImage: winagent
 
 variables: 
-  resourceGroupName: 'chatapp-rg'
+  resourceGroupName: 'chatapp-rg-18'
   subscription: 'Default Service Connection'
   location: 'eastus'
   templateFile: 'main.bicep'
