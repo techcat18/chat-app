@@ -48,8 +48,8 @@ stages:
           --template-file $(templateFile) `
           --parameters `
             location=$(location) `
-            dbLogin=Kostia18 `
-            dbPassword=Kxr7VPSM `
+            dbLogin=$(db_login) `
+            dbPassword=$(db_password) `
             sqlServerName=$(sqlServerName) `
             sqlServerDatabaseName=$(sqlServerDatabaseName) `
             apiAppServiceName=$(apiAppServiceName) `
