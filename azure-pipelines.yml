@@ -48,7 +48,7 @@ stages:
           --template-file $(templateFile) `
           --parameters `
             location=$(location) `
-            dbLogin=Kostia `
+            dbLogin=Kostia18 `
             dbPassword=Kxr7VPSM `
             sqlServerName=$(sqlServerName) `
             sqlServerDatabaseName=$(sqlServerDatabaseName) `
