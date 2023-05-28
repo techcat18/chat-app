@@ -35,6 +35,7 @@ stages:
     - task: AzureCLI@2
       displayName: Creating resources defined in main.bicep
       env:
+        SQL_LOGIN: $(db_login)
         SQL_PASSWORD: $(db_password)
       inputs:
         azureSubscription: $(subscription)
@@ -47,7 +48,7 @@ stages:
           --template-file $(templateFile) `
           --parameters `
             location=$(location) `
-            dbLogin=$(db_login) `
+            dbLogin=$env:SQL_LOGIN `
             dbPassword=$env:SQL_PASSWORD `
             sqlServerName=$(sqlServerName) `
             sqlServerDatabaseName=$(sqlServerDatabaseName) `
@@ -136,14 +137,15 @@ stages:
      - task: SqlAzureDacpacDeployment@1
        displayName: Publishing Database project to SQL Database
        env:
+        SQL_LOGIN: $(db_login)
         SQL_PASSWORD: $(db_password)
        inputs:
          azureSubscription: $(subscription)
          AuthenticationType: 'server'
          ServerName: '$(sqlServerName).database.windows.net'
          DatabaseName: '$(sqlServerDatabaseName)'
-         SqlUsername: $(db_login)
-         SqlPassword: $env:SQL_PASSWORD
+         SqlUsername: Kostia18
+         SqlPassword: Kxr7VPSM
          deployType: 'DacpacTask'
          DeploymentAction: 'Publish'
          DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
