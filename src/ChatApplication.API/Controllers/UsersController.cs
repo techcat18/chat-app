@@ -61,7 +61,6 @@ public class UsersController: ControllerBase
         return Ok(user);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut]
     public async Task<IActionResult> Put(
         UpdateUserModel updateUserModel,
