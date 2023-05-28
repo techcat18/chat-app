@@ -45,8 +45,8 @@ stages:
           --template-file $(templateFile) `
           --parameters `
             location=$(location) `
-            dbLogin=${env:DB_LOGIN} `
-            dbPassword=${env:DB_PASSWORD} `
+            dbLogin=$(db_login) `
+            dbPassword=$(db_password) `
             sqlServerName=$(sqlServerName) `
             sqlServerDatabaseName=$(sqlServerDatabaseName) `
             apiAppServiceName=$(apiAppServiceName) `
@@ -138,8 +138,8 @@ stages:
          AuthenticationType: 'server'
          ServerName: '$(sqlServerName).database.windows.net'
          DatabaseName: '$(sqlServerDatabaseName)'
-         SqlUsername: ${env:DB_LOGIN}
-         SqlPassword: ${env:DB_PASSWORD}
+         SqlUsername: $(db_login)
+         SqlPassword: $(db_password)
          deployType: 'DacpacTask'
          DeploymentAction: 'Publish'
          DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
