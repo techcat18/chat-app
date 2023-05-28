@@ -144,8 +144,8 @@ stages:
          AuthenticationType: 'server'
          ServerName: '$(sqlServerName).database.windows.net'
          DatabaseName: '$(sqlServerDatabaseName)'
-         SqlUsername: Kostia18
-         SqlPassword: Kxr7VPSM
+         SqlUsername: $(SQL_LOGIN)
+         SqlPassword: $(SQL_PASSWORD)
          deployType: 'DacpacTask'
          DeploymentAction: 'Publish'
          DacpacFile: '$(Pipeline.Workspace)/dacpac/*.dacpac'
