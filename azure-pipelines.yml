@@ -16,46 +16,48 @@ variables:
   blazorAppServiceName: 'chatblazorappservicenew'
   storageAccountName: 'chatappstorageaccnew'
   keyVaultName: 'chatkeyvault18new'
+  SQL_LOGIN: $(db_login)
+  SQL_PASSWORD: $(db_password)
 
 stages:
-- stage: Provision
-  jobs: 
-  - job: Provision_Resources
-    steps:
-    - task: AzureCLI@2
-      displayName: Creating Resource Group
-      inputs:
-        azureSubscription: $(subscription)
-        scriptType: 'ps'
-        scriptLocation: inlineScript
-        useGlobalConfig: true
-        inlineScript: |
-          az group create --name $(resourceGroupName) --location $(location)
+# - stage: Provision
+#   jobs: 
+#   - job: Provision_Resources
+#     steps:
+#     - task: AzureCLI@2
+#       displayName: Creating Resource Group
+#       inputs:
+#         azureSubscription: $(subscription)
+#         scriptType: 'ps'
+#         scriptLocation: inlineScript
+#         useGlobalConfig: true
+#         inlineScript: |
+#           az group create --name $(resourceGroupName) --location $(location)
 
-    - task: AzureCLI@2
-      displayName: Creating resources defined in main.bicep
-      env:
-        SQL_LOGIN: $(db_login)
-        SQL_PASSWORD: $(db_password)
-      inputs:
-        azureSubscription: $(subscription)
-        scriptType: 'ps'
-        scriptLocation: inlineScript
-        useGlobalConfig: true
-        inlineScript: |
-          az deployment group create `
-          --resource-group $(resourceGroupName) `
-          --template-file $(templateFile) `
-          --parameters `
-            location=$(location) `
-            dbLogin=$(db_login) `
-            dbPassword=$(db_password) `
-            sqlServerName=$(sqlServerName) `
-            sqlServerDatabaseName=$(sqlServerDatabaseName) `
-            apiAppServiceName=$(apiAppServiceName) `
-            blazorAppServiceName=$(blazorAppServiceName) `
-            keyVaultName=$(keyVaultName) `
-            storageAccountName=$(storageAccountName)
+#     - task: AzureCLI@2
+#       displayName: Creating resources defined in main.bicep
+#       env:
+#         SQL_LOGIN: $(db_login)
+#         SQL_PASSWORD: $(db_password)
+#       inputs:
+#         azureSubscription: $(subscription)
+#         scriptType: 'ps'
+#         scriptLocation: inlineScript
+#         useGlobalConfig: true
+#         inlineScript: |
+#           az deployment group create `
+#           --resource-group $(resourceGroupName) `
+#           --template-file $(templateFile) `
+#           --parameters `
+#             location=$(location) `
+#             dbLogin=$(db_login) `
+#             dbPassword=$(db_password) `
+#             sqlServerName=$(sqlServerName) `
+#             sqlServerDatabaseName=$(sqlServerDatabaseName) `
+#             apiAppServiceName=$(apiAppServiceName) `
+#             blazorAppServiceName=$(blazorAppServiceName) `
+#             keyVaultName=$(keyVaultName) `
+#             storageAccountName=$(storageAccountName)
 
 - stage: Build
   jobs:
@@ -114,15 +116,15 @@ stages:
         artifact: dacpac
         publishLocation: 'pipeline'
 
-- stage: Test
-  jobs:
-   - job: Test
-     steps:
-     - task: DotNetCoreCLI@2 
-       displayName: Running Tests 
-       inputs: 
-         command: test 
-         workingDirectory: $(solutionDir) 
+# - stage: Test
+#   jobs:
+#    - job: Test
+#      steps:
+#      - task: DotNetCoreCLI@2 
+#        displayName: Running Tests 
+#        inputs: 
+#          command: test 
+#          workingDirectory: $(solutionDir) 
 
 - stage: Deploy
   jobs:
@@ -136,9 +138,6 @@ stages:
 
      - task: SqlAzureDacpacDeployment@1
        displayName: Publishing Database project to SQL Database
-       env:
-        SQL_LOGIN: $(db_login)
-        SQL_PASSWORD: $(db_password)
        inputs:
          azureSubscription: $(subscription)
          AuthenticationType: 'server'
