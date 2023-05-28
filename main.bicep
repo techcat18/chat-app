@@ -62,7 +62,7 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
     frontUrlString: 'http://${blazorAppServiceName}.azurewebsites.net/'
-    jwtSettingsKeyString: 'ChatApp123091204890128308120'
+    jwtSettingsKeyString: 'ChatApp1230912048901283'
     jwtSettingsAudienceString: 'BlazorApp'
     jwtSettingsIssuerString: 'ChatAppAPI'
   }
