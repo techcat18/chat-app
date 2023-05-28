@@ -43,9 +43,10 @@ public class AzureBlobStorageService: IStorageService
         {
             BlobContainerName = containerName,
             BlobName = fileName,
-            Identifier = "readonly-policy",
-            ExpiresOn = DateTime.UtcNow.AddMinutes(30)
+            ExpiresOn = DateTime.UtcNow.AddHours(6)
         };
+        
+        blobSasBuilder.SetPermissions(BlobSasPermissions.Read);
 
         var sasToken = blobSasBuilder.ToSasQueryParameters(
             new StorageSharedKeyCredential(_blobServiceClient.AccountName, _blobAccessKey)).ToString();
