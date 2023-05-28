@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApplication.API.Controllers;
 
-[Authorize(AuthenticationSchemes = "Bearer")]
 [ApiController]
 [Route("api/auth")]
 public class AuthController: ControllerBase
