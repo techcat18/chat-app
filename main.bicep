@@ -74,8 +74,7 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     jwtSettingsKeyString: 'ChatApp1230912048901283'
     jwtSettingsAudienceString: 'BlazorApp'
     jwtSettingsIssuerString: 'ChatAppAPI'
-    signalRId: signalR.outputs.signalRId
-    signalRApiVersion: signalR.outputs.signalRApiVersion
+    signalRConnection: signalR.outputs.connectionString
   }
   dependsOn: [
     storageAccount

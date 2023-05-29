@@ -63,5 +63,4 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
   }
 }
 
-output signalRId string = signalRService.id
-output signalRApiVersion string = signalRService.apiVersion
+output connectionString string = signalRService.listKeys().primaryConnectionString

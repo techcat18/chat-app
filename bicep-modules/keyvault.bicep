@@ -5,8 +5,7 @@ param frontUrlString string
 param jwtSettingsKeyString string
 param jwtSettingsAudienceString string
 param jwtSettingsIssuerString string
-param signalRId string
-param signalRApiVersion string
+param signalRConnection string
 @secure()
 param sqlServerDatabaseConnection string
 @secure()
@@ -108,7 +107,7 @@ resource signalRConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-01' 
   parent: keyVault
   name: 'Azure--SignalR--ConnectionString'
   properties: {
-    value: listKeys(signalRId, signalRApiVersion).primaryConnectionString
+    value: signalRConnection
   }
 }
 
