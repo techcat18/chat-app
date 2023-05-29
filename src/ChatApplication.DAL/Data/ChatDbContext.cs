@@ -49,6 +49,13 @@ public class ChatDbContext: IdentityDbContext<User>
                 .GetMethod(nameof(ChatsByUserIdFunc))!)
             .HasName("GetChatsByUserIdFunction");
 
+        modelBuilder.Entity<ChatType>()
+            .HasData(new List<ChatType>
+            {
+                new ChatType { Id = 1, Name = "Public" },
+                new ChatType { Id = 2, Name = "Private" }
+            });
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserChatConfiguration).Assembly);
 
         base.OnModelCreating(modelBuilder);
