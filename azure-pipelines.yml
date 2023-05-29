@@ -16,6 +16,7 @@ variables:
   blazorAppServiceName: 'chatblazorappservicenew'
   storageAccountName: 'chatappstorageaccnew'
   keyVaultName: 'chatkeyvault18new'
+  signalRServiceName: 'chatsignalr1818'
   SQL_LOGIN: $(db_login)
   SQL_PASSWORD: $(db_password)
 
@@ -54,6 +55,7 @@ stages:
             apiAppServiceName=$(apiAppServiceName) `
             blazorAppServiceName=$(blazorAppServiceName) `
             keyVaultName=$(keyVaultName) `
+            signalRServiceName=$(signalRServiceName) `
             storageAccountName=$(storageAccountName)
 
 - stage: Build

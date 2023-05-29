@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSignalR();
+builder.Services
+    .AddSignalR()
+    .AddAzureSignalR(builder.Configuration.GetSection("Azure:SignalR:ConnectionString").Value);
 
 if (builder.Environment.IsProduction())
 {

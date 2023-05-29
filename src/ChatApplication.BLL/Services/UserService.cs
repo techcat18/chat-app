@@ -95,7 +95,7 @@ public class UserService: IUserService
                        .GetByIdAsync(id, cancellationToken)
                    ?? throw new UserNotFoundException(id);
 
-        user.Image += "?" + await _blobStorageService.GetSasTokenAsync("user-photos", user.Email);
+        //user.Image += "?" + await _blobStorageService.GetSasTokenAsync("user-photos", user.Email);
 
         return _mapper.Map<UserModel>(user);
     }

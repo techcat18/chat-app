@@ -5,6 +5,7 @@ param sqlServerName string
 param sqlServerDatabaseName string
 param apiAppServiceName string
 param blazorAppServiceName string
+param signalRServiceName string
 param keyVaultName string
 @secure()
 param dbLogin string
@@ -52,6 +53,14 @@ module appService './bicep-modules/appservice.bicep' = {
   ]
 }
 
+module signalR 'bicep-modules/signalr.bicep' = {
+  name: 'SignalRDeploy'
+  params: {
+    location: location
+    signalRServiceName: signalRServiceName
+  }
+}
+
 module keyVault './bicep-modules/keyvault.bicep' = {
   name: 'KeyVaultDeploy'
   params: {
@@ -65,5 +74,11 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     jwtSettingsKeyString: 'ChatApp1230912048901283'
     jwtSettingsAudienceString: 'BlazorApp'
     jwtSettingsIssuerString: 'ChatAppAPI'
+    signalRId: signalR.outputs.signalRId
+    signalRApiVersion: signalR.outputs.signalRApiVersion
   }
+  dependsOn: [
+    storageAccount
+    signalR
+  ]
 }
