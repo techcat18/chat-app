@@ -9,16 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services
-    .AddSignalR()
-    .AddAzureSignalR(builder.Configuration.GetSection("Azure:SignalR:ConnectionString").Value);
 
 if (builder.Environment.IsProduction())
 {
+    builder.Services
+        .AddSignalR()
+        .AddAzureSignalR(builder.Configuration.GetSection("Azure:SignalR:ConnectionString").Value);
+    
     var keyVaultUrl = new Uri(builder.Configuration.GetSection("AzureKeyVaultUrl").Value!);
     var azureCredential = new DefaultAzureCredential();
             
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+}
+else
+{
+    builder.Services.AddSignalR();
 }
 
 builder.Services.AddCors(options =>
