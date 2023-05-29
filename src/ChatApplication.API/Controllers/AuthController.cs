@@ -11,10 +11,26 @@ namespace ChatApplication.API.Controllers;
 public class AuthController: ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(IAuthService authService)
+    public AuthController(
+        IAuthService authService,
+        IConfiguration configuration)
     {
         _authService = authService;
+        _configuration = configuration;
+    }
+
+    [HttpGet]
+    public IActionResult Test()
+    {
+        var blobStorageConnectionString = _configuration.GetSection("Azure:Blob:ConnectionString").Value;
+        var signalRConnectionString = _configuration.GetSection("Azure:SignalR:ConnectionString").Value;
+
+        return Ok(new List<string>
+        {
+            blobStorageConnectionString, signalRConnectionString
+        });
     }
 
     [AllowAnonymous]
