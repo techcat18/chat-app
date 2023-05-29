@@ -63,4 +63,4 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
   }
 }
 
-output connectionString string = signalRService.listKeys().primaryConnectionString
+output connectionString string = listkeys(resourceId('Microsoft.SignalRService/SignalR', signalRServiceName), '2023-02-01').primaryConnectionString
