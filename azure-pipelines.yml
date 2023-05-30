@@ -21,42 +21,42 @@ variables:
   SQL_PASSWORD: $(db_password)
 
 stages:
-# - stage: Provision
-#   jobs: 
-#   - job: Provision_Resources
-#     steps:
-#     - task: AzureCLI@2
-#       displayName: Creating Resource Group
-#       inputs:
-#         azureSubscription: $(subscription)
-#         scriptType: 'ps'
-#         scriptLocation: inlineScript
-#         useGlobalConfig: true
-#         inlineScript: |
-#           az group create --name $(resourceGroupName) --location $(location)
+- stage: Provision
+  jobs: 
+  - job: Provision_Resources
+    steps:
+    - task: AzureCLI@2
+      displayName: Creating Resource Group
+      inputs:
+        azureSubscription: $(subscription)
+        scriptType: 'ps'
+        scriptLocation: inlineScript
+        useGlobalConfig: true
+        inlineScript: |
+          az group create --name $(resourceGroupName) --location $(location)
 
-#     - task: AzureCLI@2
-#       displayName: Creating resources defined in main.bicep
-#       inputs:
-#         azureSubscription: $(subscription)
-#         scriptType: 'ps'
-#         scriptLocation: inlineScript
-#         useGlobalConfig: true
-#         inlineScript: |
-#           az deployment group create `
-#           --resource-group $(resourceGroupName) `
-#           --template-file $(templateFile) `
-#           --parameters `
-#             location=$(location) `
-#             dbLogin=$(SQL_LOGIN) `
-#             dbPassword=$(SQL_PASSWORD) `
-#             sqlServerName=$(sqlServerName) `
-#             sqlServerDatabaseName=$(sqlServerDatabaseName) `
-#             apiAppServiceName=$(apiAppServiceName) `
-#             blazorAppServiceName=$(blazorAppServiceName) `
-#             keyVaultName=$(keyVaultName) `
-#             signalRServiceName=$(signalRServiceName) `
-#             storageAccountName=$(storageAccountName)
+    - task: AzureCLI@2
+      displayName: Creating resources defined in main.bicep
+      inputs:
+        azureSubscription: $(subscription)
+        scriptType: 'ps'
+        scriptLocation: inlineScript
+        useGlobalConfig: true
+        inlineScript: |
+          az deployment group create `
+          --resource-group $(resourceGroupName) `
+          --template-file $(templateFile) `
+          --parameters `
+            location=$(location) `
+            dbLogin=$(SQL_LOGIN) `
+            dbPassword=$(SQL_PASSWORD) `
+            sqlServerName=$(sqlServerName) `
+            sqlServerDatabaseName=$(sqlServerDatabaseName) `
+            apiAppServiceName=$(apiAppServiceName) `
+            blazorAppServiceName=$(blazorAppServiceName) `
+            keyVaultName=$(keyVaultName) `
+            signalRServiceName=$(signalRServiceName) `
+            storageAccountName=$(storageAccountName)
 
 - stage: Build
   jobs:
