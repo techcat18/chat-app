@@ -56,7 +56,7 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
 
 var signalRAppServerRoleId = '420fcaa2-552c-430f-98ca-3264be4806c7'
 
-resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' = {
+resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   name: signalRAppServerRoleId
   scope: signalRService
 }
