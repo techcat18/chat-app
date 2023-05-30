@@ -23,7 +23,7 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
     features: [
       {
         flag: 'ServiceMode'
-        value: 'Serverless'
+        value: 'Default'
         properties: {}
       }
       {
@@ -42,19 +42,6 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
         properties: {}
       }
     ]
-    networkACLs: {
-      defaultAction: 'Deny'
-      privateEndpoints: [
-      ]
-      publicNetwork: {
-        allow: [
-           'ServerConnection'
-           'ClientConnection'
-           'RESTAPI'
-           'Trace' 
-        ]
-      }
-    }
     publicNetworkAccess: 'Enabled'
     tls: {
       clientCertEnabled: false
