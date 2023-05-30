@@ -53,5 +53,4 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
   }
 }
 
-//output connectionString string = 'Endpoint=https://${signalRService.name}.service.signalr.net;AuthType=azure.msi;Version=1.0;'
-output connectionString string = signalRService.listKeys().primaryConnectionString
+output connectionString string = 'Endpoint=https://${signalRService.name}.service.signalr.net;AuthType=azure.msi;Version=1.0;'
