@@ -8,6 +8,9 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
     name: 'Free_F1'
     tier: 'Free'
   }
+  identity: {
+    type: 'SystemAssigned'
+  }
   kind: 'SignalR'
   properties: {
     cors:{
@@ -63,4 +66,4 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
   }
 }
 
-output connectionString string = listkeys(resourceId('Microsoft.SignalRService/SignalR', signalRServiceName), '2023-02-01').primaryConnectionString
+output connectionString string = 'Endpoint=https://${signalRService.name}.service.signalr.net;AuthType=azure.msi;Version=1.0;'
