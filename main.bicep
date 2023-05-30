@@ -58,7 +58,11 @@ module signalR 'bicep-modules/signalr.bicep' = {
   params: {
     location: location
     signalRServiceName: signalRServiceName
+    apiPrincipalId: appService.outputs.apiAppServicePrincipalId
   }
+  dependsOn: [
+    appService
+  ]
 }
 
 module keyVault './bicep-modules/keyvault.bicep' = {

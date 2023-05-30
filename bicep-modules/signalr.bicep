@@ -1,5 +1,6 @@
 param location string = resourceGroup().location
 param signalRServiceName string 
+param apiPrincipalId string
 
 resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
   name: signalRServiceName
@@ -50,6 +51,22 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
       templates: [
       ]
     }
+  }
+}
+
+var signalRAppServerRoleId = '420fcaa2-552c-430f-98ca-3264be4806c7'
+
+resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' = {
+  name: signalRAppServerRoleId
+  scope: signalRService
+}
+
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(signalRService.id, roleDefinition.id, apiPrincipalId)
+  properties: {
+    roleDefinitionId: signalRAppServerRoleId
+    principalId: apiPrincipalId
+    principalType: 'ServicePrincipal'
   }
 }
 
