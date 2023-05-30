@@ -56,15 +56,15 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
 
 var signalRAppServerRoleId = '420fcaa2-552c-430f-98ca-3264be4806c7'
 
-resource roleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+resource signalRServerRole 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   name: signalRAppServerRoleId
   scope: signalRService
 }
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(signalRService.id, roleDefinition.id, apiPrincipalId)
+  name: guid(signalRService.id, signalRServerRole.id, apiPrincipalId)
   properties: {
-    roleDefinitionId: signalRAppServerRoleId
+    roleDefinitionId: signalRServerRole.id
     principalId: apiPrincipalId
     principalType: 'ServicePrincipal'
   }
