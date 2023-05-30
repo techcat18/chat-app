@@ -14,7 +14,10 @@ if (builder.Environment.IsProduction())
 {
     builder.Services
         .AddSignalR()
-        .AddAzureSignalR(builder.Configuration.GetSection("Azure:SignalR:ConnectionString").Value);
+        .AddAzureSignalR(options =>
+        {
+            options.ConnectionString = builder.Configuration.GetSection("Azure:SignalR:ConnectionString").Value;
+        });
     
     var keyVaultUrl = new Uri(builder.Configuration.GetSection("AzureKeyVaultUrl").Value!);
     var azureCredential = new DefaultAzureCredential();
