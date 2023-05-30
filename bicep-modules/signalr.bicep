@@ -19,8 +19,6 @@ resource signalRService 'Microsoft.SignalRService/signalR@2023-02-01' = {
         '*'
       ]
     }
-    disableAadAuth: false
-    disableLocalAuth: false
     features: [
       {
         flag: 'ServiceMode'
@@ -70,4 +68,4 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-output connectionString string = 'Endpoint=https://${signalRService.name}.service.signalr.net;AuthType=azure.msi;Version=1.0;'
+output connectionString string = 'Endpoint=https://${signalRService.name}.service.signalr.net;AuthType=aad;Version=1.0;'
