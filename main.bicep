@@ -85,3 +85,10 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     signalR
   ]
 }
+
+module function './bicep-modules/function.bicep' = {
+  name: 'FunctionDeploy'
+  params: {
+    location: location
+  }
+}

@@ -80,5 +80,6 @@
     <Build Include="dbo\Functions\GetMessageByIdFunction.sql" />
     <Build Include="dbo\Functions\GetChatsByUserIdFunction.sql" />
     <Build Include="dbo\Views\UserView.sql" />
+    <Build Include="dbo\Tables\Texts.sql" />
   </ItemGroup>
 </Project>
