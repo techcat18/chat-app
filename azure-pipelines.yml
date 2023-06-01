@@ -21,42 +21,42 @@ variables:
   SQL_PASSWORD: $(db_password)
 
 stages:
-- stage: Provision
-  jobs: 
-  - job: Provision_Resources
-    steps:
-    - task: AzureCLI@2
-      displayName: Creating Resource Group
-      inputs:
-        azureSubscription: $(subscription)
-        scriptType: 'ps'
-        scriptLocation: inlineScript
-        useGlobalConfig: true
-        inlineScript: |
-          az group create --name $(resourceGroupName) --location $(location)
+# - stage: Provision
+#   jobs: 
+#   - job: Provision_Resources
+#     steps:
+#     - task: AzureCLI@2
+#       displayName: Creating Resource Group
+#       inputs:
+#         azureSubscription: $(subscription)
+#         scriptType: 'ps'
+#         scriptLocation: inlineScript
+#         useGlobalConfig: true
+#         inlineScript: |
+#           az group create --name $(resourceGroupName) --location $(location)
 
-    - task: AzureCLI@2
-      displayName: Creating resources defined in main.bicep
-      inputs:
-        azureSubscription: $(subscription)
-        scriptType: 'ps'
-        scriptLocation: inlineScript
-        useGlobalConfig: true
-        inlineScript: |
-          az deployment group create `
-          --resource-group $(resourceGroupName) `
-          --template-file $(templateFile) `
-          --parameters `
-            location=$(location) `
-            dbLogin=$(SQL_LOGIN) `
-            dbPassword=$(SQL_PASSWORD) `
-            sqlServerName=$(sqlServerName) `
-            sqlServerDatabaseName=$(sqlServerDatabaseName) `
-            apiAppServiceName=$(apiAppServiceName) `
-            blazorAppServiceName=$(blazorAppServiceName) `
-            keyVaultName=$(keyVaultName) `
-            signalRServiceName=$(signalRServiceName) `
-            storageAccountName=$(storageAccountName)
+#     - task: AzureCLI@2
+#       displayName: Creating resources defined in main.bicep
+#       inputs:
+#         azureSubscription: $(subscription)
+#         scriptType: 'ps'
+#         scriptLocation: inlineScript
+#         useGlobalConfig: true
+#         inlineScript: |
+#           az deployment group create `
+#           --resource-group $(resourceGroupName) `
+#           --template-file $(templateFile) `
+#           --parameters `
+#             location=$(location) `
+#             dbLogin=$(SQL_LOGIN) `
+#             dbPassword=$(SQL_PASSWORD) `
+#             sqlServerName=$(sqlServerName) `
+#             sqlServerDatabaseName=$(sqlServerDatabaseName) `
+#             apiAppServiceName=$(apiAppServiceName) `
+#             blazorAppServiceName=$(blazorAppServiceName) `
+#             keyVaultName=$(keyVaultName) `
+#             signalRServiceName=$(signalRServiceName) `
+#             storageAccountName=$(storageAccountName)
 
 - stage: Build
   jobs:
@@ -92,6 +92,23 @@ stages:
       inputs:
         targetPath: '$(build.artifactStagingDirectory)/blazor'
         artifact: blazor
+        publishLocation: 'pipeline'
+
+  - job: Build_Functions
+    steps:
+    - script: dotnet build ChatApplication.Functions
+      displayName: Building Functions Project
+      workingDirectory: $(solutionDir)
+      
+    - script: dotnet publish ChatApplication.Functions -o $(build.artifactStagingDirectory)/functions
+      displayName: Publishing Functions project build to the artifact
+      workingDirectory: $(solutionDir)
+    
+    - task: PublishPipelineArtifact@1
+      displayName: Publishing the Functions build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/functions'
+        artifact: functions
         publishLocation: 'pipeline'
   
   - job: Build_Database
@@ -198,3 +215,27 @@ stages:
         appName: '$(blazorAppServiceName)'
         package: '$(Pipeline.Workspace)/PublishedBlazor.zip'
         deploymentMethod: 'auto'
+
+   - job: Deploy_Functions
+     steps:
+     - task: DownloadPipelineArtifact@2
+       inputs:
+         buildType: 'current'
+         artifactName: 'functions'
+         targetPath: '$(Pipeline.Workspace)/functions'
+
+     - task: ArchiveFiles@2
+       inputs:
+         rootFolderOrFile: '$(Pipeline.Workspace)/functions/'
+         includeRootFolder: false
+         archiveType: 'zip'
+         archiveFile: '$(Pipeline.Workspace)/functions.zip'
+         replaceExistingArchive: true
+         
+     - task: AzureFunctionApp@2
+       inputs:
+         azureSubscription: $(subscription)
+         appType: 'functionApp'
+         appName: 'fnappdwyxwbkvi5nqk'
+         package: '$(Pipeline.Workspace)/functions.zip'
+         deploymentMethod: 'auto'
