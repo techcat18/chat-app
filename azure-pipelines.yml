@@ -111,6 +111,23 @@ stages:
         artifact: functions
         publishLocation: 'pipeline'
   
+  - job: Build_Functions
+    steps:
+    - script: dotnet build ChatApplication.Functions
+      displayName: Building Functions Project
+      workingDirectory: $(solutionDir)
+      
+    - script: dotnet publish ChatApplication.Functions -o $(build.artifactStagingDirectory)/functions
+      displayName: Publishing Functions project build to the artifact
+      workingDirectory: $(solutionDir)
+    
+    - task: PublishPipelineArtifact@1
+      displayName: Publishing the Functions build artifact to the pipeline
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/functions'
+        artifact: functions
+        publishLocation: 'pipeline'
+
   - job: Build_Database
     steps:
     - task: MSBuild@1
@@ -215,7 +232,7 @@ stages:
         appName: '$(blazorAppServiceName)'
         package: '$(Pipeline.Workspace)/PublishedBlazor.zip'
         deploymentMethod: 'auto'
-
+        
    - job: Deploy_Functions
      steps:
      - task: DownloadPipelineArtifact@2
@@ -231,7 +248,7 @@ stages:
          archiveType: 'zip'
          archiveFile: '$(Pipeline.Workspace)/functions.zip'
          replaceExistingArchive: true
-         
+
      - task: AzureFunctionApp@2
        inputs:
          azureSubscription: $(subscription)
