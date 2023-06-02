@@ -3,6 +3,7 @@ param apiAppServiceName string
 param blazorAppServiceName string
 param appServicePlanId string
 param keyVaultName string
+param functionName string
 
 resource apiAppService 'Microsoft.Web/sites@2021-01-15' = {
   name: apiAppServiceName
@@ -33,6 +34,10 @@ resource blazorAppService 'Microsoft.Web/sites@2021-01-15' = {
         {
           name: 'APIUrl'
           value: 'http://${apiAppServiceName}.azurewebsites.net/api/'
+        }
+        {
+          name: 'Azure--Functions--Url'
+          value: 'https://${functionName}.azurewebsites.net'
         }
       ]
     }
