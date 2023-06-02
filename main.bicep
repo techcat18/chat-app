@@ -48,6 +48,7 @@ module appService './bicep-modules/appservice.bicep' = {
     apiAppServiceName: apiAppServiceName
     blazorAppServiceName: blazorAppServiceName
     keyVaultName: keyVaultName
+    functionName: functionName
   }
   dependsOn: [
     appServicePlan

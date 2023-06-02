@@ -37,7 +37,7 @@ resource blazorAppService 'Microsoft.Web/sites@2021-01-15' = {
         }
         {
           name: 'Azure--Functions--Url'
-          value: 'https://${functionName}.azurewebsites.net'
+          value: 'https://${functionName}.azurewebsites.net/api/wordDocuments'
         }
       ]
     }
