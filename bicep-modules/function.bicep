@@ -48,6 +48,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: 'https://${keyVaultName}.vault.azure.net/'
         }
         {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
           name: 'WEBSITE_CONTENTSHARE'
           value: toLower(functionName)
         }
