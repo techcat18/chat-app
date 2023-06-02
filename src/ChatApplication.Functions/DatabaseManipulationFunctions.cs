@@ -1,11 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using ChatApplication.Functions.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using Microsoft.Extensions.Logging;
 
 namespace ChatApplication.Functions;
@@ -40,7 +38,6 @@ public static class DatabaseManipulationFunctions
     [FunctionName(nameof(RetrieveTextFromDatabase))]
     public static async Task<string> RetrieveTextFromDatabase(
         [ActivityTrigger] string name,
-        [SignalR(HubName = "chatHub")] IAsyncCollector<SignalRMessage> signalRMessages,
         ILogger log)
     {
         var databaseConnectionString = Environment.GetEnvironmentVariable("DBConnection");
@@ -64,19 +61,7 @@ public static class DatabaseManipulationFunctions
         }
             
         log.LogInformation("Text from SQL Database retrieved.");
-        
-        await SendCompletionNotification(signalRMessages, "Orchestration completed successfully!");
 
         return text;
-    }
-    
-    private static async Task SendCompletionNotification(IAsyncCollector<SignalRMessage> signalRMessages, string message)
-    {
-        await signalRMessages.AddAsync(
-            new SignalRMessage
-            {
-                Target = "CompletionNotification",
-                Arguments = new object[] { message }
-            });
     }
 }

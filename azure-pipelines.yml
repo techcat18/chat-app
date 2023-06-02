@@ -238,6 +238,6 @@ stages:
        inputs:
          azureSubscription: $(subscription)
          appType: 'functionApp'
-         appName: 'fnappdwyxwbkvi5nqk'
+         appName: $(functionName)
          package: '$(Pipeline.Workspace)/functions.zip'
          deploymentMethod: 'auto'
