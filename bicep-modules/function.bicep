@@ -1,10 +1,9 @@
 param functionName string
-param appServicePlanId string
+param storageAccountType string = 'Standard_LRS'
 param keyVaultName string
 
-param storageAccountType string = 'Standard_LRS'
-
 param location string = resourceGroup().location
+
 param runtime string = 'dotnet'
 
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
@@ -23,6 +22,16 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
+resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: functionName
+  location: location
+  sku: {
+    name: 'Y1'
+    tier: 'Dymanic'
+  }
+  properties: {}
+}
+
 resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   name: functionName
   location: location
@@ -31,7 +40,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: appServicePlanId
+    serverFarmId: hostingPlan.id
     siteConfig: {
       appSettings: [
         {

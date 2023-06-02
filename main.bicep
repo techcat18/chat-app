@@ -72,7 +72,6 @@ module function './bicep-modules/function.bicep' = {
     location: location
     functionName: functionName
     keyVaultName: keyVaultName
-    appServicePlanId: appServicePlan.outputs.appServicePlanId
   }
 }
 
