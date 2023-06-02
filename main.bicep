@@ -73,6 +73,7 @@ module function './bicep-modules/function.bicep' = {
     location: location
     functionName: functionName
     keyVaultName: keyVaultName
+    dbConnectionString: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlServerDatabaseName};Persist Security Info=False;User ID=${dbLogin};Password=${dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
   }
 }
 
