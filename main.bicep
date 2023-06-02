@@ -7,6 +7,7 @@ param apiAppServiceName string
 param blazorAppServiceName string
 param signalRServiceName string
 param keyVaultName string
+param functionName string
 @secure()
 param dbLogin string
 @secure()
@@ -65,6 +66,16 @@ module signalR 'bicep-modules/signalr.bicep' = {
   ]
 }
 
+module function './bicep-modules/function.bicep' = {
+  name: 'FunctionDeploy'
+  params: {
+    location: location
+    functionName: functionName
+    keyVaultName: keyVaultName
+    appServicePlanId: appServicePlan.outputs.appServicePlanId
+  }
+}
+
 module keyVault './bicep-modules/keyvault.bicep' = {
   name: 'KeyVaultDeploy'
   params: {
@@ -75,20 +86,15 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
     frontUrlString: 'http://${blazorAppServiceName}.azurewebsites.net/'
+    azureWebJobsStorage: function.outputs.storageConnectionString
     jwtSettingsKeyString: 'ChatApp1230912048901283'
     jwtSettingsAudienceString: 'BlazorApp'
     jwtSettingsIssuerString: 'ChatAppAPI'
     signalRConnection: signalR.outputs.connectionString
+    functionPrincipalId: function.outputs.functionPrincipalId
   }
   dependsOn: [
     storageAccount
     signalR
   ]
-}
-
-module function './bicep-modules/function.bicep' = {
-  name: 'FunctionDeploy'
-  params: {
-    location: location
-  }
 }

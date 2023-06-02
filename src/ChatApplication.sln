@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApplication.DAL.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApplication.IntegrationTests", "ChatApplication.IntegrationTests\ChatApplication.IntegrationTests.csproj", "{6E5510FA-45A6-4064-86CE-9F4545E08EA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApplication.Functions", "ChatApplication.Functions\ChatApplication.Functions.csproj", "{FD2AE4CF-07BB-4F49-ADE5-A0F25C8BAACD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApplication.Functions", "ChatApplication.Functions\ChatApplication.Functions.csproj", "{FD2AE4CF-07BB-4F49-ADE5-A0F25C8BAACD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

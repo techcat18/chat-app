@@ -1,27 +1,12 @@
-@description('The name of the function app that you wish to create.')
-param appName string = 'fnapp${uniqueString(resourceGroup().id)}'
+param functionName string
+param appServicePlanId string
+param keyVaultName string
 
-@description('Storage Account type')
-@allowed([
-  'Standard_LRS'
-  'Standard_GRS'
-  'Standard_RAGRS'
-])
 param storageAccountType string = 'Standard_LRS'
 
-@description('Location for all resources.')
 param location string = resourceGroup().location
-
-@description('The language worker runtime to load in the function app.')
-@allowed([
-  'node'
-  'dotnet'
-  'java'
-])
 param runtime string = 'dotnet'
 
-var functionAppName = appName
-var hostingPlanName = appName
 var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
 var functionWorkerRuntime = runtime
 
@@ -38,38 +23,24 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
-resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: hostingPlanName
-  location: location
-  sku: {
-    name: 'Y1'
-    tier: 'Dymanic'
-  }
-  properties: {}
-}
-
 resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
-  name: functionAppName
+  name: functionName
   location: location
   kind: 'functionapp'
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: hostingPlan.id
+    serverFarmId: appServicePlanId
     siteConfig: {
       appSettings: [
         {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          name: 'AzureKeyVaultUrl'
+          value: 'https://${keyVaultName}.vault.azure.net/'
         }
         {
           name: 'WEBSITE_CONTENTSHARE'
-          value: toLower(functionAppName)
+          value: toLower(functionName)
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -90,3 +61,11 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
     httpsOnly: true
   }
 }
+
+var key = storageAccount.listKeys().keys[0].value
+
+output functionPrincipalId string = functionApp.identity.principalId
+
+output storageAccessKey string = key
+output storageConnectionString string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${key}'
+output storageEndpoint object = storageAccount.properties.primaryEndpoints

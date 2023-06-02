@@ -1,11 +1,13 @@
 param location string = resourceGroup().location
 param keyVaultName string
 param apiAppServicePrincipalId string
+param functionPrincipalId string
 param frontUrlString string
 param jwtSettingsKeyString string
 param jwtSettingsAudienceString string
 param jwtSettingsIssuerString string
 param signalRConnection string
+param azureWebJobsStorage string
 @secure()
 param sqlServerDatabaseConnection string
 @secure()
@@ -32,6 +34,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
       {
         tenantId: subscription().tenantId
         objectId: 'c95fc188-feb0-42fb-86ac-27763f04107a'
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+      }
+      {
+        tenantId: subscription().tenantId
+        objectId: functionPrincipalId
         permissions: {
           secrets: [
             'get'
@@ -68,6 +80,30 @@ resource blobStorageConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-
   name: 'Azure--Blob--ConnectionString'
   properties: {
     value: storageConnectionString
+  }
+}
+
+resource functionUrl 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'Azure--Functions--Url'
+  properties: {
+    value: storageConnectionString
+  }
+}
+
+resource webJobsStorage 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'AzureWebJobsStorage'
+  properties: {
+    value: azureWebJobsStorage
+  }
+}
+
+resource websiteContentAzureFileConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  parent: keyVault
+  name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+  properties: {
+    value: azureWebJobsStorage
   }
 }
 

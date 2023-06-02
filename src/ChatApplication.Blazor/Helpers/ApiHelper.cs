@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using ChatApplication.Blazor.Helpers.Interfaces;
+using ChatApplication.Blazor.Models.File;
 using Flurl.Http;
 
 namespace ChatApplication.Blazor.Helpers;
@@ -43,6 +44,13 @@ public class ApiHelper: IApiHelper
         await (_apiUrl + endpoint)
             .WithHeader("Authorization", $"Bearer {token}")
             .PostJsonAsync(model);
+    }
+
+    public async Task FunctionPostAsync(FileUploadModel fileUploadModel, string endpoint)
+    {
+        await endpoint
+            .PostMultipartAsync(mp =>
+                mp.AddFile(fileUploadModel.FileName, fileUploadModel.Stream, fileUploadModel.FileName));
     }
 
     public async Task<TOut> PostAsync<TIn, TOut>(TIn model, string endpoint)
