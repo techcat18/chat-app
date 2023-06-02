@@ -1,6 +1,7 @@
 param functionName string
 param storageAccountType string = 'Standard_LRS'
 param keyVaultName string
+param dbConnectionString string
 
 param location string = resourceGroup().location
 
@@ -46,6 +47,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
         {
           name: 'AzureKeyVaultUrl'
           value: 'https://${keyVaultName}.vault.azure.net/'
+        }
+        {
+          name: 'DBConnection'
+          value: dbConnectionString
         }
         {
           name: 'AzureWebJobsStorage'

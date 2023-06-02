@@ -19,6 +19,6 @@ public class WordDocumentService: IWordDocumentService
 
     public async Task UploadFileAsync(FileUploadModel file)
     {
-        await _apiHelper.FunctionPostAsync(file, _configuration.GetSection("Azure:Functions:Url").Value);
+        await _apiHelper.FunctionPostAsync(file, _configuration.GetSection("AzureFunctionsUrl").Value);
     }
 }
