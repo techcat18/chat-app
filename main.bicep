@@ -85,7 +85,6 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     storageAccessKey: storageAccount.outputs.storageAccessKey
     storageConnectionString: storageAccount.outputs.storageConnectionString
     frontUrlString: 'http://${blazorAppServiceName}.azurewebsites.net/'
-    azureWebJobsStorage: function.outputs.storageConnectionString
     jwtSettingsKeyString: 'ChatApp1230912048901283'
     jwtSettingsAudienceString: 'BlazorApp'
     jwtSettingsIssuerString: 'ChatAppAPI'
@@ -95,5 +94,6 @@ module keyVault './bicep-modules/keyvault.bicep' = {
   dependsOn: [
     storageAccount
     signalR
+    function
   ]
 }

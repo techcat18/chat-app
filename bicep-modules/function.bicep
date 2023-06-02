@@ -48,6 +48,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: 'https://${keyVaultName}.vault.azure.net/'
         }
         {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
         }
@@ -75,10 +79,4 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
-var key = storageAccount.listKeys().keys[0].value
-
 output functionPrincipalId string = functionApp.identity.principalId
-
-output storageAccessKey string = key
-output storageConnectionString string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${key}'
-output storageEndpoint object = storageAccount.properties.primaryEndpoints

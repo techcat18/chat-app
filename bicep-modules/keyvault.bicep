@@ -7,7 +7,6 @@ param jwtSettingsKeyString string
 param jwtSettingsAudienceString string
 param jwtSettingsIssuerString string
 param signalRConnection string
-param azureWebJobsStorage string
 @secure()
 param sqlServerDatabaseConnection string
 @secure()
@@ -88,22 +87,6 @@ resource functionUrl 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   name: 'Azure--Functions--Url'
   properties: {
     value: storageConnectionString
-  }
-}
-
-resource webJobsStorage 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
-  parent: keyVault
-  name: 'AzureWebJobsStorage'
-  properties: {
-    value: azureWebJobsStorage
-  }
-}
-
-resource websiteContentAzureFileConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
-  parent: keyVault
-  name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-  properties: {
-    value: azureWebJobsStorage
   }
 }
 
