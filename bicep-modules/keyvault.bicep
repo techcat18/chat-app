@@ -19,38 +19,38 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
   location: location
   properties: {
     tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        tenantId: subscription().tenantId
-        objectId: apiAppServicePrincipalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-      }
-      {
-        tenantId: subscription().tenantId
-        objectId: 'c95fc188-feb0-42fb-86ac-27763f04107a'
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-      }
-      {
-        tenantId: subscription().tenantId
-        objectId: functionPrincipalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-      }
-    ]
+    // accessPolicies: [
+    //   {
+    //     tenantId: subscription().tenantId
+    //     objectId: apiAppServicePrincipalId
+    //     permissions: {
+    //       secrets: [
+    //         'get'
+    //         'list'
+    //       ]
+    //     }
+    //   }
+    //   {
+    //     tenantId: subscription().tenantId
+    //     objectId: 'c95fc188-feb0-42fb-86ac-27763f04107a'
+    //     permissions: {
+    //       secrets: [
+    //         'get'
+    //         'list'
+    //       ]
+    //     }
+    //   }
+    //   {
+    //     tenantId: subscription().tenantId
+    //     objectId: functionPrincipalId
+    //     permissions: {
+    //       secrets: [
+    //         'get'
+    //         'list'
+    //       ]
+    //     }
+    //   }
+    // ]
     sku: {
       name: 'standard'
       family: 'A'

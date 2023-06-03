@@ -99,3 +99,15 @@ module keyVault './bicep-modules/keyvault.bicep' = {
     function
   ]
 }
+
+module keyVaultAccess './bicep-modules/keyvaultaccess.bicep' = {
+  name: 'KeyVaultAccessDeploy'
+  params: {
+    apiPrincipalId: appService.outputs.apiAppServicePrincipalId
+    functionPrincipalId: function.outputs.functionPrincipalId
+  }
+  dependsOn: [
+    appService
+    function
+  ]
+}

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace ChatApplication.Functions
 {
-    public static class WordDocumentUploaderFunction
+    public static class ChainingFunction
     {
         [FunctionName(nameof(RunOrchestrator))]
         public static async Task<IActionResult> RunOrchestrator(

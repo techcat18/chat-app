@@ -38,7 +38,7 @@ public static class HttpFunctions
             
         var jsonString = JsonConvert.SerializeObject(fileInputModel);
                 
-        var instanceId = await starter.StartNewAsync(nameof(WordDocumentUploaderFunction.RunOrchestrator), input: jsonString);
+        var instanceId = await starter.StartNewAsync(nameof(ChainingFunction.RunOrchestrator), input: jsonString);
 
         return starter.CreateCheckStatusResponse(req, instanceId);
     }
